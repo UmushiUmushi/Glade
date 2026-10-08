@@ -13,18 +13,16 @@
 
 ## Layout
 
-![Item builder layout](diagrams/builder.svg)
-
-| #   | Part               | Detail                                                                                                                                                                           |
-| --- | ------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1   | Title bar          | Item name and "not saved" state. Minimise, maximise, close. Standalone: game picker and Home instead of window buttons.                                                          |
-| 2   | Templates          | Scrollable list on the left. Picking one sets the kind, footprint limits and special rules.                                                                                      |
-| 3   | File, Undo, Redo   | Top left of the 3D view.                                                                                                                                                         |
-| 4   | 3D view            | Rotate with drag, zoom with wheel or pinch. A footprint grid sits under the item. Drag on empty space draws a selection box.                                                     |
-| 5   | Connection preview | Only for fence-like templates. Shows 3D previews of the item linked across, down and diagonally.                                                                                 |
-| 6   | Add panel          | Top right. Search, or scroll by category: Bases, Legs, Toppings, Greenery, Decoration, Simple shapes. Click to add, or drag onto a surface. Slides in when the footprint is set. |
-| 7   | Edit tools         | Bottom left. Slides in when a part is selected. General tools + the part's special tools.                                                                                        |
-| 8   | Problems           | Live check result and part count ("14 of 256 parts"). Click a problem to select its part.                                                                                        |
+| Part               | Detail                                                                                                                                                                           |
+| ------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Title bar          | Item name and "not saved" state. Minimise, maximise, close. Standalone: game picker and Home instead of window buttons.                                                          |
+| Templates          | Scrollable list on the left. Picking one sets the kind, footprint limits and special rules.                                                                                      |
+| File, Undo, Redo   | Top left of the 3D view.                                                                                                                                                         |
+| 3D view            | Rotate with drag, zoom with wheel or pinch. A footprint grid sits under the item. Drag on empty space draws a selection box.                                                     |
+| Connection preview | Only for fence-like templates. Shows 3D previews of the item linked across, down and diagonally.                                                                                 |
+| Add panel          | Top right. Search, or scroll by category: Bases, Legs, Toppings, Greenery, Decoration, Simple shapes. Click to add, or drag onto a surface. Slides in when the footprint is set. |
+| Edit tools         | Bottom left. Slides in when a part is selected. General tools + the part's special tools.                                                                                        |
+| Problems           | Live check result and part count ("14 of 256 parts"). Click a problem to select its part.                                                                                        |
 
 ## The builder window (inside the planner)
 

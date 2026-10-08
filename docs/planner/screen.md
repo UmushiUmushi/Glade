@@ -6,27 +6,25 @@
 
 ### Desktop
 
-![Desktop planner layout](diagrams/desktop-planner.svg)
-
-| #   | Part                             | Section                                                                          |
-| --- | -------------------------------- | -------------------------------------------------------------------------------- |
-| 1   | More menu                        | [More menu, game picker, settings, guide](#more-menu-game-picker-settings-guide) |
-| 2   | Game picker                      | [More menu, game picker, settings, guide](#more-menu-game-picker-settings-guide) |
-| 3   | Cursor controls                  | [Cursor](#cursor)                                                                |
-| 4   | Select tools and modes           | [Select](#select)                                                                |
-| 5   | Environment: time and snow       | [Environment](#environment)                                                      |
-| 6   | Layers                           | [Layers](#layers)                                                                |
-| 7   | Collapse panel                   | [The rail (collapsed panel)](#the-rail-collapsed-panel)                          |
-| 8   | Viewport modes                   | [Viewport mode buttons (top left)](#viewport-mode-buttons-top-left)              |
-| 9   | Undo and redo                    | [Undo and redo](#undo-and-redo)                                                  |
-| 10  | Violation pills                  | [Violation pills](#violation-pills)                                              |
-| 11  | Viewport menu                    | [Viewport menu (top right)](#viewport-menu-top-right)                            |
-| 12  | Selected item with quick actions | [Highlights](#highlights)                                                        |
-| 13  | Hovered item                     | [Highlights](#highlights)                                                        |
-| 14  | FPS and coordinates              | [FPS and coordinates (bottom left)](#fps-and-coordinates-bottom-left)            |
-| 15  | Toolbox tabs and search          | [Toolbox](#toolbox)                                                              |
-| 16  | New item (opens the builder)     | [Furniture mode: the item drawer](#furniture-mode-the-item-drawer)               |
-| 17  | Item cards                       | [Furniture mode: the item drawer](#furniture-mode-the-item-drawer)               |
+| Part                             | Section                                                                          |
+| -------------------------------- | -------------------------------------------------------------------------------- |
+| More menu                        | [More menu, game picker, settings, guide](#more-menu-game-picker-settings-guide) |
+| Game picker                      | [More menu, game picker, settings, guide](#more-menu-game-picker-settings-guide) |
+| Cursor controls                  | [Cursor](#cursor)                                                                |
+| Select tools and modes           | [Select](#select)                                                                |
+| Environment: time and snow       | [Environment](#environment)                                                      |
+| Layers                           | [Layers](#layers)                                                                |
+| Collapse panel                   | [The rail (collapsed panel)](#the-rail-collapsed-panel)                          |
+| Viewport modes                   | [Viewport mode buttons (top left)](#viewport-mode-buttons-top-left)              |
+| Undo and redo                    | [Undo and redo](#undo-and-redo)                                                  |
+| Violation pills                  | [Violation pills](#violation-pills)                                              |
+| Viewport menu                    | [Viewport menu (top right)](#viewport-menu-top-right)                            |
+| Selected item with quick actions | [Highlights](#highlights)                                                        |
+| Hovered item                     | [Highlights](#highlights)                                                        |
+| FPS and coordinates              | [FPS and coordinates (bottom left)](#fps-and-coordinates-bottom-left)            |
+| Toolbox tabs and search          | [Toolbox](#toolbox)                                                              |
+| New item (opens the builder)     | [Furniture mode: the item drawer](#furniture-mode-the-item-drawer)               |
+| Item cards                       | [Furniture mode: the item drawer](#furniture-mode-the-item-drawer)               |
 
 ### Screen sizes
 
@@ -40,7 +38,18 @@ The user can force a layout in Settings: **Auto**, **Desktop**, **Phone portrait
 
 ### Phone
 
-![Phone planner layouts](diagrams/mobile-planner.svg)
+| Part           | Where                                                                                                             |
+| -------------- | ----------------------------------------------------------------------------------------------------------------- |
+| Top bar        | Along the top. More menu and game picker stay pinned on the left. The rest scrolls sideways, with the rail icons. |
+| FPS and coords | Tiny, under the top bar.                                                                                          |
+| Viewport modes | Stacked down the left edge.                                                                                       |
+| Viewport menu  | On the right. It can still collapse into a slim tag.                                                              |
+| Undo and redo  | Under the viewport menu.                                                                                          |
+| Toolbox        | A bottom sheet over the viewport. It can collapse: tap or drag the handle up to open it.                          |
+
+- Tap replaces hover: tap an icon to see its name and its flyout.
+- Long press opens the actions menu for a selection or item.
+- Portrait and landscape use the same parts.
 
 ## Side panel (expanded)
 
@@ -89,8 +98,6 @@ What each tool selects depends on the viewport mode ([Selecting](behaviour.md#se
 
 ### Environment
 
-![Time of day control](diagrams/time-slider.svg)
-
 | Control                        | Does                                                                                                                                                                           |
 | ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | **Time slider**                | Sets the time of day. Snaps to 4 key points (from the game's look): Morning 7:00, Midday 12:00, Afternoon 16:30, Night 21:00. You can also stop between them; the look blends. |
@@ -134,8 +141,6 @@ Each row has an eye button. Clicking the row name also toggles it.
 | ⬜ Not ticked   | Disabled (greyed).      | Only the **active area** shows: the area under the cursor or the selection. |
 
 ## The rail (collapsed panel)
-
-![Collapsed side panel](diagrams/side-rail.svg)
 
 The rail is 64 px wide. **Everything in the panel still works from the rail.**
 
@@ -194,8 +199,6 @@ On phones the buttons stack down the left edge.
 - Disabled (greyed) when there is nothing to undo or redo. The tooltip says what will be undone: "Undo: move 3 chairs".
 
 ### Viewport menu (top right)
-
-![Viewport details](diagrams/viewport-details.svg)
 
 | Row                 | Does                                                                                                                                  | Key   |
 | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------- | ----- |

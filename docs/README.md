@@ -19,7 +19,6 @@ working on.
 ## How to read these docs
 
 - Most pages start with an **In short** box. Read only those first to get the whole picture fast.
-- Pictures live in each folder's `diagrams/`. They are SVG images.
 - Flow charts use **Mermaid**. GitHub shows them by itself. In VS Code, the extension "Markdown
   Preview Mermaid Support" shows them in the preview.
 - Words in `code style` are names of files, functions or data fields.

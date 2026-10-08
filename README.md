@@ -1,6 +1,6 @@
 # Glade
 
-Glade is a web app for planning maps and building items for cosy building games. Each planner
+Glade is a web app for planning maps and building items for various building games. Each planner
 looks like its game and works like every other planner: the same controls, the same keys, the same
 behaviour.
 
@@ -60,6 +60,11 @@ pnpm lint
 ```
 
 See [CONTRIBUTING.md](CONTRIBUTING.md).
+
+## AI use
+
+The code was written with the help of AI. All design and artwork in Glade is made by people, not
+by AI.
 
 ## License
 
