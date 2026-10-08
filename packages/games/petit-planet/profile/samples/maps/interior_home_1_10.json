@@ -1,0 +1,44 @@
+{
+  "version": 3,
+  "game": "petit-planet",
+  "map": "interior_home_1_10",
+  "name": "demo",
+  "meta": {"created":"2026-10-07T00:00:00.000Z","updated":"2026-10-07T00:00:00.000Z"},
+  "layers": {
+    "items": {
+      "kind": "entities",
+      "items": [
+        {"id":"i1","type":"home-bed","mx":14,"my":0,"rot":0},
+        {"id":"i2","type":"home-round-table","mx":8,"my":8,"rot":0},
+        {"id":"i3","type":"home-chair","mx":6,"my":9,"rot":90},
+        {"id":"i4","type":"home-bookshelf","mx":0,"my":0,"rot":0}
+      ]
+    },
+    "wallItems": {
+      "kind": "entities",
+      "items": [
+        {"id":"w1","type":"home-picture","room":"main","wall":"north","x":4,"y":4},
+        {"id":"w2","type":"home-window","room":"main","wall":"west","x":8,"y":2}
+      ]
+    },
+    "ceilingItems": {
+      "kind": "entities",
+      "items": [
+        {"id":"l1","type":"home-ceiling-lamp","mx":9,"my":9,"rot":0}
+      ]
+    },
+    "coverings": {
+      "kind": "entities",
+      "items": [
+        {"id":"c1","type":"home-hills-wallpaper","room":"main"},
+        {"id":"c2","type":"home-tile-flooring","room":"main"}
+      ]
+    },
+    "onSurfaces": {
+      "kind": "entities",
+      "items": [
+        {"id":"s1","type":"home-flowers","on":"i2","x":5,"y":5,"rot":0}
+      ]
+    }
+  }
+}

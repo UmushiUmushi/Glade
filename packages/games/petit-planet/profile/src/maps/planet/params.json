@@ -1,0 +1,18 @@
+{
+  "minLandLevel": 0,
+  "maxHeight": 8,
+  "maxStepBetweenNeighbors": 3,
+  "stepNeighborhood": "8",
+  "waterfallMinRun": 3,
+  "bridge": {
+    "minLength": 4,
+    "maxLength": 7
+  },
+  "inclineRise": 1,
+  "modelLimits": {
+    "maxParts": 256,
+    "maxHeight": 6,
+    "maxTriangles": 10000,
+    "maxDepth": 6
+  }
+}

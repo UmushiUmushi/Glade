@@ -1,0 +1,58 @@
+{
+  "units": { "heightScale": 1.65 },
+  "world": {
+    "curvature": { "enabled": false, "radius": 250 },
+    "camera": {
+      "walk": {
+        "fov": 40,
+        "pitch": 25,
+        "distance": 12,
+        "eye": 2.5,
+        "near": { "distance": 8, "pitch": 18 },
+        "far": { "distance": 18, "pitch": 32 }
+      }
+    },
+    "figure": { "height": 3.6, "radius": 0.5, "color": "#c9573a" }
+  },
+  "defaultPreset": "inside",
+  "shared": {
+    "objects": { "toonSteps": 3, "glass": 0.45 }
+  },
+  "presets": {
+    "inside": {
+      "sky": {
+        "top": "#000000",
+        "horizon": "#000000",
+        "stars": false,
+        "fog": { "color": "#000000", "near": 400, "far": 900 }
+      },
+      "light": {
+        "sun": {
+          "azimuth": 160,
+          "elevation": 62,
+          "color": "#fff3e0",
+          "intensity": 0.55,
+          "shadows": true,
+          "shadowBlur": 0.4,
+          "shadowOpacity": 0.25
+        },
+        "ambient": { "sky": "#fff1dc", "ground": "#d8c3a5", "intensity": 0.95 },
+        "grade": {
+          "saturation": 1.08,
+          "contrast": 0.96,
+          "gain": "#fff8ee",
+          "lift": "#120e0a",
+          "tint": [1, 1, 1]
+        }
+      },
+      "colors": {
+        "floor": "#e6c9a3",
+        "wall": "#efe3cf",
+        "door": "#7a5233",
+        "edge": "#c9b391",
+        "outside": "#0e0d0c",
+        "glow": "#6e6e6e"
+      }
+    }
+  }
+}

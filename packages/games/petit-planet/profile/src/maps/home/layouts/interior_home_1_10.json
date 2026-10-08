@@ -1,0 +1,13 @@
+{
+  "id": "interior_home_1_10",
+  "title": "Home (1 room, 10 x 10)",
+  "rooms": [
+    {
+      "id": "main",
+      "size": [10, 10],
+      "at": [0, 0],
+      "wallHeight": 4,
+      "doors": [{ "wall": "south", "at": 4, "entrance": true }]
+    }
+  ]
+}

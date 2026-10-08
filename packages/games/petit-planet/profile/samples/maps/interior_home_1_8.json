@@ -1,0 +1,49 @@
+{
+  "version": 3,
+  "game": "petit-planet",
+  "map": "interior_home_1_8",
+  "name": "demo",
+  "meta": {"created":"2026-10-07T00:00:00.000Z","updated":"2026-10-07T00:00:00.000Z"},
+  "layers": {
+    "items": {
+      "kind": "entities",
+      "items": [
+        {"id":"i1","type":"home-bed","mx":10,"my":0,"rot":0},
+        {"id":"i2","type":"home-counter","mx":4,"my":0,"rot":0},
+        {"id":"i3","type":"home-bookshelf","mx":0,"my":8,"rot":0},
+        {"id":"i4","type":"home-bookshelf","mx":0,"my":10,"rot":0},
+        {"id":"i5","type":"home-round-table","mx":10,"my":9,"rot":0},
+        {"id":"i6","type":"home-chair","mx":8,"my":10,"rot":90},
+        {"id":"i7","type":"home-chair","mx":12,"my":13,"rot":180}
+      ]
+    },
+    "wallItems": {
+      "kind": "entities",
+      "items": [
+        {"id":"w1","type":"home-picture","room":"main","wall":"north","x":2,"y":4},
+        {"id":"w2","type":"home-picture","room":"main","wall":"north","x":5,"y":5},
+        {"id":"w3","type":"home-window","room":"main","wall":"east","x":6,"y":2}
+      ]
+    },
+    "ceilingItems": {
+      "kind": "entities",
+      "items": [
+        {"id":"l1","type":"home-ceiling-lamp","mx":7,"my":7,"rot":0}
+      ]
+    },
+    "coverings": {
+      "kind": "entities",
+      "items": [
+        {"id":"c1","type":"home-hills-wallpaper","room":"main"},
+        {"id":"c2","type":"home-tile-flooring","room":"main"}
+      ]
+    },
+    "onSurfaces": {
+      "kind": "entities",
+      "items": [
+        {"id":"s1","type":"home-teapot","on":"i5","x":5,"y":5,"rot":0},
+        {"id":"s2","type":"home-flowers","on":"i2","x":4,"y":1,"rot":0}
+      ]
+    }
+  }
+}

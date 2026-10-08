@@ -1,0 +1,14 @@
+node_modules
+dist
+*.log
+.DS_Store
+
+# Local editor and assistant settings
+.claude/settings.local.json
+
+# Game reference screenshots and the notes about them: local only, never committed.
+# tests/references.test.ts fails if anything under these folders is ever tracked.
+packages/games/*/references/
+
+# Render golden mismatches, written for inspection.
+packages/testkit/render/data/*.actual.png

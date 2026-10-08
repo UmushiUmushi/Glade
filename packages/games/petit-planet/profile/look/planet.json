@@ -1,0 +1,605 @@
+{
+  "units": {
+    "heightScale": 1.65
+  },
+  "world": {
+    "curvature": {
+      "enabled": true,
+      "radius": 250
+    },
+    "sea": {
+      "enabled": true,
+      "level": -0.35
+    },
+    "camera": {
+      "walk": {
+        "fov": 27,
+        "pitch": 20,
+        "distance": 20,
+        "eye": 2.5,
+        "aspect": 2.22,
+        "near": {
+          "distance": 16,
+          "pitch": 12
+        },
+        "far": {
+          "distance": 30,
+          "pitch": 25
+        }
+      }
+    },
+    "figure": {
+      "height": 3.6,
+      "radius": 0.5,
+      "color": "#c9573a"
+    }
+  },
+  "defaultPreset": "midday",
+  "defaultSeason": "spring",
+  "shared": {
+    "toon": {
+      "steps": 3,
+      "outline": {
+        "enabled": false,
+        "color": "#3b2f2a",
+        "width": 1
+      }
+    },
+    "terrain": {
+      "land": {
+        "cushion": {
+          "overhang": 0.2,
+          "depth": 0.5,
+          "radius": 0.3,
+          "tuck": 0.15,
+          "corner": 0.6,
+          "coreInset": 0.08,
+          "coreShade": 0.95,
+          "coreUnder": 0.4,
+          "coreDrop": 0.15
+        },
+        "leaves": {
+          "size": 0.36,
+          "spacing": 0.19,
+          "rowStep": 0.14,
+          "topSpacing": 0.15,
+          "jitter": 0.35,
+          "push": 0.03,
+          "layer": 0.06,
+          "rowWave": 0.05,
+          "edgeBand": 0.8,
+          "rand": 0.08,
+          "soft": 2.5,
+          "foot": [
+            [0.1, 0.0],
+            [0.22, -0.02]
+          ],
+          "pathRows": [
+            [-0.04, -0.02],
+            [0.1, -0.05]
+          ]
+        },
+        "tone": {
+          "bias": 0.42,
+          "byHeight": 0.15,
+          "byNormal": 0.6,
+          "normalPower": 3,
+          "under": 0.25,
+          "underWidth": 0.65,
+          "rim": 1,
+          "rimWidth": 1.2,
+          "rimWarp": 1.3,
+          "rimWarpSize": 2,
+          "detail": 0.12,
+          "detailSize": 0.6,
+          "patch": 0.2,
+          "patchSize": 3,
+          "clumps": 0.7,
+          "bands": 3,
+          "clumpEdge": 0.8,
+          "shadePatch": 0,
+          "shadeSize": 2.5,
+          "ground": -0.28,
+          "blend": 0.35,
+          "blendFrom": 1.5,
+          "blendTo": 4,
+          "groundRim": 0
+        },
+        "face": {
+          "topLine": 0.06,
+          "bandAt": 0.12,
+          "bandWidth": 0.24,
+          "soft": 0.04,
+          "wobble": 0.05,
+          "wobbleScale": 5,
+          "streaks": 0.015,
+          "streakScale": 7,
+          "haze": 0.5,
+          "hazeWidth": 0.1,
+          "hazeWave": 0.06,
+          "ambient": 0.86,
+          "sun": 0.3,
+          "shade": 1,
+          "shadeTint": "#c1bef3",
+          "follow": 0,
+          "round": 0.4,
+          "period": 3,
+          "lightTo": 1.25,
+          "seamDepth": 1.48,
+          "seamSpread": 0.07,
+          "lavenderAt": 1.57,
+          "pinkFrom": 1.8,
+          "pinkTo": 2.1,
+          "lowAt": 2.3,
+          "line": 0.3,
+          "blend": 0.4,
+          "bandSoft": 0.1,
+          "dent": 0.05,
+          "dentSize": 0.5,
+          "blotch": 0.06,
+          "blotchSize": 0.7,
+          "vStreaks": 0.03,
+          "topLight": 0.1,
+          "seam": 0.8,
+          "seamAt": 0.27,
+          "seamWidth": 0.07
+        },
+        "daylight": {
+          "sun": {
+            "color": "#fff8f0",
+            "intensity": 0.75,
+            "azimuth": 200,
+            "elevation": 60
+          },
+          "ambient": {
+            "sky": "#9fd0f0",
+            "ground": "#7a6a80",
+            "intensity": 0.55
+          },
+          "grade": {
+            "saturation": 1.15,
+            "contrast": 1.05,
+            "gain": "#ece6da",
+            "lift": "#141828"
+          }
+        }
+      },
+      "sand": {
+        "wetWidth": 1.5,
+        "grassBorder": true
+      },
+      "contact": {
+        "width": 1.3,
+        "strength": 0.16
+      }
+    },
+    "water": {
+      "inset": 0.33,
+      "bed": 0.7,
+      "opacity": 0.8,
+      "shallow": 0,
+      "shoreFoam": 0,
+      "edgeDark": 0.3,
+      "caustics": 0.05,
+      "waves": {
+        "amplitude": 0.005,
+        "speed": 0.3,
+        "scale": 3
+      },
+      "fall": {
+        "streaks": 2,
+        "speed": 0.8,
+        "white": 0.38,
+        "edge": 0.45,
+        "lip": 0.25,
+        "foam": {
+          "height": 0.6,
+          "spread": 1.1
+        }
+      },
+      "patches": 0.25
+    },
+    "objects": {
+      "toonSteps": 3,
+      "snow": 0,
+      "glass": 0.45
+    },
+    "paths": {
+      "gap": 0.1,
+      "fringe": 0,
+      "corner": 0.6
+    }
+  },
+  "presets": {
+    "morning": {
+      "hour": 7,
+      "sky": {
+        "top": "#1a609b",
+        "mid": "#53bada",
+        "midAt": 3,
+        "topAt": 30,
+        "horizon": "#b3d5d6",
+        "stars": true,
+        "starAlpha": 0.45,
+        "sparkles": 0.5,
+        "clouds": "#eef5f7",
+        "meteors": 0,
+        "fog": {
+          "color": "#8ccad8",
+          "near": 90,
+          "far": 420
+        }
+      },
+      "light": {
+        "sun": {
+          "azimuth": 110,
+          "elevation": 30,
+          "color": "#fff0e0",
+          "intensity": 0.85,
+          "shadows": true,
+          "shadowSoftness": 3,
+          "shadowOpacity": 0.4,
+          "shadowBlur": 0.3
+        },
+        "ambient": {
+          "sky": "#b8dcf0",
+          "ground": "#7a6a80",
+          "intensity": 0.5
+        },
+        "grade": {
+          "saturation": 1.08,
+          "contrast": 1.03,
+          "gain": "#ffffff",
+          "lift": "#141828",
+          "tint": [1, 1, 1]
+        },
+        "focus": {
+          "blur": 6,
+          "start": 1.5,
+          "end": 4
+        }
+      },
+      "colors": {
+        "glow": "#333333",
+        "grassTop": ["#86cc5c", "#4f8844", "#84c85a"],
+        "grassShade": "#448b3e",
+        "shadowTint": "#dce4f0",
+        "strata": ["#f0b0a2", "#e2bcc8", "#cf968c", "#eaa99e", "#dcb6c2", "#c98f86"],
+        "strataUp": [
+          "#98605a",
+          "#b86e5e",
+          "#be7462",
+          "#c98f86",
+          "#dcb6c2",
+          "#f0b0a2",
+          "#cf968c",
+          "#e2bcc8",
+          "#eaa99e"
+        ],
+        "sand": "#f0e2b6",
+        "sandWet": "#d9c79a",
+        "bed": "#2d5a3a",
+        "water": "#379868",
+        "fall": "#2e5a48",
+        "foam": "#ddecda",
+        "sea": "#4fb8d0",
+        "snow": "#f6f3ea",
+        "occlusion": "#1e1a2a",
+        "land": {
+          "grass": ["#316521", "#57a13a", "#74b858"],
+          "face": ["#d6b6bd", "#ae796e", "#926a6c", "#986f6c", "#775655"],
+          "upper": ["#e5b1ae", "#c98f83", "#916562", "#cfb3c1", "#b88779"],
+          "faceGain": 1.08
+        }
+      }
+    },
+    "midday": {
+      "hour": 12,
+      "sky": {
+        "top": "#185d99",
+        "mid": "#4bb6db",
+        "midAt": 3,
+        "topAt": 30,
+        "horizon": "#b0d6d8",
+        "stars": true,
+        "starAlpha": 0.45,
+        "sparkles": 0.5,
+        "clouds": "#eef5f7",
+        "meteors": 0,
+        "fog": {
+          "color": "#86c8d9",
+          "near": 90,
+          "far": 420
+        }
+      },
+      "light": {
+        "sun": {
+          "azimuth": 200,
+          "elevation": 60,
+          "color": "#fff8f0",
+          "intensity": 0.75,
+          "shadows": true,
+          "shadowSoftness": 3,
+          "shadowOpacity": 0.4,
+          "shadowBlur": 0.25
+        },
+        "ambient": {
+          "sky": "#9fd0f0",
+          "ground": "#7a6a80",
+          "intensity": 0.55
+        },
+        "grade": {
+          "saturation": 1.15,
+          "contrast": 1.05,
+          "gain": "#ece6da",
+          "lift": "#141828",
+          "tint": [1, 1, 1]
+        },
+        "focus": {
+          "blur": 6,
+          "start": 1.5,
+          "end": 4
+        }
+      },
+      "colors": {
+        "glow": "#262626",
+        "grassTop": ["#86cc5c", "#4f8844", "#84c85a"],
+        "grassShade": "#448b3e",
+        "shadowTint": "#e4ecf0",
+        "strata": ["#f0b0a2", "#e2bcc8", "#cf968c", "#eaa99e", "#dcb6c2", "#c98f86"],
+        "strataUp": [
+          "#98605a",
+          "#b86e5e",
+          "#be7462",
+          "#c98f86",
+          "#dcb6c2",
+          "#f0b0a2",
+          "#cf968c",
+          "#e2bcc8",
+          "#eaa99e"
+        ],
+        "sand": "#f0e2b6",
+        "sandWet": "#d9c79a",
+        "bed": "#2d5a3a",
+        "water": "#379868",
+        "fall": "#2e5a48",
+        "foam": "#ddecda",
+        "sea": "#4fb8d0",
+        "snow": "#f6f3ea",
+        "occlusion": "#10281c",
+        "land": {
+          "grass": ["#316521", "#57a13a", "#74b858"],
+          "face": ["#c3908c", "#9e6051", "#855450", "#8a5850", "#6c443f"],
+          "upper": ["#fbc0b7", "#de9a8a", "#b07870", "#e0c1c7", "#cc917f"],
+          "faceGain": 1
+        }
+      }
+    },
+    "afternoon": {
+      "hour": 16.5,
+      "sky": {
+        "top": "#185d99",
+        "mid": "#4bb6db",
+        "midAt": 3,
+        "topAt": 30,
+        "horizon": "#b0d6d8",
+        "stars": true,
+        "starAlpha": 0.4,
+        "sparkles": 0.5,
+        "clouds": "#f5ece6",
+        "meteors": 0,
+        "fog": {
+          "color": "#86c8d9",
+          "near": 90,
+          "far": 420
+        }
+      },
+      "light": {
+        "sun": {
+          "azimuth": 240,
+          "elevation": 28,
+          "color": "#ffe6cc",
+          "intensity": 0.8,
+          "shadows": true,
+          "shadowSoftness": 3,
+          "shadowOpacity": 0.42,
+          "shadowBlur": 0.28
+        },
+        "ambient": {
+          "sky": "#9fd0f0",
+          "ground": "#7a6a80",
+          "intensity": 0.55
+        },
+        "grade": {
+          "saturation": 1.2,
+          "contrast": 1.05,
+          "gain": "#ece6da",
+          "lift": "#141828",
+          "tint": [1.03, 0.89, 0.84]
+        },
+        "focus": {
+          "blur": 6,
+          "start": 1.5,
+          "end": 4
+        }
+      },
+      "colors": {
+        "glow": "#333333",
+        "grassTop": ["#86cc5c", "#4f8844", "#84c85a"],
+        "grassShade": "#448b3e",
+        "shadowTint": "#e4ecf0",
+        "strata": ["#f0b0a2", "#e2bcc8", "#cf968c", "#eaa99e", "#dcb6c2", "#c98f86"],
+        "strataUp": [
+          "#98605a",
+          "#b86e5e",
+          "#be7462",
+          "#c98f86",
+          "#dcb6c2",
+          "#f0b0a2",
+          "#cf968c",
+          "#e2bcc8",
+          "#eaa99e"
+        ],
+        "sand": "#f0e2b6",
+        "sandWet": "#d9c79a",
+        "bed": "#2d5a3a",
+        "water": "#379868",
+        "fall": "#2e5a48",
+        "foam": "#ddecda",
+        "sea": "#4fb8d0",
+        "snow": "#f6f3ea",
+        "occlusion": "#10281c",
+        "land": {
+          "grass": ["#316521", "#57a13a", "#74b858"],
+          "face": ["#c3908c", "#9e6051", "#855450", "#8a5850", "#6c443f"],
+          "upper": ["#fbc0b7", "#de9a8a", "#b07870", "#e0c1c7", "#cc917f"],
+          "faceGain": 1
+        }
+      }
+    },
+    "night": {
+      "hour": 21,
+      "sky": {
+        "top": "#0e153f",
+        "mid": "#2887dd",
+        "midAt": 4,
+        "topAt": 22,
+        "horizon": "#4dacf6",
+        "stars": true,
+        "starAlpha": 1,
+        "sparkles": 1,
+        "clouds": "#8a96cc",
+        "meteors": 0,
+        "fog": {
+          "color": "#3d9eeb",
+          "near": 80,
+          "far": 400
+        }
+      },
+      "light": {
+        "sun": {
+          "azimuth": 150,
+          "elevation": 50,
+          "color": "#fff8f0",
+          "intensity": 0.75,
+          "shadows": true,
+          "shadowSoftness": 3,
+          "shadowOpacity": 0.35,
+          "shadowBlur": 0.3
+        },
+        "ambient": {
+          "sky": "#9fd0f0",
+          "ground": "#7a6a80",
+          "intensity": 0.55
+        },
+        "grade": {
+          "saturation": 0.701,
+          "contrast": 1.05,
+          "gain": "#ece6da",
+          "lift": "#141828",
+          "tint": [0.38, 0.84, 1.47]
+        },
+        "focus": {
+          "blur": 6,
+          "start": 1.5,
+          "end": 4
+        }
+      },
+      "colors": {
+        "glow": "#ffffff",
+        "grassTop": ["#86cc5c", "#4f8844", "#84c85a"],
+        "grassShade": "#448b3e",
+        "shadowTint": "#e4ecf0",
+        "strata": ["#f0b0a2", "#e2bcc8", "#cf968c", "#eaa99e", "#dcb6c2", "#c98f86"],
+        "strataUp": [
+          "#98605a",
+          "#b86e5e",
+          "#be7462",
+          "#c98f86",
+          "#dcb6c2",
+          "#f0b0a2",
+          "#cf968c",
+          "#e2bcc8",
+          "#eaa99e"
+        ],
+        "sand": "#f0e2b6",
+        "sandWet": "#d9c79a",
+        "bed": "#2d5a3a",
+        "water": "#379868",
+        "fall": "#2e5a48",
+        "foam": "#ddecda",
+        "sea": "#4fb8d0",
+        "snow": "#f6f3ea",
+        "occlusion": "#10281c",
+        "land": {
+          "grass": ["#316521", "#57a13a", "#74b858"],
+          "face": ["#c3908c", "#9e6051", "#855450", "#8a5850", "#6c443f"],
+          "upper": ["#fbc0b7", "#de9a8a", "#b07870", "#e0c1c7", "#cc917f"],
+          "faceGain": 1
+        }
+      }
+    }
+  },
+  "seasons": {
+    "spring": {},
+    "winter": {
+      "shared": {
+        "objects": {
+          "snow": 0.65
+        }
+      },
+      "presets": {
+        "morning": {
+          "colors": {
+            "grassTop": ["#f4eaf0", "#f5ecf2", "#f6eef4"],
+            "grassShade": "#d8d0e0",
+            "shadowTint": "#c8c8f0",
+            "occlusion": "#2a2040",
+            "land": {
+              "grass": ["#bab3c1", "#f4eaf0", "#f6eef4"]
+            }
+          }
+        },
+        "midday": {
+          "colors": {
+            "water": "#3a8a78",
+            "bed": "#34584a",
+            "grassTop": ["#efece2", "#f3f0e6", "#f6f3ea"],
+            "grassShade": "#d9dcd6",
+            "shadowTint": "#c4d2f2",
+            "occlusion": "#1c2c5a",
+            "land": {
+              "grass": ["#bbbdb8", "#efece2", "#f6f3ea"]
+            }
+          }
+        },
+        "afternoon": {
+          "colors": {
+            "water": "#3a8a78",
+            "bed": "#34584a",
+            "grassTop": ["#efece2", "#f3f0e6", "#f6f3ea"],
+            "grassShade": "#d9dcd6",
+            "shadowTint": "#c4d2f2",
+            "occlusion": "#1c2c5a",
+            "land": {
+              "grass": ["#bbbdb8", "#efece2", "#f6f3ea"]
+            }
+          }
+        },
+        "night": {
+          "colors": {
+            "water": "#3a8a78",
+            "bed": "#34584a",
+            "grassTop": ["#efece2", "#f3f0e6", "#f6f3ea"],
+            "grassShade": "#d9dcd6",
+            "shadowTint": "#c4d2f2",
+            "occlusion": "#1c2c5a",
+            "land": {
+              "grass": ["#bbbdb8", "#efece2", "#f6f3ea"]
+            }
+          }
+        }
+      }
+    }
+  }
+}

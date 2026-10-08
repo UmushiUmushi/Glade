@@ -1,0 +1,19 @@
+{
+  "name": "@glade/three",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Runs a map's render formula in three.js: chunks, materials, sky, light, post-processing, capture. No UI and no game",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@glade/core": "workspace:*",
+    "@glade/render": "workspace:*",
+    "three": "^0.186.1"
+  },
+  "devDependencies": {
+    "@types/three": "^0.186.0"
+  }
+}

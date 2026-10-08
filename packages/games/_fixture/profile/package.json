@@ -1,0 +1,17 @@
+{
+  "name": "@glade/fixture-profile",
+  "version": "0.0.0",
+  "private": true,
+  "description": "A small made-up game for the contract tests",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./samples": "./samples/index.ts"
+  },
+  "dependencies": {
+    "@glade/core": "workspace:*",
+    "@glade/render": "workspace:*",
+    "zod": "^4.6.5"
+  }
+}

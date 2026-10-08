@@ -1,0 +1,19 @@
+{
+  "name": "@glade/petit-planet-profile",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Petit Planet: maps, grids, rules, item kinds and look",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./samples": "./samples/index.ts",
+    "./look/planet.json": "./look/planet.json",
+    "./look/home.json": "./look/home.json"
+  },
+  "dependencies": {
+    "@glade/core": "workspace:*",
+    "@glade/render": "workspace:*",
+    "zod": "^4.6.5"
+  }
+}

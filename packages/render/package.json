@@ -1,0 +1,15 @@
+{
+  "name": "@glade/render",
+  "version": "0.0.0",
+  "private": true,
+  "description": "The render format: looks, 2D drawing and 3D geometry as data",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@glade/core": "workspace:*",
+    "zod": "^4.6.5"
+  }
+}

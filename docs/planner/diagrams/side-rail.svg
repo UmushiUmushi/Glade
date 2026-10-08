@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 820" width="640" height="820" font-family="Verdana, 'Atkinson Hyperlegible', Arial, sans-serif">
+  <title>Collapsed side panel (rail) with two flyouts</title>
+  <defs>
+    <style>
+      .rail { fill: #f4f1fb; stroke: #8a80a8; stroke-width: 1.5; }
+      .ic { fill: #ffffff; stroke: #8a80a8; stroke-width: 1.2; }
+      .on { fill: #dcd3ff; stroke: #5b4bc4; stroke-width: 2; }
+      .t { font-size: 10px; fill: #2b2640; }
+      .note { font-size: 13px; fill: #2b2640; }
+      .head { font-size: 12px; font-weight: bold; fill: #4b4370; letter-spacing: 1px; }
+      .div { stroke: #c9c2dd; stroke-width: 1.5; }
+      .fly { fill: #ffffff; stroke: #5b4bc4; stroke-width: 1.5; }
+      .arrow { stroke: #9a93b5; stroke-width: 1; stroke-dasharray: 3 3; }
+    </style>
+  </defs>
+  <rect x="0" y="0" width="640" height="820" fill="#ffffff"/>
+  <rect class="rail" x="0" y="0" width="64" height="820"/>
+
+  <!-- pinned -->
+  <rect class="ic" x="12" y="10" width="40" height="34" rx="8"/><text class="t" x="25" y="31">•••</text>
+  <rect class="ic" x="12" y="50" width="40" height="34" rx="8"/><text x="20" y="72" font-size="13" font-weight="bold" fill="#3d7a3a">PP</text>
+  <line class="div" x1="6" y1="94" x2="58" y2="94"/>
+  <!-- cursor -->
+  <rect class="on" x="12" y="102" width="40" height="34" rx="8"/><text class="t" x="20" y="123">Pick</text>
+  <line class="div" x1="6" y1="146" x2="58" y2="146"/>
+  <!-- select -->
+  <rect class="on" x="12" y="154" width="40" height="34" rx="8"/><text class="t" x="18" y="175">Rect</text>
+  <circle cx="48" cy="158" r="7" fill="#5b4bc4"/><text x="44" y="162" font-size="10" font-weight="bold" fill="#fff">+</text>
+  <rect class="ic" x="12" y="194" width="40" height="34" rx="8"/><text class="t" x="16" y="215">Clear</text>
+  <rect class="on" x="12" y="234" width="40" height="34" rx="8"/><text class="t" x="15" y="255">Ruler</text>
+  <line class="div" x1="6" y1="278" x2="58" y2="278"/>
+  <!-- environment -->
+  <rect class="ic" x="12" y="286" width="40" height="34" rx="8"/><circle cx="32" cy="303" r="8" fill="#ffd34d" stroke="#e0a800"/>
+  <rect class="ic" x="12" y="326" width="40" height="34" rx="8"/><text class="t" x="17" y="347">Snow</text>
+  <line class="div" x1="6" y1="370" x2="58" y2="370"/>
+  <!-- layers -->
+  <rect class="on" x="12" y="378" width="40" height="30" rx="7"/><text class="t" x="16" y="397">Hous</text>
+  <rect class="on" x="12" y="412" width="40" height="30" rx="7"/><text class="t" x="18" y="431">Furn</text>
+  <rect class="ic" x="12" y="446" width="40" height="30" rx="7"/><text class="t" x="16" y="465">Plnt</text>
+  <rect class="on" x="12" y="480" width="40" height="30" rx="7"/><text class="t" x="16" y="499">Path</text>
+  <rect class="on" x="12" y="514" width="40" height="30" rx="7"/><text class="t" x="18" y="533">Grid</text>
+  <rect class="on" x="12" y="548" width="40" height="30" rx="7"/><text class="t" x="18" y="567">Area</text>
+  <line class="div" x1="6" y1="586" x2="58" y2="586"/>
+  <rect class="on" x="12" y="594" width="40" height="30" rx="7"/><text class="t" x="16" y="608">A on</text><text class="t" x="16" y="619"> </text>
+  <rect class="ic" x="12" y="628" width="40" height="30" rx="7"/><text class="t" x="16" y="647">G on</text>
+  <rect class="ic" x="12" y="770" width="40" height="34" rx="8"/><text class="t" x="27" y="791">»</text>
+
+  <!-- notes -->
+  <text class="note" x="78" y="31">More menu (pinned, never scrolls)</text>
+  <text class="note" x="78" y="72">Game picker (pinned)</text>
+  <text class="note" x="78" y="123">Cursor: the active tool. Holding Shift swaps it.</text>
+  <text class="note" x="78" y="166">Select: last select tool + mode badge (+ = Add)</text>
+  <text class="note" x="78" y="215">Clear selection</text>
+  <text class="note" x="78" y="255">Ruler (filled = on)</text>
+  <text class="note" x="78" y="347">Snow (filled = on)</text>
+  <text class="note" x="78" y="436">Layers: filled = visible</text>
+  <text class="note" x="78" y="616">Always on: Area</text>
+  <text class="note" x="78" y="648">Always on: Grid (empty = off)</text>
+  <text class="note" x="78" y="791">Expand panel</text>
+
+  <!-- flyout: select modes -->
+  <line class="arrow" x1="52" y1="171" x2="430" y2="171"/>
+  <rect class="fly" x="430" y="140" width="190" height="66" rx="10"/>
+  <text class="head" x="442" y="160">SELECT MODE</text>
+  <rect class="ic" x="442" y="168" width="50" height="28" rx="6"/><text class="t" x="455" y="187">Set</text>
+  <rect class="on" x="498" y="168" width="50" height="28" rx="6"/><text class="t" x="511" y="187">Add</text>
+  <rect class="ic" x="554" y="168" width="56" height="28" rx="6"/><text class="t" x="566" y="187">Sub</text>
+
+  <!-- flyout: time -->
+  <line class="arrow" x1="52" y1="303" x2="430" y2="303"/>
+  <rect class="fly" x="430" y="262" width="190" height="84" rx="10"/>
+  <text class="head" x="442" y="282">TIME OF DAY</text>
+  <line x1="446" y1="316" x2="604" y2="316" stroke="#8a80a8" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="446" cy="316" r="3" fill="#4b4370"/><circle cx="502" cy="316" r="3" fill="#4b4370"/><circle cx="553" cy="316" r="3" fill="#4b4370"/><circle cx="604" cy="316" r="3" fill="#4b4370"/>
+  <circle cx="502" cy="316" r="8" fill="#ffffff" stroke="#5b4bc4" stroke-width="2.5"/>
+  <text class="t" x="476" y="338">Midday · 12:00</text>
+</svg>

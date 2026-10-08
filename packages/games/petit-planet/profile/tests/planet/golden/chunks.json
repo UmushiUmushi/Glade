@@ -1,0 +1,3186 @@
+{
+ "0,0": {
+  "terrain": {
+   "v": 1024,
+   "i": 1536,
+   "tops": 256,
+   "sides": 0,
+   "sum": 30784
+  },
+  "lawn": {
+   "v": 0,
+   "i": 0,
+   "sum": 0
+  },
+  "cushion": {
+   "v": 0,
+   "i": 0,
+   "edges": 0,
+   "leaves": 0,
+   "sum": 0
+  },
+  "paths": {
+   "v": 0,
+   "i": 0,
+   "cells": 0,
+   "sum": 0
+  },
+  "water": {
+   "v": 0,
+   "i": 0,
+   "surfaces": 0,
+   "falls": 0,
+   "foams": 0,
+   "sum": 0
+  }
+ },
+ "1,0": {
+  "terrain": {
+   "v": 1088,
+   "i": 1632,
+   "tops": 256,
+   "sides": 0,
+   "sum": 66530
+  },
+  "lawn": {
+   "v": 0,
+   "i": 0,
+   "sum": 0
+  },
+  "cushion": {
+   "v": 0,
+   "i": 0,
+   "edges": 0,
+   "leaves": 0,
+   "sum": 0
+  },
+  "paths": {
+   "v": 0,
+   "i": 0,
+   "cells": 0,
+   "sum": 0
+  },
+  "water": {
+   "v": 0,
+   "i": 0,
+   "surfaces": 0,
+   "falls": 0,
+   "foams": 0,
+   "sum": 0
+  }
+ },
+ "2,0": {
+  "terrain": {
+   "v": 1024,
+   "i": 1536,
+   "tops": 256,
+   "sides": 0,
+   "sum": 96288
+  },
+  "lawn": {
+   "v": 0,
+   "i": 0,
+   "sum": 0
+  },
+  "cushion": {
+   "v": 0,
+   "i": 0,
+   "edges": 0,
+   "leaves": 0,
+   "sum": 0
+  },
+  "paths": {
+   "v": 0,
+   "i": 0,
+   "cells": 0,
+   "sum": 0
+  },
+  "water": {
+   "v": 0,
+   "i": 0,
+   "surfaces": 0,
+   "falls": 0,
+   "foams": 0,
+   "sum": 0
+  }
+ },
+ "3,0": {
+  "terrain": {
+   "v": 1024,
+   "i": 1536,
+   "tops": 256,
+   "sides": 0,
+   "sum": 129056
+  },
+  "lawn": {
+   "v": 0,
+   "i": 0,
+   "sum": 0
+  },
+  "cushion": {
+   "v": 0,
+   "i": 0,
+   "edges": 0,
+   "leaves": 0,
+   "sum": 0
+  },
+  "paths": {
+   "v": 0,
+   "i": 0,
+   "cells": 0,
+   "sum": 0
+  },
+  "water": {
+   "v": 0,
+   "i": 0,
+   "surfaces": 0,
+   "falls": 0,
+   "foams": 0,
+   "sum": 0
+  }
+ },
+ "4,0": {
+  "terrain": {
+   "v": 1024,
+   "i": 1536,
+   "tops": 256,
+   "sides": 0,
+   "sum": 161824
+  },
+  "lawn": {
+   "v": 0,
+   "i": 0,
+   "sum": 0
+  },
+  "cushion": {
+   "v": 0,
+   "i": 0,
+   "edges": 0,
+   "leaves": 0,
+   "sum": 0
+  },
+  "paths": {
+   "v": 0,
+   "i": 0,
+   "cells": 0,
+   "sum": 0
+  },
+  "water": {
+   "v": 0,
+   "i": 0,
+   "surfaces": 0,
+   "falls": 0,
+   "foams": 0,
+   "sum": 0
+  }
+ },
+ "5,0": {
+  "terrain": {
+   "v": 1024,
+   "i": 1536,
+   "tops": 256,
+   "sides": 0,
+   "sum": 194592
+  },
+  "lawn": {
+   "v": 0,
+   "i": 0,
+   "sum": 0
+  },
+  "cushion": {
+   "v": 0,
+   "i": 0,
+   "edges": 0,
+   "leaves": 0,
+   "sum": 0
+  },
+  "paths": {
+   "v": 0,
+   "i": 0,
+   "cells": 0,
+   "sum": 0
+  },
+  "water": {
+   "v": 0,
+   "i": 0,
+   "surfaces": 0,
+   "falls": 0,
+   "foams": 0,
+   "sum": 0
+  }
+ },
+ "6,0": {
+  "terrain": {
+   "v": 1024,
+   "i": 1536,
+   "tops": 256,
+   "sides": 0,
+   "sum": 227360
+  },
+  "lawn": {
+   "v": 0,
+   "i": 0,
+   "sum": 0
+  },
+  "cushion": {
+   "v": 0,
+   "i": 0,
+   "edges": 0,
+   "leaves": 0,
+   "sum": 0
+  },
+  "paths": {
+   "v": 0,
+   "i": 0,
+   "cells": 0,
+   "sum": 0
+  },
+  "water": {
+   "v": 0,
+   "i": 0,
+   "surfaces": 0,
+   "falls": 0,
+   "foams": 0,
+   "sum": 0
+  }
+ },
+ "7,0": {
+  "terrain": {
+   "v": 1024,
+   "i": 1536,
+   "tops": 256,
+   "sides": 0,
+   "sum": 260128
+  },
+  "lawn": {
+   "v": 0,
+   "i": 0,
+   "sum": 0
+  },
+  "cushion": {
+   "v": 0,
+   "i": 0,
+   "edges": 0,
+   "leaves": 0,
+   "sum": 0
+  },
+  "paths": {
+   "v": 0,
+   "i": 0,
+   "cells": 0,
+   "sum": 0
+  },
+  "water": {
+   "v": 0,
+   "i": 0,
+   "surfaces": 0,
+   "falls": 0,
+   "foams": 0,
+   "sum": 0
+  }
+ },
+ "8,0": {
+  "terrain": {
+   "v": 1024,
+   "i": 1536,
+   "tops": 256,
+   "sides": 0,
+   "sum": 292896
+  },
+  "lawn": {
+   "v": 0,
+   "i": 0,
+   "sum": 0
+  },
+  "cushion": {
+   "v": 0,
+   "i": 0,
+   "edges": 0,
+   "leaves": 0,
+   "sum": 0
+  },
+  "paths": {
+   "v": 0,
+   "i": 0,
+   "cells": 0,
+   "sum": 0
+  },
+  "water": {
+   "v": 0,
+   "i": 0,
+   "surfaces": 0,
+   "falls": 0,
+   "foams": 0,
+   "sum": 0
+  }
+ },
+ "9,0": {
+  "terrain": {
+   "v": 1152,
+   "i": 1728,
+   "tops": 272,
+   "sides": 0,
+   "sum": 366468
+  },
+  "lawn": {
+   "v": 0,
+   "i": 0,
+   "sum": 0
+  },
+  "cushion": {
+   "v": 0,
+   "i": 0,
+   "edges": 0,
+   "leaves": 0,
+   "sum": 0
+  },
+  "paths": {
+   "v": 0,
+   "i": 0,
+   "cells": 0,
+   "sum": 0
+  },
+  "water": {
+   "v": 0,
+   "i": 0,
+   "surfaces": 0,
+   "falls": 0,
+   "foams": 0,
+   "sum": 0
+  }
+ },
+ "0,1": {
+  "terrain": {
+   "v": 1088,
+   "i": 1632,
+   "tops": 256,
+   "sides": 0,
+   "sum": 66530
+  },
+  "lawn": {
+   "v": 0,
+   "i": 0,
+   "sum": 0
+  },
+  "cushion": {
+   "v": 0,
+   "i": 0,
+   "edges": 0,
+   "leaves": 0,
+   "sum": 0
+  },
+  "paths": {
+   "v": 0,
+   "i": 0,
+   "cells": 0,
+   "sum": 0
+  },
+  "water": {
+   "v": 0,
+   "i": 0,
+   "surfaces": 0,
+   "falls": 0,
+   "foams": 0,
+   "sum": 0
+  }
+ },
+ "1,1": {
+  "terrain": {
+   "v": 740,
+   "i": 1110,
+   "tops": 256,
+   "sides": 30,
+   "sum": 58173.676
+  },
+  "lawn": {
+   "v": 4396,
+   "i": 6600,
+   "sum": 386143.973
+  },
+  "cushion": {
+   "v": 1104,
+   "i": 1656,
+   "edges": 30,
+   "leaves": 3288,
+   "sum": 88799.284
+  },
+  "paths": {
+   "v": 0,
+   "i": 0,
+   "cells": 0,
+   "sum": 0
+  },
+  "water": {
+   "v": 0,
+   "i": 0,
+   "surfaces": 0,
+   "falls": 0,
+   "foams": 0,
+   "sum": 0
+  }
+ },
+ "2,1": {
+  "terrain": {
+   "v": 320,
+   "i": 480,
+   "tops": 256,
+   "sides": 16,
+   "sum": 35953.492
+  },
+  "lawn": {
+   "v": 2944,
+   "i": 4416,
+   "sum": 352688
+  },
+  "cushion": {
+   "v": 512,
+   "i": 768,
+   "edges": 16,
+   "leaves": 1765,
+   "sum": 58034.624
+  },
+  "paths": {
+   "v": 0,
+   "i": 0,
+   "cells": 0,
+   "sum": 0
+  },
+  "water": {
+   "v": 0,
+   "i": 0,
+   "surfaces": 0,
+   "falls": 0,
+   "foams": 0,
+   "sum": 0
+  }
+ },
+ "3,1": {
+  "terrain": {
+   "v": 1664,
+   "i": 2496,
+   "tops": 258,
+   "sides": 50,
+   "sum": 285266.002
+  },
+  "lawn": {
+   "v": 4472,
+   "i": 6738,
+   "sum": 729660.716
+  },
+  "cushion": {
+   "v": 3168,
+   "i": 4752,
+   "edges": 50,
+   "leaves": 4518,
+   "sum": 544823.518
+  },
+  "paths": {
+   "v": 0,
+   "i": 0,
+   "cells": 0,
+   "sum": 0
+  },
+  "water": {
+   "v": 0,
+   "i": 0,
+   "surfaces": 0,
+   "falls": 0,
+   "foams": 0,
+   "sum": 0
+  }
+ },
+ "4,1": {
+  "terrain": {
+   "v": 1424,
+   "i": 2136,
+   "tops": 258,
+   "sides": 44,
+   "sum": 270825.47
+  },
+  "lawn": {
+   "v": 3932,
+   "i": 5928,
+   "sum": 735996.5
+  },
+  "cushion": {
+   "v": 2976,
+   "i": 4464,
+   "edges": 44,
+   "leaves": 3776,
+   "sum": 572095.903
+  },
+  "paths": {
+   "v": 0,
+   "i": 0,
+   "cells": 0,
+   "sum": 0
+  },
+  "water": {
+   "v": 0,
+   "i": 0,
+   "surfaces": 0,
+   "falls": 0,
+   "foams": 0,
+   "sum": 0
+  }
+ },
+ "5,1": {
+  "terrain": {
+   "v": 320,
+   "i": 480,
+   "tops": 256,
+   "sides": 16,
+   "sum": 66673.229
+  },
+  "lawn": {
+   "v": 2944,
+   "i": 4416,
+   "sum": 635312
+  },
+  "cushion": {
+   "v": 512,
+   "i": 768,
+   "edges": 16,
+   "leaves": 1764,
+   "sum": 107186.624
+  },
+  "paths": {
+   "v": 0,
+   "i": 0,
+   "cells": 0,
+   "sum": 0
+  },
+  "water": {
+   "v": 0,
+   "i": 0,
+   "surfaces": 0,
+   "falls": 0,
+   "foams": 0,
+   "sum": 0
+  }
+ },
+ "6,1": {
+  "terrain": {
+   "v": 320,
+   "i": 480,
+   "tops": 256,
+   "sides": 16,
+   "sum": 76913.501
+  },
+  "lawn": {
+   "v": 2944,
+   "i": 4416,
+   "sum": 729520
+  },
+  "cushion": {
+   "v": 512,
+   "i": 768,
+   "edges": 16,
+   "leaves": 1766,
+   "sum": 123570.624
+  },
+  "paths": {
+   "v": 0,
+   "i": 0,
+   "cells": 0,
+   "sum": 0
+  },
+  "water": {
+   "v": 0,
+   "i": 0,
+   "surfaces": 0,
+   "falls": 0,
+   "foams": 0,
+   "sum": 0
+  }
+ },
+ "7,1": {
+  "terrain": {
+   "v": 320,
+   "i": 480,
+   "tops": 256,
+   "sides": 16,
+   "sum": 87153.701
+  },
+  "lawn": {
+   "v": 2944,
+   "i": 4416,
+   "sum": 823728
+  },
+  "cushion": {
+   "v": 512,
+   "i": 768,
+   "edges": 16,
+   "leaves": 1756,
+   "sum": 139954.624
+  },
+  "paths": {
+   "v": 0,
+   "i": 0,
+   "cells": 0,
+   "sum": 0
+  },
+  "water": {
+   "v": 0,
+   "i": 0,
+   "surfaces": 0,
+   "falls": 0,
+   "foams": 0,
+   "sum": 0
+  }
+ },
+ "8,1": {
+  "terrain": {
+   "v": 688,
+   "i": 1032,
+   "tops": 256,
+   "sides": 31,
+   "sum": 219055.98
+  },
+  "lawn": {
+   "v": 4516,
+   "i": 6780,
+   "sum": 1446950
+  },
+  "cushion": {
+   "v": 1136,
+   "i": 1704,
+   "edges": 31,
+   "leaves": 3293,
+   "sum": 364125.16
+  },
+  "paths": {
+   "v": 0,
+   "i": 0,
+   "cells": 0,
+   "sum": 0
+  },
+  "water": {
+   "v": 0,
+   "i": 0,
+   "surfaces": 0,
+   "falls": 0,
+   "foams": 0,
+   "sum": 0
+  }
+ },
+ "9,1": {
+  "terrain": {
+   "v": 1160,
+   "i": 1740,
+   "tops": 272,
+   "sides": 0,
+   "sum": 406012
+  },
+  "lawn": {
+   "v": 64,
+   "i": 96,
+   "sum": 21410
+  },
+  "cushion": {
+   "v": 0,
+   "i": 0,
+   "edges": 0,
+   "leaves": 0,
+   "sum": 0
+  },
+  "paths": {
+   "v": 0,
+   "i": 0,
+   "cells": 0,
+   "sum": 0
+  },
+  "water": {
+   "v": 0,
+   "i": 0,
+   "surfaces": 0,
+   "falls": 0,
+   "foams": 0,
+   "sum": 0
+  }
+ },
+ "0,2": {
+  "terrain": {
+   "v": 1024,
+   "i": 1536,
+   "tops": 256,
+   "sides": 0,
+   "sum": 96288
+  },
+  "lawn": {
+   "v": 0,
+   "i": 0,
+   "sum": 0
+  },
+  "cushion": {
+   "v": 0,
+   "i": 0,
+   "edges": 0,
+   "leaves": 0,
+   "sum": 0
+  },
+  "paths": {
+   "v": 0,
+   "i": 0,
+   "cells": 0,
+   "sum": 0
+  },
+  "water": {
+   "v": 0,
+   "i": 0,
+   "surfaces": 0,
+   "falls": 0,
+   "foams": 0,
+   "sum": 0
+  }
+ },
+ "1,2": {
+  "terrain": {
+   "v": 320,
+   "i": 480,
+   "tops": 256,
+   "sides": 16,
+   "sum": 35953.426
+  },
+  "lawn": {
+   "v": 2944,
+   "i": 4416,
+   "sum": 352688
+  },
+  "cushion": {
+   "v": 512,
+   "i": 768,
+   "edges": 16,
+   "leaves": 1756,
+   "sum": 58034.624
+  },
+  "paths": {
+   "v": 0,
+   "i": 0,
+   "cells": 0,
+   "sum": 0
+  },
+  "water": {
+   "v": 0,
+   "i": 0,
+   "surfaces": 0,
+   "falls": 0,
+   "foams": 0,
+   "sum": 0
+  }
+ },
+ "2,2": {
+  "terrain": {
+   "v": 3732,
+   "i": 5598,
+   "tops": 256,
+   "sides": 75,
+   "sum": 609223.411
+  },
+  "lawn": {
+   "v": 8372,
+   "i": 12594,
+   "sum": 1375984.372
+  },
+  "cushion": {
+   "v": 3168,
+   "i": 4752,
+   "edges": 74,
+   "leaves": 8977,
+   "sum": 525384.204
+  },
+  "paths": {
+   "v": 0,
+   "i": 0,
+   "cells": 0,
+   "sum": 0
+  },
+  "water": {
+   "v": 68,
+   "i": 102,
+   "surfaces": 11,
+   "falls": 1,
+   "foams": 1,
+   "sum": 11563.008
+  }
+ },
+ "3,2": {
+  "terrain": {
+   "v": 1424,
+   "i": 2136,
+   "tops": 258,
+   "sides": 36,
+   "sum": 276718.822
+  },
+  "lawn": {
+   "v": 2732,
+   "i": 4128,
+   "sum": 533808.899
+  },
+  "cushion": {
+   "v": 2720,
+   "i": 4080,
+   "edges": 36,
+   "leaves": 3043,
+   "sum": 531516.112
+  },
+  "paths": {
+   "v": 0,
+   "i": 0,
+   "cells": 0,
+   "sum": 0
+  },
+  "water": {
+   "v": 0,
+   "i": 0,
+   "surfaces": 0,
+   "falls": 0,
+   "foams": 0,
+   "sum": 0
+  }
+ },
+ "4,2": {
+  "terrain": {
+   "v": 1184,
+   "i": 1776,
+   "tops": 258,
+   "sides": 30,
+   "sum": 248900.57
+  },
+  "lawn": {
+   "v": 2192,
+   "i": 3318,
+   "sum": 472845.683
+  },
+  "cushion": {
+   "v": 2528,
+   "i": 3792,
+   "edges": 30,
+   "leaves": 2283,
+   "sum": 539829.377
+  },
+  "paths": {
+   "v": 0,
+   "i": 0,
+   "cells": 0,
+   "sum": 0
+  },
+  "water": {
+   "v": 0,
+   "i": 0,
+   "surfaces": 0,
+   "falls": 0,
+   "foams": 0,
+   "sum": 0
+  }
+ },
+ "5,2": {
+  "terrain": {
+   "v": 0,
+   "i": 0,
+   "tops": 256,
+   "sides": 0,
+   "sum": 0
+  },
+  "lawn": {
+   "v": 1024,
+   "i": 1536,
+   "sum": 261785.6
+  },
+  "cushion": {
+   "v": 0,
+   "i": 0,
+   "edges": 0,
+   "leaves": 0,
+   "sum": 0
+  },
+  "paths": {
+   "v": 0,
+   "i": 0,
+   "cells": 0,
+   "sum": 0
+  },
+  "water": {
+   "v": 0,
+   "i": 0,
+   "surfaces": 0,
+   "falls": 0,
+   "foams": 0,
+   "sum": 0
+  }
+ },
+ "6,2": {
+  "terrain": {
+   "v": 0,
+   "i": 0,
+   "tops": 256,
+   "sides": 0,
+   "sum": 0
+  },
+  "lawn": {
+   "v": 1024,
+   "i": 1536,
+   "sum": 294553.6
+  },
+  "cushion": {
+   "v": 0,
+   "i": 0,
+   "edges": 0,
+   "leaves": 0,
+   "sum": 0
+  },
+  "paths": {
+   "v": 0,
+   "i": 0,
+   "cells": 0,
+   "sum": 0
+  },
+  "water": {
+   "v": 0,
+   "i": 0,
+   "surfaces": 0,
+   "falls": 0,
+   "foams": 0,
+   "sum": 0
+  }
+ },
+ "7,2": {
+  "terrain": {
+   "v": 0,
+   "i": 0,
+   "tops": 256,
+   "sides": 0,
+   "sum": 0
+  },
+  "lawn": {
+   "v": 1024,
+   "i": 1536,
+   "sum": 327321.6
+  },
+  "cushion": {
+   "v": 0,
+   "i": 0,
+   "edges": 0,
+   "leaves": 0,
+   "sum": 0
+  },
+  "paths": {
+   "v": 0,
+   "i": 0,
+   "cells": 0,
+   "sum": 0
+  },
+  "water": {
+   "v": 0,
+   "i": 0,
+   "surfaces": 0,
+   "falls": 0,
+   "foams": 0,
+   "sum": 0
+  }
+ },
+ "8,2": {
+  "terrain": {
+   "v": 256,
+   "i": 384,
+   "tops": 256,
+   "sides": 16,
+   "sum": 93905.246
+  },
+  "lawn": {
+   "v": 2944,
+   "i": 4416,
+   "sum": 1062137.6
+  },
+  "cushion": {
+   "v": 512,
+   "i": 768,
+   "edges": 16,
+   "leaves": 1653,
+   "sum": 188143.104
+  },
+  "paths": {
+   "v": 0,
+   "i": 0,
+   "cells": 0,
+   "sum": 0
+  },
+  "water": {
+   "v": 0,
+   "i": 0,
+   "surfaces": 0,
+   "falls": 0,
+   "foams": 0,
+   "sum": 0
+  }
+ },
+ "9,2": {
+  "terrain": {
+   "v": 1088,
+   "i": 1632,
+   "tops": 272,
+   "sides": 0,
+   "sum": 416704
+  },
+  "lawn": {
+   "v": 64,
+   "i": 96,
+   "sum": 23456
+  },
+  "cushion": {
+   "v": 0,
+   "i": 0,
+   "edges": 0,
+   "leaves": 0,
+   "sum": 0
+  },
+  "paths": {
+   "v": 0,
+   "i": 0,
+   "cells": 0,
+   "sum": 0
+  },
+  "water": {
+   "v": 0,
+   "i": 0,
+   "surfaces": 0,
+   "falls": 0,
+   "foams": 0,
+   "sum": 0
+  }
+ },
+ "0,3": {
+  "terrain": {
+   "v": 1024,
+   "i": 1536,
+   "tops": 256,
+   "sides": 0,
+   "sum": 129056
+  },
+  "lawn": {
+   "v": 0,
+   "i": 0,
+   "sum": 0
+  },
+  "cushion": {
+   "v": 0,
+   "i": 0,
+   "edges": 0,
+   "leaves": 0,
+   "sum": 0
+  },
+  "paths": {
+   "v": 0,
+   "i": 0,
+   "cells": 0,
+   "sum": 0
+  },
+  "water": {
+   "v": 0,
+   "i": 0,
+   "surfaces": 0,
+   "falls": 0,
+   "foams": 0,
+   "sum": 0
+  }
+ },
+ "1,3": {
+  "terrain": {
+   "v": 320,
+   "i": 480,
+   "tops": 256,
+   "sides": 16,
+   "sum": 46193.719
+  },
+  "lawn": {
+   "v": 3016,
+   "i": 4524,
+   "sum": 460190.8
+  },
+  "cushion": {
+   "v": 512,
+   "i": 768,
+   "edges": 16,
+   "leaves": 1752,
+   "sum": 74418.624
+  },
+  "paths": {
+   "v": 16,
+   "i": 24,
+   "cells": 4,
+   "sum": 2970.72
+  },
+  "water": {
+   "v": 0,
+   "i": 0,
+   "surfaces": 0,
+   "falls": 0,
+   "foams": 0,
+   "sum": 0
+  }
+ },
+ "2,3": {
+  "terrain": {
+   "v": 0,
+   "i": 0,
+   "tops": 256,
+   "sides": 0,
+   "sum": 0
+  },
+  "lawn": {
+   "v": 1600,
+   "i": 2400,
+   "sum": 312976
+  },
+  "cushion": {
+   "v": 0,
+   "i": 0,
+   "edges": 0,
+   "leaves": 0,
+   "sum": 0
+  },
+  "paths": {
+   "v": 128,
+   "i": 192,
+   "cells": 32,
+   "sum": 26069.76
+  },
+  "water": {
+   "v": 0,
+   "i": 0,
+   "surfaces": 0,
+   "falls": 0,
+   "foams": 0,
+   "sum": 0
+  }
+ },
+ "3,3": {
+  "terrain": {
+   "v": 1128,
+   "i": 1692,
+   "tops": 256,
+   "sides": 14,
+   "sum": 245551.047
+  },
+  "lawn": {
+   "v": 4048,
+   "i": 6096,
+   "sum": 899428.8
+  },
+  "cushion": {
+   "v": 448,
+   "i": 672,
+   "edges": 14,
+   "leaves": 1492,
+   "sum": 97846.757
+  },
+  "paths": {
+   "v": 128,
+   "i": 192,
+   "cells": 32,
+   "sum": 30165.76
+  },
+  "water": {
+   "v": 48,
+   "i": 72,
+   "surfaces": 12,
+   "falls": 0,
+   "foams": 0,
+   "sum": 10469.064
+  }
+ },
+ "4,3": {
+  "terrain": {
+   "v": 0,
+   "i": 0,
+   "tops": 256,
+   "sides": 0,
+   "sum": 0
+  },
+  "lawn": {
+   "v": 1312,
+   "i": 1968,
+   "sum": 336276.8
+  },
+  "cushion": {
+   "v": 0,
+   "i": 0,
+   "edges": 0,
+   "leaves": 0,
+   "sum": 0
+  },
+  "paths": {
+   "v": 56,
+   "i": 84,
+   "cells": 14,
+   "sum": 14485.52
+  },
+  "water": {
+   "v": 0,
+   "i": 0,
+   "surfaces": 0,
+   "falls": 0,
+   "foams": 0,
+   "sum": 0
+  }
+ },
+ "5,3": {
+  "terrain": {
+   "v": 0,
+   "i": 0,
+   "tops": 256,
+   "sides": 0,
+   "sum": 0
+  },
+  "lawn": {
+   "v": 1024,
+   "i": 1536,
+   "sum": 294553.6
+  },
+  "cushion": {
+   "v": 0,
+   "i": 0,
+   "edges": 0,
+   "leaves": 0,
+   "sum": 0
+  },
+  "paths": {
+   "v": 0,
+   "i": 0,
+   "cells": 0,
+   "sum": 0
+  },
+  "water": {
+   "v": 0,
+   "i": 0,
+   "surfaces": 0,
+   "falls": 0,
+   "foams": 0,
+   "sum": 0
+  }
+ },
+ "6,3": {
+  "terrain": {
+   "v": 0,
+   "i": 0,
+   "tops": 256,
+   "sides": 0,
+   "sum": 0
+  },
+  "lawn": {
+   "v": 1024,
+   "i": 1536,
+   "sum": 327321.6
+  },
+  "cushion": {
+   "v": 0,
+   "i": 0,
+   "edges": 0,
+   "leaves": 0,
+   "sum": 0
+  },
+  "paths": {
+   "v": 0,
+   "i": 0,
+   "cells": 0,
+   "sum": 0
+  },
+  "water": {
+   "v": 0,
+   "i": 0,
+   "surfaces": 0,
+   "falls": 0,
+   "foams": 0,
+   "sum": 0
+  }
+ },
+ "7,3": {
+  "terrain": {
+   "v": 0,
+   "i": 0,
+   "tops": 256,
+   "sides": 0,
+   "sum": 0
+  },
+  "lawn": {
+   "v": 1024,
+   "i": 1536,
+   "sum": 360089.6
+  },
+  "cushion": {
+   "v": 0,
+   "i": 0,
+   "edges": 0,
+   "leaves": 0,
+   "sum": 0
+  },
+  "paths": {
+   "v": 0,
+   "i": 0,
+   "cells": 0,
+   "sum": 0
+  },
+  "water": {
+   "v": 0,
+   "i": 0,
+   "surfaces": 0,
+   "falls": 0,
+   "foams": 0,
+   "sum": 0
+  }
+ },
+ "8,3": {
+  "terrain": {
+   "v": 256,
+   "i": 384,
+   "tops": 256,
+   "sides": 16,
+   "sum": 102098.492
+  },
+  "lawn": {
+   "v": 2944,
+   "i": 4416,
+   "sum": 1156345.6
+  },
+  "cushion": {
+   "v": 512,
+   "i": 768,
+   "edges": 16,
+   "leaves": 1649,
+   "sum": 204527.104
+  },
+  "paths": {
+   "v": 0,
+   "i": 0,
+   "cells": 0,
+   "sum": 0
+  },
+  "water": {
+   "v": 0,
+   "i": 0,
+   "surfaces": 0,
+   "falls": 0,
+   "foams": 0,
+   "sum": 0
+  }
+ },
+ "9,3": {
+  "terrain": {
+   "v": 1088,
+   "i": 1632,
+   "tops": 272,
+   "sides": 0,
+   "sum": 451520
+  },
+  "lawn": {
+   "v": 64,
+   "i": 96,
+   "sum": 25504
+  },
+  "cushion": {
+   "v": 0,
+   "i": 0,
+   "edges": 0,
+   "leaves": 0,
+   "sum": 0
+  },
+  "paths": {
+   "v": 0,
+   "i": 0,
+   "cells": 0,
+   "sum": 0
+  },
+  "water": {
+   "v": 0,
+   "i": 0,
+   "surfaces": 0,
+   "falls": 0,
+   "foams": 0,
+   "sum": 0
+  }
+ },
+ "0,4": {
+  "terrain": {
+   "v": 1024,
+   "i": 1536,
+   "tops": 256,
+   "sides": 0,
+   "sum": 161824
+  },
+  "lawn": {
+   "v": 0,
+   "i": 0,
+   "sum": 0
+  },
+  "cushion": {
+   "v": 0,
+   "i": 0,
+   "edges": 0,
+   "leaves": 0,
+   "sum": 0
+  },
+  "paths": {
+   "v": 0,
+   "i": 0,
+   "cells": 0,
+   "sum": 0
+  },
+  "water": {
+   "v": 0,
+   "i": 0,
+   "surfaces": 0,
+   "falls": 0,
+   "foams": 0,
+   "sum": 0
+  }
+ },
+ "1,4": {
+  "terrain": {
+   "v": 320,
+   "i": 480,
+   "tops": 256,
+   "sides": 16,
+   "sum": 56433.113
+  },
+  "lawn": {
+   "v": 2944,
+   "i": 4416,
+   "sum": 541104
+  },
+  "cushion": {
+   "v": 512,
+   "i": 768,
+   "edges": 16,
+   "leaves": 1765,
+   "sum": 90802.624
+  },
+  "paths": {
+   "v": 0,
+   "i": 0,
+   "cells": 0,
+   "sum": 0
+  },
+  "water": {
+   "v": 0,
+   "i": 0,
+   "surfaces": 0,
+   "falls": 0,
+   "foams": 0,
+   "sum": 0
+  }
+ },
+ "2,4": {
+  "terrain": {
+   "v": 0,
+   "i": 0,
+   "tops": 256,
+   "sides": 0,
+   "sum": 0
+  },
+  "lawn": {
+   "v": 1024,
+   "i": 1536,
+   "sum": 229017.6
+  },
+  "cushion": {
+   "v": 0,
+   "i": 0,
+   "edges": 0,
+   "leaves": 0,
+   "sum": 0
+  },
+  "paths": {
+   "v": 0,
+   "i": 0,
+   "cells": 0,
+   "sum": 0
+  },
+  "water": {
+   "v": 0,
+   "i": 0,
+   "surfaces": 0,
+   "falls": 0,
+   "foams": 0,
+   "sum": 0
+  }
+ },
+ "3,4": {
+  "terrain": {
+   "v": 0,
+   "i": 0,
+   "tops": 256,
+   "sides": 0,
+   "sum": 0
+  },
+  "lawn": {
+   "v": 1024,
+   "i": 1536,
+   "sum": 261785.6
+  },
+  "cushion": {
+   "v": 0,
+   "i": 0,
+   "edges": 0,
+   "leaves": 0,
+   "sum": 0
+  },
+  "paths": {
+   "v": 0,
+   "i": 0,
+   "cells": 0,
+   "sum": 0
+  },
+  "water": {
+   "v": 0,
+   "i": 0,
+   "surfaces": 0,
+   "falls": 0,
+   "foams": 0,
+   "sum": 0
+  }
+ },
+ "4,4": {
+  "terrain": {
+   "v": 0,
+   "i": 0,
+   "tops": 256,
+   "sides": 0,
+   "sum": 0
+  },
+  "lawn": {
+   "v": 1024,
+   "i": 1536,
+   "sum": 294553.6
+  },
+  "cushion": {
+   "v": 0,
+   "i": 0,
+   "edges": 0,
+   "leaves": 0,
+   "sum": 0
+  },
+  "paths": {
+   "v": 0,
+   "i": 0,
+   "cells": 0,
+   "sum": 0
+  },
+  "water": {
+   "v": 0,
+   "i": 0,
+   "surfaces": 0,
+   "falls": 0,
+   "foams": 0,
+   "sum": 0
+  }
+ },
+ "5,4": {
+  "terrain": {
+   "v": 0,
+   "i": 0,
+   "tops": 256,
+   "sides": 0,
+   "sum": 0
+  },
+  "lawn": {
+   "v": 1024,
+   "i": 1536,
+   "sum": 327321.6
+  },
+  "cushion": {
+   "v": 0,
+   "i": 0,
+   "edges": 0,
+   "leaves": 0,
+   "sum": 0
+  },
+  "paths": {
+   "v": 0,
+   "i": 0,
+   "cells": 0,
+   "sum": 0
+  },
+  "water": {
+   "v": 0,
+   "i": 0,
+   "surfaces": 0,
+   "falls": 0,
+   "foams": 0,
+   "sum": 0
+  }
+ },
+ "6,4": {
+  "terrain": {
+   "v": 0,
+   "i": 0,
+   "tops": 256,
+   "sides": 0,
+   "sum": 0
+  },
+  "lawn": {
+   "v": 1024,
+   "i": 1536,
+   "sum": 360089.6
+  },
+  "cushion": {
+   "v": 0,
+   "i": 0,
+   "edges": 0,
+   "leaves": 0,
+   "sum": 0
+  },
+  "paths": {
+   "v": 0,
+   "i": 0,
+   "cells": 0,
+   "sum": 0
+  },
+  "water": {
+   "v": 0,
+   "i": 0,
+   "surfaces": 0,
+   "falls": 0,
+   "foams": 0,
+   "sum": 0
+  }
+ },
+ "7,4": {
+  "terrain": {
+   "v": 0,
+   "i": 0,
+   "tops": 256,
+   "sides": 0,
+   "sum": 0
+  },
+  "lawn": {
+   "v": 1024,
+   "i": 1536,
+   "sum": 392857.6
+  },
+  "cushion": {
+   "v": 0,
+   "i": 0,
+   "edges": 0,
+   "leaves": 0,
+   "sum": 0
+  },
+  "paths": {
+   "v": 0,
+   "i": 0,
+   "cells": 0,
+   "sum": 0
+  },
+  "water": {
+   "v": 0,
+   "i": 0,
+   "surfaces": 0,
+   "falls": 0,
+   "foams": 0,
+   "sum": 0
+  }
+ },
+ "8,4": {
+  "terrain": {
+   "v": 256,
+   "i": 384,
+   "tops": 256,
+   "sides": 16,
+   "sum": 110289.938
+  },
+  "lawn": {
+   "v": 2944,
+   "i": 4416,
+   "sum": 1250553.6
+  },
+  "cushion": {
+   "v": 512,
+   "i": 768,
+   "edges": 16,
+   "leaves": 1652,
+   "sum": 220911.104
+  },
+  "paths": {
+   "v": 0,
+   "i": 0,
+   "cells": 0,
+   "sum": 0
+  },
+  "water": {
+   "v": 0,
+   "i": 0,
+   "surfaces": 0,
+   "falls": 0,
+   "foams": 0,
+   "sum": 0
+  }
+ },
+ "9,4": {
+  "terrain": {
+   "v": 1088,
+   "i": 1632,
+   "tops": 272,
+   "sides": 0,
+   "sum": 486336
+  },
+  "lawn": {
+   "v": 64,
+   "i": 96,
+   "sum": 27552
+  },
+  "cushion": {
+   "v": 0,
+   "i": 0,
+   "edges": 0,
+   "leaves": 0,
+   "sum": 0
+  },
+  "paths": {
+   "v": 0,
+   "i": 0,
+   "cells": 0,
+   "sum": 0
+  },
+  "water": {
+   "v": 0,
+   "i": 0,
+   "surfaces": 0,
+   "falls": 0,
+   "foams": 0,
+   "sum": 0
+  }
+ },
+ "0,5": {
+  "terrain": {
+   "v": 1024,
+   "i": 1536,
+   "tops": 256,
+   "sides": 0,
+   "sum": 194592
+  },
+  "lawn": {
+   "v": 0,
+   "i": 0,
+   "sum": 0
+  },
+  "cushion": {
+   "v": 0,
+   "i": 0,
+   "edges": 0,
+   "leaves": 0,
+   "sum": 0
+  },
+  "paths": {
+   "v": 0,
+   "i": 0,
+   "cells": 0,
+   "sum": 0
+  },
+  "water": {
+   "v": 0,
+   "i": 0,
+   "surfaces": 0,
+   "falls": 0,
+   "foams": 0,
+   "sum": 0
+  }
+ },
+ "1,5": {
+  "terrain": {
+   "v": 320,
+   "i": 480,
+   "tops": 256,
+   "sides": 16,
+   "sum": 66674.672
+  },
+  "lawn": {
+   "v": 2944,
+   "i": 4416,
+   "sum": 635312
+  },
+  "cushion": {
+   "v": 512,
+   "i": 768,
+   "edges": 16,
+   "leaves": 1771,
+   "sum": 107186.624
+  },
+  "paths": {
+   "v": 0,
+   "i": 0,
+   "cells": 0,
+   "sum": 0
+  },
+  "water": {
+   "v": 0,
+   "i": 0,
+   "surfaces": 0,
+   "falls": 0,
+   "foams": 0,
+   "sum": 0
+  }
+ },
+ "2,5": {
+  "terrain": {
+   "v": 0,
+   "i": 0,
+   "tops": 256,
+   "sides": 0,
+   "sum": 0
+  },
+  "lawn": {
+   "v": 1024,
+   "i": 1536,
+   "sum": 261785.6
+  },
+  "cushion": {
+   "v": 0,
+   "i": 0,
+   "edges": 0,
+   "leaves": 0,
+   "sum": 0
+  },
+  "paths": {
+   "v": 0,
+   "i": 0,
+   "cells": 0,
+   "sum": 0
+  },
+  "water": {
+   "v": 0,
+   "i": 0,
+   "surfaces": 0,
+   "falls": 0,
+   "foams": 0,
+   "sum": 0
+  }
+ },
+ "3,5": {
+  "terrain": {
+   "v": 0,
+   "i": 0,
+   "tops": 256,
+   "sides": 0,
+   "sum": 0
+  },
+  "lawn": {
+   "v": 1024,
+   "i": 1536,
+   "sum": 294553.6
+  },
+  "cushion": {
+   "v": 0,
+   "i": 0,
+   "edges": 0,
+   "leaves": 0,
+   "sum": 0
+  },
+  "paths": {
+   "v": 0,
+   "i": 0,
+   "cells": 0,
+   "sum": 0
+  },
+  "water": {
+   "v": 0,
+   "i": 0,
+   "surfaces": 0,
+   "falls": 0,
+   "foams": 0,
+   "sum": 0
+  }
+ },
+ "4,5": {
+  "terrain": {
+   "v": 0,
+   "i": 0,
+   "tops": 256,
+   "sides": 0,
+   "sum": 0
+  },
+  "lawn": {
+   "v": 1024,
+   "i": 1536,
+   "sum": 327321.6
+  },
+  "cushion": {
+   "v": 0,
+   "i": 0,
+   "edges": 0,
+   "leaves": 0,
+   "sum": 0
+  },
+  "paths": {
+   "v": 0,
+   "i": 0,
+   "cells": 0,
+   "sum": 0
+  },
+  "water": {
+   "v": 0,
+   "i": 0,
+   "surfaces": 0,
+   "falls": 0,
+   "foams": 0,
+   "sum": 0
+  }
+ },
+ "5,5": {
+  "terrain": {
+   "v": 0,
+   "i": 0,
+   "tops": 256,
+   "sides": 0,
+   "sum": 0
+  },
+  "lawn": {
+   "v": 1024,
+   "i": 1536,
+   "sum": 360089.6
+  },
+  "cushion": {
+   "v": 0,
+   "i": 0,
+   "edges": 0,
+   "leaves": 0,
+   "sum": 0
+  },
+  "paths": {
+   "v": 0,
+   "i": 0,
+   "cells": 0,
+   "sum": 0
+  },
+  "water": {
+   "v": 0,
+   "i": 0,
+   "surfaces": 0,
+   "falls": 0,
+   "foams": 0,
+   "sum": 0
+  }
+ },
+ "6,5": {
+  "terrain": {
+   "v": 0,
+   "i": 0,
+   "tops": 256,
+   "sides": 0,
+   "sum": 0
+  },
+  "lawn": {
+   "v": 1024,
+   "i": 1536,
+   "sum": 392857.6
+  },
+  "cushion": {
+   "v": 0,
+   "i": 0,
+   "edges": 0,
+   "leaves": 0,
+   "sum": 0
+  },
+  "paths": {
+   "v": 0,
+   "i": 0,
+   "cells": 0,
+   "sum": 0
+  },
+  "water": {
+   "v": 0,
+   "i": 0,
+   "surfaces": 0,
+   "falls": 0,
+   "foams": 0,
+   "sum": 0
+  }
+ },
+ "7,5": {
+  "terrain": {
+   "v": 0,
+   "i": 0,
+   "tops": 256,
+   "sides": 0,
+   "sum": 0
+  },
+  "lawn": {
+   "v": 1024,
+   "i": 1536,
+   "sum": 425625.6
+  },
+  "cushion": {
+   "v": 0,
+   "i": 0,
+   "edges": 0,
+   "leaves": 0,
+   "sum": 0
+  },
+  "paths": {
+   "v": 0,
+   "i": 0,
+   "cells": 0,
+   "sum": 0
+  },
+  "water": {
+   "v": 0,
+   "i": 0,
+   "surfaces": 0,
+   "falls": 0,
+   "foams": 0,
+   "sum": 0
+  }
+ },
+ "8,5": {
+  "terrain": {
+   "v": 256,
+   "i": 384,
+   "tops": 256,
+   "sides": 16,
+   "sum": 118480.972
+  },
+  "lawn": {
+   "v": 2944,
+   "i": 4416,
+   "sum": 1344761.6
+  },
+  "cushion": {
+   "v": 512,
+   "i": 768,
+   "edges": 16,
+   "leaves": 1649,
+   "sum": 237295.104
+  },
+  "paths": {
+   "v": 0,
+   "i": 0,
+   "cells": 0,
+   "sum": 0
+  },
+  "water": {
+   "v": 0,
+   "i": 0,
+   "surfaces": 0,
+   "falls": 0,
+   "foams": 0,
+   "sum": 0
+  }
+ },
+ "9,5": {
+  "terrain": {
+   "v": 1088,
+   "i": 1632,
+   "tops": 272,
+   "sides": 0,
+   "sum": 521152
+  },
+  "lawn": {
+   "v": 64,
+   "i": 96,
+   "sum": 29600
+  },
+  "cushion": {
+   "v": 0,
+   "i": 0,
+   "edges": 0,
+   "leaves": 0,
+   "sum": 0
+  },
+  "paths": {
+   "v": 0,
+   "i": 0,
+   "cells": 0,
+   "sum": 0
+  },
+  "water": {
+   "v": 0,
+   "i": 0,
+   "surfaces": 0,
+   "falls": 0,
+   "foams": 0,
+   "sum": 0
+  }
+ },
+ "0,6": {
+  "terrain": {
+   "v": 1024,
+   "i": 1536,
+   "tops": 256,
+   "sides": 0,
+   "sum": 227360
+  },
+  "lawn": {
+   "v": 0,
+   "i": 0,
+   "sum": 0
+  },
+  "cushion": {
+   "v": 0,
+   "i": 0,
+   "edges": 0,
+   "leaves": 0,
+   "sum": 0
+  },
+  "paths": {
+   "v": 0,
+   "i": 0,
+   "cells": 0,
+   "sum": 0
+  },
+  "water": {
+   "v": 0,
+   "i": 0,
+   "surfaces": 0,
+   "falls": 0,
+   "foams": 0,
+   "sum": 0
+  }
+ },
+ "1,6": {
+  "terrain": {
+   "v": 320,
+   "i": 480,
+   "tops": 256,
+   "sides": 16,
+   "sum": 76913.804
+  },
+  "lawn": {
+   "v": 2944,
+   "i": 4416,
+   "sum": 729520
+  },
+  "cushion": {
+   "v": 512,
+   "i": 768,
+   "edges": 16,
+   "leaves": 1756,
+   "sum": 123570.624
+  },
+  "paths": {
+   "v": 0,
+   "i": 0,
+   "cells": 0,
+   "sum": 0
+  },
+  "water": {
+   "v": 0,
+   "i": 0,
+   "surfaces": 0,
+   "falls": 0,
+   "foams": 0,
+   "sum": 0
+  }
+ },
+ "2,6": {
+  "terrain": {
+   "v": 0,
+   "i": 0,
+   "tops": 256,
+   "sides": 0,
+   "sum": 0
+  },
+  "lawn": {
+   "v": 1024,
+   "i": 1536,
+   "sum": 294553.6
+  },
+  "cushion": {
+   "v": 0,
+   "i": 0,
+   "edges": 0,
+   "leaves": 0,
+   "sum": 0
+  },
+  "paths": {
+   "v": 0,
+   "i": 0,
+   "cells": 0,
+   "sum": 0
+  },
+  "water": {
+   "v": 0,
+   "i": 0,
+   "surfaces": 0,
+   "falls": 0,
+   "foams": 0,
+   "sum": 0
+  }
+ },
+ "3,6": {
+  "terrain": {
+   "v": 0,
+   "i": 0,
+   "tops": 256,
+   "sides": 0,
+   "sum": 0
+  },
+  "lawn": {
+   "v": 1024,
+   "i": 1536,
+   "sum": 327321.6
+  },
+  "cushion": {
+   "v": 0,
+   "i": 0,
+   "edges": 0,
+   "leaves": 0,
+   "sum": 0
+  },
+  "paths": {
+   "v": 0,
+   "i": 0,
+   "cells": 0,
+   "sum": 0
+  },
+  "water": {
+   "v": 0,
+   "i": 0,
+   "surfaces": 0,
+   "falls": 0,
+   "foams": 0,
+   "sum": 0
+  }
+ },
+ "4,6": {
+  "terrain": {
+   "v": 0,
+   "i": 0,
+   "tops": 256,
+   "sides": 0,
+   "sum": 0
+  },
+  "lawn": {
+   "v": 1024,
+   "i": 1536,
+   "sum": 360089.6
+  },
+  "cushion": {
+   "v": 0,
+   "i": 0,
+   "edges": 0,
+   "leaves": 0,
+   "sum": 0
+  },
+  "paths": {
+   "v": 0,
+   "i": 0,
+   "cells": 0,
+   "sum": 0
+  },
+  "water": {
+   "v": 0,
+   "i": 0,
+   "surfaces": 0,
+   "falls": 0,
+   "foams": 0,
+   "sum": 0
+  }
+ },
+ "5,6": {
+  "terrain": {
+   "v": 0,
+   "i": 0,
+   "tops": 256,
+   "sides": 0,
+   "sum": 0
+  },
+  "lawn": {
+   "v": 1024,
+   "i": 1536,
+   "sum": 392857.6
+  },
+  "cushion": {
+   "v": 0,
+   "i": 0,
+   "edges": 0,
+   "leaves": 0,
+   "sum": 0
+  },
+  "paths": {
+   "v": 0,
+   "i": 0,
+   "cells": 0,
+   "sum": 0
+  },
+  "water": {
+   "v": 0,
+   "i": 0,
+   "surfaces": 0,
+   "falls": 0,
+   "foams": 0,
+   "sum": 0
+  }
+ },
+ "6,6": {
+  "terrain": {
+   "v": 0,
+   "i": 0,
+   "tops": 256,
+   "sides": 0,
+   "sum": 0
+  },
+  "lawn": {
+   "v": 1024,
+   "i": 1536,
+   "sum": 425625.6
+  },
+  "cushion": {
+   "v": 0,
+   "i": 0,
+   "edges": 0,
+   "leaves": 0,
+   "sum": 0
+  },
+  "paths": {
+   "v": 0,
+   "i": 0,
+   "cells": 0,
+   "sum": 0
+  },
+  "water": {
+   "v": 0,
+   "i": 0,
+   "surfaces": 0,
+   "falls": 0,
+   "foams": 0,
+   "sum": 0
+  }
+ },
+ "7,6": {
+  "terrain": {
+   "v": 0,
+   "i": 0,
+   "tops": 256,
+   "sides": 0,
+   "sum": 0
+  },
+  "lawn": {
+   "v": 1024,
+   "i": 1536,
+   "sum": 458393.6
+  },
+  "cushion": {
+   "v": 0,
+   "i": 0,
+   "edges": 0,
+   "leaves": 0,
+   "sum": 0
+  },
+  "paths": {
+   "v": 0,
+   "i": 0,
+   "cells": 0,
+   "sum": 0
+  },
+  "water": {
+   "v": 0,
+   "i": 0,
+   "surfaces": 0,
+   "falls": 0,
+   "foams": 0,
+   "sum": 0
+  }
+ },
+ "8,6": {
+  "terrain": {
+   "v": 256,
+   "i": 384,
+   "tops": 256,
+   "sides": 16,
+   "sum": 126672.985
+  },
+  "lawn": {
+   "v": 2944,
+   "i": 4416,
+   "sum": 1438969.6
+  },
+  "cushion": {
+   "v": 512,
+   "i": 768,
+   "edges": 16,
+   "leaves": 1650,
+   "sum": 253679.104
+  },
+  "paths": {
+   "v": 0,
+   "i": 0,
+   "cells": 0,
+   "sum": 0
+  },
+  "water": {
+   "v": 0,
+   "i": 0,
+   "surfaces": 0,
+   "falls": 0,
+   "foams": 0,
+   "sum": 0
+  }
+ },
+ "9,6": {
+  "terrain": {
+   "v": 1088,
+   "i": 1632,
+   "tops": 272,
+   "sides": 0,
+   "sum": 555968
+  },
+  "lawn": {
+   "v": 64,
+   "i": 96,
+   "sum": 31648
+  },
+  "cushion": {
+   "v": 0,
+   "i": 0,
+   "edges": 0,
+   "leaves": 0,
+   "sum": 0
+  },
+  "paths": {
+   "v": 0,
+   "i": 0,
+   "cells": 0,
+   "sum": 0
+  },
+  "water": {
+   "v": 0,
+   "i": 0,
+   "surfaces": 0,
+   "falls": 0,
+   "foams": 0,
+   "sum": 0
+  }
+ },
+ "0,7": {
+  "terrain": {
+   "v": 1024,
+   "i": 1536,
+   "tops": 256,
+   "sides": 0,
+   "sum": 260128
+  },
+  "lawn": {
+   "v": 0,
+   "i": 0,
+   "sum": 0
+  },
+  "cushion": {
+   "v": 0,
+   "i": 0,
+   "edges": 0,
+   "leaves": 0,
+   "sum": 0
+  },
+  "paths": {
+   "v": 0,
+   "i": 0,
+   "cells": 0,
+   "sum": 0
+  },
+  "water": {
+   "v": 0,
+   "i": 0,
+   "surfaces": 0,
+   "falls": 0,
+   "foams": 0,
+   "sum": 0
+  }
+ },
+ "1,7": {
+  "terrain": {
+   "v": 688,
+   "i": 1032,
+   "tops": 256,
+   "sides": 31,
+   "sum": 197039.084
+  },
+  "lawn": {
+   "v": 4516,
+   "i": 6780,
+   "sum": 1302438
+  },
+  "cushion": {
+   "v": 1136,
+   "i": 1704,
+   "edges": 31,
+   "leaves": 3385,
+   "sum": 327773.161
+  },
+  "paths": {
+   "v": 0,
+   "i": 0,
+   "cells": 0,
+   "sum": 0
+  },
+  "water": {
+   "v": 0,
+   "i": 0,
+   "surfaces": 0,
+   "falls": 0,
+   "foams": 0,
+   "sum": 0
+  }
+ },
+ "2,7": {
+  "terrain": {
+   "v": 256,
+   "i": 384,
+   "tops": 256,
+   "sides": 16,
+   "sum": 85714.318
+  },
+  "lawn": {
+   "v": 2944,
+   "i": 4416,
+   "sum": 967929.6
+  },
+  "cushion": {
+   "v": 512,
+   "i": 768,
+   "edges": 16,
+   "leaves": 1761,
+   "sum": 171759.104
+  },
+  "paths": {
+   "v": 0,
+   "i": 0,
+   "cells": 0,
+   "sum": 0
+  },
+  "water": {
+   "v": 0,
+   "i": 0,
+   "surfaces": 0,
+   "falls": 0,
+   "foams": 0,
+   "sum": 0
+  }
+ },
+ "3,7": {
+  "terrain": {
+   "v": 256,
+   "i": 384,
+   "tops": 256,
+   "sides": 16,
+   "sum": 93904.894
+  },
+  "lawn": {
+   "v": 2944,
+   "i": 4416,
+   "sum": 1062137.6
+  },
+  "cushion": {
+   "v": 512,
+   "i": 768,
+   "edges": 16,
+   "leaves": 1757,
+   "sum": 188143.104
+  },
+  "paths": {
+   "v": 0,
+   "i": 0,
+   "cells": 0,
+   "sum": 0
+  },
+  "water": {
+   "v": 0,
+   "i": 0,
+   "surfaces": 0,
+   "falls": 0,
+   "foams": 0,
+   "sum": 0
+  }
+ },
+ "4,7": {
+  "terrain": {
+   "v": 256,
+   "i": 384,
+   "tops": 256,
+   "sides": 16,
+   "sum": 102097.556
+  },
+  "lawn": {
+   "v": 2944,
+   "i": 4416,
+   "sum": 1156345.6
+  },
+  "cushion": {
+   "v": 512,
+   "i": 768,
+   "edges": 16,
+   "leaves": 1754,
+   "sum": 204527.104
+  },
+  "paths": {
+   "v": 0,
+   "i": 0,
+   "cells": 0,
+   "sum": 0
+  },
+  "water": {
+   "v": 0,
+   "i": 0,
+   "surfaces": 0,
+   "falls": 0,
+   "foams": 0,
+   "sum": 0
+  }
+ },
+ "5,7": {
+  "terrain": {
+   "v": 256,
+   "i": 384,
+   "tops": 256,
+   "sides": 16,
+   "sum": 110289.618
+  },
+  "lawn": {
+   "v": 2944,
+   "i": 4416,
+   "sum": 1250553.6
+  },
+  "cushion": {
+   "v": 512,
+   "i": 768,
+   "edges": 16,
+   "leaves": 1760,
+   "sum": 220911.104
+  },
+  "paths": {
+   "v": 0,
+   "i": 0,
+   "cells": 0,
+   "sum": 0
+  },
+  "water": {
+   "v": 0,
+   "i": 0,
+   "surfaces": 0,
+   "falls": 0,
+   "foams": 0,
+   "sum": 0
+  }
+ },
+ "6,7": {
+  "terrain": {
+   "v": 256,
+   "i": 384,
+   "tops": 256,
+   "sides": 16,
+   "sum": 118481.742
+  },
+  "lawn": {
+   "v": 2944,
+   "i": 4416,
+   "sum": 1344761.6
+  },
+  "cushion": {
+   "v": 512,
+   "i": 768,
+   "edges": 16,
+   "leaves": 1757,
+   "sum": 237295.104
+  },
+  "paths": {
+   "v": 0,
+   "i": 0,
+   "cells": 0,
+   "sum": 0
+  },
+  "water": {
+   "v": 0,
+   "i": 0,
+   "surfaces": 0,
+   "falls": 0,
+   "foams": 0,
+   "sum": 0
+  }
+ },
+ "7,7": {
+  "terrain": {
+   "v": 256,
+   "i": 384,
+   "tops": 256,
+   "sides": 16,
+   "sum": 126673.037
+  },
+  "lawn": {
+   "v": 2944,
+   "i": 4416,
+   "sum": 1438969.6
+  },
+  "cushion": {
+   "v": 512,
+   "i": 768,
+   "edges": 16,
+   "leaves": 1745,
+   "sum": 253679.104
+  },
+  "paths": {
+   "v": 0,
+   "i": 0,
+   "cells": 0,
+   "sum": 0
+  },
+  "water": {
+   "v": 0,
+   "i": 0,
+   "surfaces": 0,
+   "falls": 0,
+   "foams": 0,
+   "sum": 0
+  }
+ },
+ "8,7": {
+  "terrain": {
+   "v": 640,
+   "i": 960,
+   "tops": 256,
+   "sides": 32,
+   "sum": 339168.329
+  },
+  "lawn": {
+   "v": 4636,
+   "i": 6960,
+   "sum": 2419410.627
+  },
+  "cushion": {
+   "v": 1168,
+   "i": 1752,
+   "edges": 32,
+   "leaves": 3395,
+   "sum": 618338.597
+  },
+  "paths": {
+   "v": 0,
+   "i": 0,
+   "cells": 0,
+   "sum": 0
+  },
+  "water": {
+   "v": 0,
+   "i": 0,
+   "surfaces": 0,
+   "falls": 0,
+   "foams": 0,
+   "sum": 0
+  }
+ },
+ "9,7": {
+  "terrain": {
+   "v": 1088,
+   "i": 1632,
+   "tops": 272,
+   "sides": 0,
+   "sum": 590784
+  },
+  "lawn": {
+   "v": 64,
+   "i": 96,
+   "sum": 33696
+  },
+  "cushion": {
+   "v": 0,
+   "i": 0,
+   "edges": 0,
+   "leaves": 0,
+   "sum": 0
+  },
+  "paths": {
+   "v": 0,
+   "i": 0,
+   "cells": 0,
+   "sum": 0
+  },
+  "water": {
+   "v": 0,
+   "i": 0,
+   "surfaces": 0,
+   "falls": 0,
+   "foams": 0,
+   "sum": 0
+  }
+ },
+ "0,8": {
+  "terrain": {
+   "v": 1152,
+   "i": 1728,
+   "tops": 272,
+   "sides": 0,
+   "sum": 329604
+  },
+  "lawn": {
+   "v": 0,
+   "i": 0,
+   "sum": 0
+  },
+  "cushion": {
+   "v": 0,
+   "i": 0,
+   "edges": 0,
+   "leaves": 0,
+   "sum": 0
+  },
+  "paths": {
+   "v": 0,
+   "i": 0,
+   "cells": 0,
+   "sum": 0
+  },
+  "water": {
+   "v": 0,
+   "i": 0,
+   "surfaces": 0,
+   "falls": 0,
+   "foams": 0,
+   "sum": 0
+  }
+ },
+ "1,8": {
+  "terrain": {
+   "v": 1160,
+   "i": 1740,
+   "tops": 272,
+   "sides": 0,
+   "sum": 368892
+  },
+  "lawn": {
+   "v": 64,
+   "i": 96,
+   "sum": 19362
+  },
+  "cushion": {
+   "v": 0,
+   "i": 0,
+   "edges": 0,
+   "leaves": 0,
+   "sum": 0
+  },
+  "paths": {
+   "v": 0,
+   "i": 0,
+   "cells": 0,
+   "sum": 0
+  },
+  "water": {
+   "v": 0,
+   "i": 0,
+   "surfaces": 0,
+   "falls": 0,
+   "foams": 0,
+   "sum": 0
+  }
+ },
+ "2,8": {
+  "terrain": {
+   "v": 1088,
+   "i": 1632,
+   "tops": 272,
+   "sides": 0,
+   "sum": 381888
+  },
+  "lawn": {
+   "v": 64,
+   "i": 96,
+   "sum": 21408
+  },
+  "cushion": {
+   "v": 0,
+   "i": 0,
+   "edges": 0,
+   "leaves": 0,
+   "sum": 0
+  },
+  "paths": {
+   "v": 0,
+   "i": 0,
+   "cells": 0,
+   "sum": 0
+  },
+  "water": {
+   "v": 0,
+   "i": 0,
+   "surfaces": 0,
+   "falls": 0,
+   "foams": 0,
+   "sum": 0
+  }
+ },
+ "3,8": {
+  "terrain": {
+   "v": 1088,
+   "i": 1632,
+   "tops": 272,
+   "sides": 0,
+   "sum": 416704
+  },
+  "lawn": {
+   "v": 64,
+   "i": 96,
+   "sum": 23456
+  },
+  "cushion": {
+   "v": 0,
+   "i": 0,
+   "edges": 0,
+   "leaves": 0,
+   "sum": 0
+  },
+  "paths": {
+   "v": 0,
+   "i": 0,
+   "cells": 0,
+   "sum": 0
+  },
+  "water": {
+   "v": 0,
+   "i": 0,
+   "surfaces": 0,
+   "falls": 0,
+   "foams": 0,
+   "sum": 0
+  }
+ },
+ "4,8": {
+  "terrain": {
+   "v": 1088,
+   "i": 1632,
+   "tops": 272,
+   "sides": 0,
+   "sum": 451520
+  },
+  "lawn": {
+   "v": 64,
+   "i": 96,
+   "sum": 25504
+  },
+  "cushion": {
+   "v": 0,
+   "i": 0,
+   "edges": 0,
+   "leaves": 0,
+   "sum": 0
+  },
+  "paths": {
+   "v": 0,
+   "i": 0,
+   "cells": 0,
+   "sum": 0
+  },
+  "water": {
+   "v": 0,
+   "i": 0,
+   "surfaces": 0,
+   "falls": 0,
+   "foams": 0,
+   "sum": 0
+  }
+ },
+ "5,8": {
+  "terrain": {
+   "v": 1088,
+   "i": 1632,
+   "tops": 272,
+   "sides": 0,
+   "sum": 486336
+  },
+  "lawn": {
+   "v": 64,
+   "i": 96,
+   "sum": 27552
+  },
+  "cushion": {
+   "v": 0,
+   "i": 0,
+   "edges": 0,
+   "leaves": 0,
+   "sum": 0
+  },
+  "paths": {
+   "v": 0,
+   "i": 0,
+   "cells": 0,
+   "sum": 0
+  },
+  "water": {
+   "v": 0,
+   "i": 0,
+   "surfaces": 0,
+   "falls": 0,
+   "foams": 0,
+   "sum": 0
+  }
+ },
+ "6,8": {
+  "terrain": {
+   "v": 1088,
+   "i": 1632,
+   "tops": 272,
+   "sides": 0,
+   "sum": 521152
+  },
+  "lawn": {
+   "v": 64,
+   "i": 96,
+   "sum": 29600
+  },
+  "cushion": {
+   "v": 0,
+   "i": 0,
+   "edges": 0,
+   "leaves": 0,
+   "sum": 0
+  },
+  "paths": {
+   "v": 0,
+   "i": 0,
+   "cells": 0,
+   "sum": 0
+  },
+  "water": {
+   "v": 0,
+   "i": 0,
+   "surfaces": 0,
+   "falls": 0,
+   "foams": 0,
+   "sum": 0
+  }
+ },
+ "7,8": {
+  "terrain": {
+   "v": 1088,
+   "i": 1632,
+   "tops": 272,
+   "sides": 0,
+   "sum": 555968
+  },
+  "lawn": {
+   "v": 64,
+   "i": 96,
+   "sum": 31648
+  },
+  "cushion": {
+   "v": 0,
+   "i": 0,
+   "edges": 0,
+   "leaves": 0,
+   "sum": 0
+  },
+  "paths": {
+   "v": 0,
+   "i": 0,
+   "cells": 0,
+   "sum": 0
+  },
+  "water": {
+   "v": 0,
+   "i": 0,
+   "surfaces": 0,
+   "falls": 0,
+   "foams": 0,
+   "sum": 0
+  }
+ },
+ "8,8": {
+  "terrain": {
+   "v": 1088,
+   "i": 1632,
+   "tops": 272,
+   "sides": 0,
+   "sum": 590784
+  },
+  "lawn": {
+   "v": 64,
+   "i": 96,
+   "sum": 33696
+  },
+  "cushion": {
+   "v": 0,
+   "i": 0,
+   "edges": 0,
+   "leaves": 0,
+   "sum": 0
+  },
+  "paths": {
+   "v": 0,
+   "i": 0,
+   "cells": 0,
+   "sum": 0
+  },
+  "water": {
+   "v": 0,
+   "i": 0,
+   "surfaces": 0,
+   "falls": 0,
+   "foams": 0,
+   "sum": 0
+  }
+ },
+ "9,8": {
+  "terrain": {
+   "v": 1292,
+   "i": 1938,
+   "tops": 289,
+   "sides": 0,
+   "sum": 741948
+  },
+  "lawn": {
+   "v": 4,
+   "i": 6,
+   "sum": 2172
+  },
+  "cushion": {
+   "v": 0,
+   "i": 0,
+   "edges": 0,
+   "leaves": 0,
+   "sum": 0
+  },
+  "paths": {
+   "v": 0,
+   "i": 0,
+   "cells": 0,
+   "sum": 0
+  },
+  "water": {
+   "v": 0,
+   "i": 0,
+   "surfaces": 0,
+   "falls": 0,
+   "foams": 0,
+   "sum": 0
+  }
+ },
+ "objects": {
+  "plants.box": {
+   "n": 0,
+   "sum": 0
+  },
+  "plants.cylinder": {
+   "n": 0,
+   "sum": 0
+  },
+  "plants.cone": {
+   "n": 0,
+   "sum": 0
+  },
+  "plants.sphere": {
+   "n": 0,
+   "sum": 0
+  },
+  "items.box": {
+   "n": 6,
+   "sum": 1375.96
+  },
+  "items.cylinder": {
+   "n": 1,
+   "sum": 228.85
+  },
+  "items.cone": {
+   "n": 0,
+   "sum": 0
+  },
+  "items.sphere": {
+   "n": 1,
+   "sum": 229.5
+  }
+ }
+}

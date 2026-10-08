@@ -1,0 +1,7 @@
+node_modules
+pnpm-lock.yaml
+packages/games/*/references
+# Golden data is written by tests, byte for byte.
+packages/games/*/profile/tests/**/golden/*.json
+# Saved maps keep the map file format's own layout (one grid row, cell or entity per line).
+packages/games/*/profile/samples/maps/

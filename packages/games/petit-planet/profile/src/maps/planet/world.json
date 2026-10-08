@@ -1,0 +1,50 @@
+{
+  "id": "petit-planet",
+  "major": {
+    "w": 160,
+    "h": 144
+  },
+  "minorPerMajor": 2,
+  "areaSize": 16,
+  "beach": {
+    "width": 16,
+    "level": 0
+  },
+  "land": {
+    "x": [17, 143],
+    "y": [17, 127],
+    "defaultLevel": 1
+  },
+  "terrainEditable": {
+    "x": [18, 142],
+    "y": [18, 126]
+  },
+  "corners": {
+    "path": 1,
+    "terrain": 0.5
+  },
+  "landmarks": [
+    {
+      "id": "town-center",
+      "grid": "major",
+      "x": 78,
+      "y": 71,
+      "w": 20,
+      "h": 27,
+      "lockTerrain": true,
+      "lockLevel": 1,
+      "lockPlacement": true,
+      "terrainLockExtent": "outside"
+    },
+    {
+      "id": "entrance",
+      "grid": "major",
+      "x": 30,
+      "y": 143,
+      "w": 3,
+      "h": 1,
+      "lockTerrain": true,
+      "lockPlacement": true
+    }
+  ]
+}
