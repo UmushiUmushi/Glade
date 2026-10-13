@@ -4,27 +4,27 @@ Petit Planet is the first game in Glade. Its profile is `@glade/petit-planet-pro
 ([its README](../../packages/games/petit-planet/profile/README.md) has the grids, layers, rules,
 kinds and params). This page shows how the game's four packages fit together in Glade.
 
-| Package                       | Holds                                                                                  |
-| ----------------------------- | -------------------------------------------------------------------------------------- |
-| `@glade/petit-planet-profile` | The island and the homes: grids, layers, rules, kinds, params, look. Exists today.     |
-| `@glade/petit-planet-catalog` | Base items with original models, categories, builder templates.                        |
-| `@glade/petit-planet-edit`    | Ops only Petit Planet has, such as bridges that span a gap and waterfalls that settle. |
-| `@glade/petit-planet-ui`      | Theme, fonts, the Drag and Grab tool icons, modes, layers, rule text, guide pages.     |
+| Package                       | Holds                                                                                                      |
+| ----------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| `@glade/petit-planet-profile` | The island and the homes: grids, layers, rules, kinds, params, look. Exists today.                         |
+| `@glade/petit-planet-catalog` | Base items with original models, categories, builder templates.                                            |
+| `@glade/petit-planet-edit`    | Terrain editing (brush, raise / lower, lift and drop, terraces, later sculpt) and bridges that span a gap. |
+| `@glade/petit-planet-ui`      | Theme, fonts, the Grab tool icon, modes, layers, rule text, guide pages.                                   |
 
 ## Per map
 
-| Part              | The island (`planet`)                                                                                   | Homes (after 1.0)                                                                                |
-| ----------------- | ------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
-| Modes             | Furniture (grid `minor`, lines of `major`), Paths (`major`), Cliffs (`terrain`), Water (`terrain`)      | Floor, Walls, Ceiling, Decor ([home modes](../planner/screen.md#viewport-mode-buttons-top-left)) |
-| Layers            | Houses, Furniture, Plants, Paths, Grid, Area                                                            | Floor, Walls, Items, Wall items, Ceiling items, Grid                                             |
-| Time points       | From the look's presets: 7:00, 12:00, 16:30, 21:00                                                      | None: a home's look is fixed (one preset, no seasons)                                            |
-| Season            | Snow toggle = season `winter` (off = `spring`)                                                          | None                                                                                             |
-| Terrain support   | `full`: land always stands on land below it (no overhangs)                                              | No terrain                                                                                       |
-| Views             | 2D and 3D, curved planet                                                                                | 2D and 3D, flat; walls hide when the camera is behind them                                       |
-| Catalog           | Base catalog + packs. Hides what the island doesn't take (wall and ceiling items, wallpaper, flooring). | Same catalog. Hides plants, paths, bridges, inclines and buildings.                              |
-| Categories        | All, Houses, then game categories (Q-5)                                                                 | All, then home categories (Q-5)                                                                  |
-| Builder templates | Other, Fence/hedge, House, Tree/plant, Bridge, Incline, Path tile, Lamp, Table, Small thing             | Adds Wall item, Ceiling item, Wallpaper, Flooring                                                |
-| Title font        | An open font close to the game's title style (Q-9)                                                      | Same                                                                                             |
+| Part              | The island (`planet`)                                                                                                                 | Homes (after 1.0)                                                                                |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| Modes             | Furniture (grid `minor`, lines of `major`), Paths (`major`), Cliffs (`terrain`), Water (`terrain`)                                    | Floor, Walls, Ceiling, Decor ([home modes](../planner/screen.md#viewport-mode-buttons-top-left)) |
+| Layers            | Houses, Furniture, Plants, Paths, Grid, Area                                                                                          | Floor, Walls, Items, Wall items, Ceiling items, Grid                                             |
+| Time points       | From the look's presets: 7:00, 12:00, 16:30, 21:00                                                                                    | None: a home's look is fixed (one preset, no seasons)                                            |
+| Season            | Snow toggle = season `winter` (off = `spring`)                                                                                        | None                                                                                             |
+| Terrain           | A heightmap: one height (0–8) per block, with an optional water block on top. No overhangs. Edited by Petit Planet's own terrain ops. | No terrain                                                                                       |
+| Views             | 2D and 3D, curved planet                                                                                                              | 2D and 3D, flat; walls hide when the camera is behind them                                       |
+| Catalog           | Base catalog + packs. Hides what the island doesn't take (wall and ceiling items, wallpaper, flooring).                               | Same catalog. Hides plants, paths, bridges, inclines and buildings.                              |
+| Categories        | All, Houses, then game categories (Q-5)                                                                                               | All, then home categories (Q-5)                                                                  |
+| Builder templates | Other, Fence/hedge, House, Tree/plant, Bridge, Incline, Path tile, Lamp, Table, Small thing                                           | Adds Wall item, Ceiling item, Wallpaper, Flooring                                                |
+| Title font        | An open font close to the game's title style (Q-9)                                                                                    | Same                                                                                             |
 
 ## Friendly rule text
 

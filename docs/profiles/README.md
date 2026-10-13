@@ -144,7 +144,7 @@ that region (`validate(doc, map, { region })`), and `map.locate(map, doc, layer,
 rects a cell or an entity covers. A rule that has to see the whole map is marked non-local and
 always does.
 
-Settings that both editing and rules need (a step limit, a support style) live in the profile,
+Settings that both editing and rules need (like a step limit) live in the profile,
 once. The edits read them to make valid changes, and the rules read them to check.
 
 ## The render format

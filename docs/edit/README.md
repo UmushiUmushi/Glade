@@ -2,8 +2,9 @@
 
 > **In short:** Profiles describe maps and never change them. **Editing** changes them: `@glade/edit`
 > holds the game-free machinery (ops on a draft, patches, transactions, undo) and the ops games
-> share (objects and terrain). A game's own `edit` package adds only what no other game has. The
-> real map lives in a background **worker**; the screen keeps a read-only copy.
+> share (objects and paths). A game's own `edit` package adds what no other game has, including
+> its terrain, because each game's terrain is its own model. The real map lives in a background
+> **worker**; the screen keeps a read-only copy.
 
 ## Shared ops, game settings
 
@@ -11,27 +12,40 @@ Glade's controls are the same in every game ([the idea](../architecture.md#the-i
 so the edits behind them are shared too. An op family is written once, game-free, and reads the
 facts it needs from the game's profile.
 
-| Op family           | Package                    | Ops                                                           | Reads from the profile                                          |
-| ------------------- | -------------------------- | ------------------------------------------------------------- | --------------------------------------------------------------- |
-| Objects             | `@glade/edit` (`objects/`) | place, move, rotate, copy, delete, things on surfaces         | Grids, footprints, rotation steps, what a map takes             |
-| Terrain             | `@glade/edit` (`terrain/`) | raise, lower, sculpt, lift and drop, terraces                 | Height range, step limit, support style, which cells can change |
-| Paths and coverings | `@glade/edit`              | paint, erase, fill, shape corners                             | Path grid, which cells take a path, corner shapes               |
-| Game-only           | `@glade/<id>-edit`         | Petit Planet: bridges that span a gap, waterfalls that settle | Whatever that game's rules need                                 |
+| Op family           | Package                                 | Ops                                                                                                                      | Reads from the profile                                                                          |
+| ------------------- | --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------- |
+| Objects             | `@glade/edit` (`objects/`)              | place, move, rotate, copy, delete, things on surfaces                                                                    | Grids, footprints, rotation steps, what a map takes                                             |
+| Paths and coverings | `@glade/edit` (`paths/`)                | paint, erase, fill, shape corners                                                                                        | Path grid, which cells take a path, corner shapes                                               |
+| Terrain             | `@glade/petit-planet-edit` (`terrain/`) | one-layer brush and eraser, raise / lower land, raise / lower water, lift and drop, live terraces, corners; later sculpt | Height range, step limit (`maxStepBetweenNeighbors`), which cells can change, waterfall helpers |
+| Other game-only     | `@glade/<id>-edit`                      | Petit Planet: bridges that span a gap                                                                                    | Whatever that game's rules need                                                                 |
 
-### Support styles
+### Terrain belongs to its game
 
-How terrain may hang over empty space is a profile setting, `support`. The terrain ops read it
-when they put blocks down, and the profile's rules read the same setting when they check the
-result, so the two always agree.
+Petit Planet's terrain is a **heightmap**: one height (0–8) per block, with an optional water block
+on top. Overhangs can't exist. Another game will likely store terrain another way (Minecraft has
+3D blocks with overhangs), so its terrain ops would be different code, not different settings.
 
-| Style             | Game (example) | What a drop does with blocks left in the air       |
-| ----------------- | -------------- | -------------------------------------------------- |
-| `"full"`          | Petit Planet   | Fills every column down to the ground.             |
-| `{ overhang: n }` | Timberborn     | Adds pillars where an overhang is longer than `n`. |
-| `"none"`          | Minecraft      | Leaves blocks where they are.                      |
+| Shared by every game                                                       | Per game                                       |
+| -------------------------------------------------------------------------- | ---------------------------------------------- |
+| The tools: brush, eraser, Raise / lower slider, select and drag            | The terrain ops behind them                    |
+| The intents the tools send (`PaintTerrain`, `RaiseLower`, `MoveSelection`) | How each intent becomes ops (the mode planner) |
+| Draft, patch, transaction, undo                                            | The terrain model and its rules (profile)      |
 
-Only `"full"` is built at first, since Petit Planet is the only block game so far. The others are
-written when a game that needs them arrives.
+So the controls stay the same in every game, and each game's terrain is free to be its own model.
+If a second game ever uses the same heightmap, the shared parts move to `@glade/edit`.
+
+### Live terraces
+
+Terrain changes happen live. There is no "settle" step after a change.
+
+1. While you drag or slide, the mode planner runs the ops **and** the terraces they need, as a
+   `preview` (at most every 100 ms).
+2. The terraces show as purple temporary terrain.
+3. Letting go runs the same ops and terraces as one transaction: one undo step.
+
+How terraces are found: [lift and drop](../planner/behaviour.md#lift-and-drop). The brush and
+eraser never terrace: blocks they can't change get red stripes instead
+([brush and eraser](../planner/behaviour.md#brush-and-eraser-one-layer)).
 
 ## The editor
 
@@ -55,24 +69,26 @@ transaction under 10 ms.
 The planner turns input into an **intent**; the game's mode planner turns the intent into ops
 ([planner internals](../planner/internals.md)).
 
-| Intent                                      | Made by                     | Ops (the island)                                                            | Profile accessors the ops use                                |
-| ------------------------------------------- | --------------------------- | --------------------------------------------------------------------------- | ------------------------------------------------------------ |
-| `Place { type, cell, rot }`                 | Drawer drag, click-to-place | `placeItem` or `placePlant`                                                 | `putItem`, `putPlant`                                        |
-| `PlaceOnSurface { type, table, x, y, rot }` | Drop on a table             | `placeOnSurface`                                                            | `onSurfaces` (read); a writer is still to come (roadmap T-3) |
-| `MoveSelection { dx, dy }`                  | Pick drag, keyboard move    | `move` per item (things on tables come along); `transplant` for terrain     | `putItem`, `setTerrain`, `setPathAt`, `setCornerAt`          |
-| `Rotate { ids, dir }`                       | `[` `]`, quick actions      | `rotate`                                                                    | `putItem`                                                    |
-| `Delete { scope }`                          | `Delete` key, menu          | `remove`, `clearPath`, `smoothTo`, `setWater off`                           | `removeObjects`, `setPathAt`, `setTerrain`                   |
-| `PaintPath { cells, type }`                 | Brush stroke                | `setPath`                                                                   | `setPathAt`                                                  |
-| `ErasePath { cells }`                       | Eraser stroke               | `clearPath`                                                                 | `setPathAt`                                                  |
-| `Fill { cells, type }`                      | Fill tool                   | `setPath`                                                                   | `setPathAt`                                                  |
-| `ShapeCorner { cell, corner, shape }`       | Cut tool                    | `setCorner`                                                                 | `setCornerAt`, `resolvePathCorner`, `resolveTerrainCorner`   |
-| `RaiseLower { cells, delta }`               | Actions menu slider         | `raise` / `lower` with terraces                                             | `setTerrain`, `isEditableTerrain`                            |
-| `Paste { fragment, at }`                    | Paste                       | the ops that recreate the fragment                                          | —                                                            |
-| `Select { shape, mode }`                    | Select tools                | none (selection is not a map edit; the planner updates its selection store) | `floodRegion`, `cellsInRect`                                 |
+| Intent                                      | Made by                     | Ops (the island)                                                                 | Profile accessors the ops use                                |
+| ------------------------------------------- | --------------------------- | -------------------------------------------------------------------------------- | ------------------------------------------------------------ |
+| `Place { type, cell, rot }`                 | Drawer drag, click-to-place | `placeItem` or `placePlant`                                                      | `putItem`, `putPlant`                                        |
+| `PlaceOnSurface { type, table, x, y, rot }` | Drop on a table             | `placeOnSurface`                                                                 | `onSurfaces` (read); a writer is still to come (roadmap T-3) |
+| `MoveSelection { dx, dy }`                  | Pick drag, keyboard move    | `move` per item (things on tables come along); `transplant` for terrain          | `putItem`, `setTerrain`, `setPathAt`, `setCornerAt`          |
+| `Rotate { ids, dir }`                       | `[` `]`, quick actions      | `rotate`                                                                         | `putItem`                                                    |
+| `Delete { scope }`                          | `Delete` key, menu          | `remove`, `clearPath`, `smoothTo`, `setWater off`                                | `removeObjects`, `setPathAt`, `setTerrain`                   |
+| `PaintPath { cells, type }`                 | Brush stroke                | `setPath`                                                                        | `setPathAt`                                                  |
+| `ErasePath { cells }`                       | Eraser stroke               | `clearPath`                                                                      | `setPathAt`                                                  |
+| `Fill { cells, type }`                      | Fill tool                   | `setPath`                                                                        | `setPathAt`                                                  |
+| `ShapeCorner { cell, corner, shape }`       | Cut tool                    | `setCorner`                                                                      | `setCornerAt`, `resolvePathCorner`, `resolveTerrainCorner`   |
+| `RaiseLower { cells, delta }`               | Actions menu slider         | `raise` / `lower` (Cliffs) or `raiseWater` / `lowerWater` (Water), with terraces | `setTerrain`, `isEditableTerrain`, `maxStepBetweenNeighbors` |
+| `PaintTerrain { cells, level, dir }`        | Cliffs brush and eraser     | `brushLayer`: only cells at `level` change, by `dir` (+1 or −1); no terraces     | `setTerrain`, `isEditableTerrain`                            |
+| `PaintWater { cells, level, on }`           | Water brush and eraser      | `setWater` on cells at `level`                                                   | `setTerrain`                                                 |
+| `Paste { fragment, at }`                    | Paste                       | the ops that recreate the fragment                                               | —                                                            |
+| `Select { shape, mode }`                    | Select tools                | none (selection is not a map edit; the planner updates its selection store)      | `floodRegion`, `cellsInRect`                                 |
 
-The terrain helpers the moldable terrain needs (`edgeRun` and `fallSides` for waterfalls,
+The terrain helpers the terrain ops need (`edgeRun` and `fallSides` for waterfalls,
 `isEditableTerrain`) are read-only facts in the profile. How the terrain moves is described in
-[how the planner behaves](../planner/behaviour.md#moldable-terrain).
+[how the planner behaves](../planner/behaviour.md#shaping-terrain).
 
 ## The editor worker
 
@@ -131,5 +147,5 @@ shares every row and entity that did not change. The old object stays as it was.
 - Every op has unit tests.
 - Property tests: "any op, then undo, gives back the map you started with", and "the recording
   draft gives the same patch as a full diff".
-- After a terrain drop, the profile's rules hold in the changed area (for Petit Planet: rule T3,
+- After any terrain op, the profile's rules hold in the changed area (for Petit Planet: rule T3,
   the step limit).

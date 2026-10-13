@@ -91,19 +91,106 @@ The cursor shows what will happen: open hand (can grab), closed hand (dragging),
 
 Glade orders things as **furniture → terrain → paths**. Things higher in the list can move without caring about the ones below.
 
-| You move      | Onto furniture                                                                         | Onto raised land                                                                            | Onto paths                                                                     |
-| ------------- | -------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
-| **Furniture** | ❌ Not allowed (overlap)                                                               | ✅ Sits on top. Must be flat and dry.                                                       | ✅ Allowed. Plants only on paths that allow plants.                            |
-| **Terrain**   | ❌ Not allowed where furniture stands (unless that furniture is part of what you move) | Stage 1–2: chunk replaces the land. Stage 3: merges ([Moldable terrain](#moldable-terrain)) | ✅ The paths under it are erased. A pill says how many. Undo brings them back. |
-| **Paths**     | Allowed (paths can run under items, if rules allow)                                    | ✅ Paths go **on top** of land (must be flat and dry)                                       | Replaces the old path there                                                    |
+| You move      | Onto furniture                                                                         | Onto raised land                                                                                         | Onto paths                                                                     |
+| ------------- | -------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| **Furniture** | ❌ Not allowed (overlap)                                                               | ✅ Sits on top. Must be flat and dry.                                                                    | ✅ Allowed. Plants only on paths that allow plants.                            |
+| **Terrain**   | ❌ Not allowed where furniture stands (unless that furniture is part of what you move) | Lift and drop: the piece replaces the land. Sculpt (later): merges ([Shaping terrain](#shaping-terrain)) | ✅ The paths under it are erased. A pill says how many. Undo brings them back. |
+| **Paths**     | Allowed (paths can run under items, if rules allow)                                    | ✅ Paths go **on top** of land (must be flat and dry)                                                    | Replaces the old path there                                                    |
 
 A path can never end up **under** a terrain block.
 
-## Moldable terrain
+## Shaping terrain
 
-> **In short:** Pick up a piece of land and move it. In stage 1 it must land somewhere valid or it snaps back. In stage 2, Glade builds temporary terraces around it to make it valid. In stage 3, land can merge into other land and push dents into it.
+> **In short:** Four ways to change terrain. The **brush** and **eraser** add or remove one layer,
+> stopping at every edge. The **Raise / lower** slider moves a selection of land or water up and
+> down. **Lift and drop** moves a piece of land. **Sculpt** (after 1.0) lets land merge into other
+> land. Everything happens live: when a change needs terraces, Glade shows them while you work and
+> keeps them when you let go. There is no separate "settle" step.
 
-### Stage 1: lift and drop
+| Way                   | Control                    | What changes                                 | Adds terraces?           | When a block can't change            |
+| --------------------- | -------------------------- | -------------------------------------------- | ------------------------ | ------------------------------------ |
+| Brush / eraser        | Toolbox, drag on the map   | One layer: only blocks at the stroke's level | No                       | Red stripes on it + a violation pill |
+| Raise / lower (land)  | Selection → slider         | The selected land, by whole levels           | Yes, live                | Skipped, striped, a pill counts them |
+| Raise / lower (water) | Selection → slider         | The selected water, by whole levels          | Yes, live, when lowering | Skipped, striped, a pill counts them |
+| Lift and drop         | Selection → drag           | A piece of land moves to a new place         | Yes, live                | The piece glows red                  |
+| Sculpt (after 1.0)    | Selection → drag into land | Two pieces of land merge into a new shape    | Yes, live                | The piece glows red                  |
+
+All terrain is one height per block (0 to 8), with an optional water block on top
+([Petit Planet's terrain](../profiles/petit-planet.md#per-map)).
+
+### Brush and eraser (one layer)
+
+The brush draws **one flat layer**. The stroke's **level** is the level of the block where you
+press. Only blocks at exactly that level change. Lower and higher blocks are left alone, so every
+edge acts as a border.
+
+**Example:** you press on a block at level 2 and paint across the whole row.
+
+| Block  | A   | B   | C   | D   | E   |
+| ------ | --- | --- | --- | --- | --- |
+| Before | 1   | 2   | 2   | 2   | 3   |
+| After  | 1   | 3   | 3   | 3   | 3   |
+
+A (level 1) and E (level 3) are not the stroke's level, so they stay as they are.
+
+1. **Size** is the brush's width only. A stroke never adds more than one level, however often it
+   passes over a block.
+2. A block at the stroke's level that **can't** change shows a **red striped overlay** while you
+   paint, and a violation pill explains why. Examples: rule T3 (too steep), a landmark, the beach,
+   part of an item standing on it, already at level 8.
+3. The brush never changes other blocks to make room. No terraces.
+4. Letting go commits every block that could change. The stroke is one undo step.
+
+| Tool   | Cliffs mode                                                                            | Water mode                                             |
+| ------ | -------------------------------------------------------------------------------------- | ------------------------------------------------------ |
+| Brush  | Raises land at the stroke's level by 1. Water blocks are borders too.                  | Adds water on dry blocks at the stroke's level.        |
+| Eraser | Lowers land at the stroke's level by 1. Press on level 3: only level 3 blocks go to 2. | Removes water from water blocks at the stroke's level. |
+
+### Raise and lower (land)
+
+1. Select an area (Cliffs mode).
+2. In the actions menu, use the **Raise / lower** slider.
+3. The selected shape goes up or down by whole levels.
+4. If a step at the edge would break the step limit (T3), Glade adds **terraces** around it, live.
+   They show purple while you slide and become real when you let go.
+5. Blocks that can't move are skipped and shown with stripes:
+   - under items that are only partly inside the selection;
+   - landmark and beach blocks;
+   - blocks already at the top (8) or bottom (0).
+6. A pill notes skipped blocks: "12 blocks skipped: under items".
+7. **Note:** if you lower a cliff and then raise it, it rises in the shape of the **selection**, not its old shape. Use Undo to get the old shape back.
+
+**Items on raised ground:** when an item's whole footprint is inside the selection, its blocks move together, so it stays flat.
+
+### Raise and lower (water)
+
+Water is always one block deep, on top of land. But a pond can sit low: dig a hole 3 levels deep
+with the eraser, then fill its bottom with the water brush.
+
+1. Select water (Water mode). Magic selects a whole water body.
+2. In the actions menu, use the **Raise / lower** slider.
+3. **Raise:** the water goes up, and the land under it rises with it, so the water stays one block
+   deep. Water can rise until it is level with the land around it (the cliff surface), never
+   above. Blocks that would pass it are skipped and striped.
+4. **Lower:** the water goes down, with the land under it. If the banks would become too steep
+   (T3), Glade adds terraces to the banks, live, like raising land.
+5. Waterfall rules (W2, W4) are checked live too.
+
+**Example:** a pond in ground at level 5.
+
+| Step               | Pond (water level)                            | Bank next to it | Bank one further out |
+| ------------------ | --------------------------------------------- | --------------- | -------------------- |
+| Start              | 2                                             | 5               | 5                    |
+| Raise by 3         | 5 (level with the ground: as high as it goes) | 5               | 5                    |
+| Raise by 1 more    | Skipped: can't pass the land around it        | 5               | 5                    |
+| Lower to 1 instead | 1                                             | **4** (terrace) | 5                    |
+
+Lowering to 1 makes a step of 4 next to the bank at 5, more than the limit of 3. So Glade lowers
+that bank to 4.
+
+### Lift and drop
+
+> Lift and drop and its live terraces are in 1.0, with no feature flag.
 
 1. Select land in Cliffs or Water mode.
 2. Drag it. Glade "lifts" the piece:
@@ -113,31 +200,30 @@ A path can never end up **under** a terrain block.
    - everything on top (items, plants, paths).
 3. The hole it leaves becomes **base level** (the most common height around the hole).
 4. A see-through copy follows the cursor, snapped to blocks.
-5. Drop it. It replaces the land under it. Paths under it are erased.
-6. If the result breaks a rule, it glows red. Deselect to return it to its last good position.
-
-**Example:** a long mountain. Select its tail. Drag it 6 blocks away. Now you have two mountains. Drag it only 1 block: the mountain just changes shape.
-
-### Stage 2: temporary terrain (auto-terrace)
-
-When a drop spot is **almost** valid, Glade builds the missing land for you.
-
-1. While you drag, Glade works out the **smallest change** to the ground around the piece that makes it valid:
+5. While you drag, Glade works out the **smallest change** to the ground around the piece that
+   makes the drop valid, and shows it as see-through purple with stripes (temporary terrain):
    - steps too tall (rule T3) → add terraces;
    - waterfall face too short (W2) → widen the cliff face;
    - corner shapes that can't exist (T5) → square them.
-2. This temporary land shows as see-through purple with stripes.
-3. Drop the piece: the temporary land becomes real, in the same undo step.
-4. If even temporary land can't fix it (for example, a landmark or the beach is in the way), it glows red instead.
+6. Drop it. The piece replaces the land under it, and the temporary terrain becomes real, in one
+   undo step. Paths under it are erased.
+7. If even temporary terrain can't fix it (for example, a landmark or the beach is in the way), it
+   glows red instead. Deselect to return it to its last good position.
+
+**Example:** a long mountain. Select its tail. Drag it 6 blocks away. Now you have two mountains. Drag it only 1 block: the mountain just changes shape.
 
 **How terraces are found (simple version):**
 
-- Every block near the piece gets a lowest and highest allowed height, so that no neighbour is more than 3 levels away.
-- Glade computes these limits by spreading out from the piece, one ring at a time (like ripples).
+- Every block near the change gets a lowest and highest allowed height, so that no neighbour is more than 3 levels away.
+- Glade computes these limits by spreading out from the change, one ring at a time (like ripples).
 - Each block is then clamped between its limits. Blocks already inside the limits don't change.
-- This is fast: one pass over a small area, well under 5 ms.
+- This is fast: one pass over a small area, well under 5 ms, so it runs on every drag update.
 
-### Stage 3: merge and dent (research)
+The same terraces serve the Raise / lower slider for land and water.
+
+### Sculpt (after 1.0, research)
+
+Sculpt lets blocks **merge into each other**, forming a new shape.
 
 | Situation                                                                             | Result                                                                                                                   |
 | ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
@@ -150,22 +236,8 @@ Default: Blend for land, Carve for water. A small toggle in the actions menu cha
 
 **Order of priority:** the thing you are moving always wins over the land it lands on.
 
-> Stage 3 needs research ([roadmap, Phase 9](../roadmap.md#phase-9-research-features-l-ongoing)). Stages 1 and 2 are the promise for the first full release.
-
-## Raise and lower
-
-1. Select an area (Cliffs mode).
-2. In the actions menu, use the **Raise / lower** slider.
-3. The selected shape goes up or down by whole levels.
-4. Existing cliffs inside stay valid: Glade adds terraces at the edges if needed (like stage 2).
-5. Blocks that can't move are skipped and shown with stripes:
-   - under items that are only partly inside the selection;
-   - landmark and beach blocks;
-   - blocks already at the top (8) or bottom (0).
-6. A pill notes skipped blocks: "12 blocks skipped: under items".
-7. **Note:** if you lower a cliff and then raise it, it rises in the shape of the **selection**, not its old shape. Use Undo to get the old shape back.
-
-**Items on raised ground:** when an item's whole footprint is inside the selection, its blocks move together, so it stays flat.
+> Sculpt needs research ([roadmap, Phase 9](../roadmap.md#phase-9-research-features-l-ongoing)).
+> Until then, dropping land onto land replaces it (lift and drop).
 
 ## Copy, paste, duplicate, delete
 
@@ -302,7 +374,7 @@ All keys can be changed in **Settings → Controls**. On Mac, `Ctrl` means `⌘`
 2. Draw around the tail of the mountain. Its cliff blocks and the trees on it are selected.
 3. Drag the selection 6 blocks to the east.
 4. The hole becomes base level. The tail lands as its own mountain.
-5. If a step is too steep, stage 2 adds purple temporary terraces. Let go to keep them.
+5. If a step is too steep, Glade shows purple temporary terraces. Let go to keep them.
 
 ### J4: Paint a path and round its corners
 
@@ -318,6 +390,14 @@ All keys can be changed in **Settings → Controls**. On Mac, `Ctrl` means `⌘`
 2. The actions menu opens. Drag the **Raise / lower** slider up one notch.
 3. The garden rises. Items fully inside rise with it. Terraces appear at the edges if needed.
 4. A pill says "4 blocks skipped: under items" if some items were only partly inside.
+
+### J6: Dig a pond and raise its water
+
+1. Press `3` (Cliffs mode). Choose **Eraser**.
+2. Press on the grass (level 5) and paint a 4 × 4 area. It drops to 4. Paint again three times: 3, then 2.
+3. Press `4` (Water mode). Choose **Brush**. Press on the hole's bottom (level 2) and paint it. It fills with water.
+4. Magic-select the pond. Drag the **Raise / lower** slider up 2 notches. The pond rises to 4.
+5. Drag it up once more: the pond reaches 5, level with the grass. One more notch: a pill says the water can't rise above the land around it.
 
 ## Things on tables (surfaces)
 

@@ -53,22 +53,22 @@ The same idea holds inside the code. **Glade has one engine; each game gives it 
 that work alike share the same tools and the same editing code, and differ only in the facts their
 profile states.
 
-**Example: dragging a T-shaped mountain.** Three block games, three support rules:
+**Example: the step limit.** In Petit Planet, land next to land can differ by at most 3 levels.
+The profile states this once: `maxStepBetweenNeighbors: 3`.
 
-1. **The planner** (the same in every game) turns the drag into a request: "move these blocks 5 to
+1. **The planner** (the same in every game) turns a drag into a request: "move these blocks 5 to
    the right". It never changes the map itself.
-2. **The shared terrain editing** (`packages/edit`) lifts the blocks, puts them down, and asks the
-   game's profile what to do with the parts left hanging in the air:
-   - Petit Planet (`support: "full"`): fill every column down to the ground.
-   - Timberborn (`support: { overhang: 2 }`): add pillars where an overhang is longer than 2.
-   - Minecraft (`support: "none"`): leave it as it is.
-3. **The profile's rules** check the result.
+2. **Petit Planet's terrain editing** lifts the blocks, puts them down, and adds terraces wherever
+   a step would be taller than `maxStepBetweenNeighbors`.
+3. **The profile's rule T3** checks the result against the same `maxStepBetweenNeighbors`.
 
 The drag (step 2) and the check (step 3) read the **same setting** from the profile, so an edit can
 never make something the rules reject. A fact about a game is written once, in its profile.
 
-Shared code is built for the games that exist. The terrain editing starts with the one support
-style Petit Planet needs; the others are added when a game that needs them arrives.
+Shared code is built for the games that exist. Terrain editing lives in Petit Planet's own `edit`
+package, because another game's terrain is likely a different model. Example: Petit Planet stores
+one height per block, so overhangs can't exist; Minecraft stores 3D blocks. Terrain code moves to
+a shared package only if a second game uses the same model.
 
 ## The parts
 
@@ -76,26 +76,26 @@ style Petit Planet needs; the others are added when a game that needs them arriv
 > are built from: shared packages that never name a game, and `packages/games/<id>/`, one folder
 > per game.
 
-| Part         | Package               | Holds                                                                                         |
-| ------------ | --------------------- | --------------------------------------------------------------------------------------------- |
-| **Shared**   | `@glade/core`         | Maps, grids, layers, kinds and catalogs, rule checks, map files. Never changes a map.         |
-|              | `@glade/render`       | The look as data: colours, times of day, seasons, 2D drawing, 3D geometry, item models.       |
-|              | `@glade/three`        | `MapScene`: draws a map in 3D with three.js. No UI.                                           |
-|              | `@glade/edit`         | Changes maps: ops on a draft, patches, transactions, undo, and shared ops (objects, terrain). |
-|              | `@glade/planner`      | The planner: the action pipeline, tools, selection, and its screens.                          |
-|              | `@glade/builder`      | The item builder: smart parts, layout rules, compiling to a model, and its screens.           |
-|              | `@glade/viewport`     | Shows a map: 2D canvas, `MapScene` host, cameras, input, highlights, picking.                 |
-|              | `@glade/ui`           | Design tokens and controls: buttons, toggles, sliders, menus, dialogs, shared icons.          |
-|              | `@glade/logging`      | The event registry, logger, redaction and the `.gladelog` format.                             |
-|              | `@glade/errors`       | `Result`, the error shape and the error code registry.                                        |
-|              | `@glade/formats`      | Map, pack and clipboard files and their migrations; API shapes for web and server.            |
-|              | `@glade/testkit`      | The contract every game passes, and render goldens. Tests only.                               |
-| **Per game** | `@glade/<id>-profile` | What the game is: maps, grids, rules, kinds, item fields, settings (like `support`), look.    |
-|              | `@glade/<id>-catalog` | The base items (with their models), categories, and builder templates.                        |
-|              | `@glade/<id>-edit`    | Edits only this game has (for example how bridges span gaps). Often small.                    |
-|              | `@glade/<id>-ui`      | How the game looks in Glade: theme, fonts, icons, modes, layers, rule text, guide pages.      |
-| **Apps**     | `@glade/web`          | The browser app: routes, the game registry, storage, the worker, the API client.              |
-|              | `@glade/server`       | The API: shared maps and packs, upload checks, bug reports.                                   |
+| Part         | Package               | Holds                                                                                           |
+| ------------ | --------------------- | ----------------------------------------------------------------------------------------------- |
+| **Shared**   | `@glade/core`         | Maps, grids, layers, kinds and catalogs, rule checks, map files. Never changes a map.           |
+|              | `@glade/render`       | The look as data: colours, times of day, seasons, 2D drawing, 3D geometry, item models.         |
+|              | `@glade/three`        | `MapScene`: draws a map in 3D with three.js. No UI.                                             |
+|              | `@glade/edit`         | Changes maps: ops on a draft, patches, transactions, undo, and shared ops (objects, terrain).   |
+|              | `@glade/planner`      | The planner: the action pipeline, tools, selection, and its screens.                            |
+|              | `@glade/builder`      | The item builder: smart parts, layout rules, compiling to a model, and its screens.             |
+|              | `@glade/viewport`     | Shows a map: 2D canvas, `MapScene` host, cameras, input, highlights, picking.                   |
+|              | `@glade/ui`           | Design tokens and controls: buttons, toggles, sliders, menus, dialogs, shared icons.            |
+|              | `@glade/logging`      | The event registry, logger, redaction and the `.gladelog` format.                               |
+|              | `@glade/errors`       | `Result`, the error shape and the error code registry.                                          |
+|              | `@glade/formats`      | Map, pack and clipboard files and their migrations; API shapes for web and server.              |
+|              | `@glade/testkit`      | The contract every game passes, and render goldens. Tests only.                                 |
+| **Per game** | `@glade/<id>-profile` | What the game is: maps, grids, rules, kinds, item fields, settings (like the step limit), look. |
+|              | `@glade/<id>-catalog` | The base items (with their models), categories, and builder templates.                          |
+|              | `@glade/<id>-edit`    | Edits only this game has (for example how bridges span gaps). Often small.                      |
+|              | `@glade/<id>-ui`      | How the game looks in Glade: theme, fonts, icons, modes, layers, rule text, guide pages.        |
+| **Apps**     | `@glade/web`          | The browser app: routes, the game registry, storage, the worker, the API client.                |
+|              | `@glade/server`       | The API: shared maps and packs, upload checks, bug reports.                                     |
 
 Today the shared profile packages (`core`, `render`, `three`, `testkit`) and Petit Planet's profile
 exist. The other packages are made when their code arrives, in the order of the
@@ -103,16 +103,16 @@ exist. The other packages are made when their code arrives, in the order of the
 
 ### Where does it go?
 
-| Ask yourself                                                         | Home                              |
-| -------------------------------------------------------------------- | --------------------------------- |
-| Is it a fact about the game (grids, kinds, what's allowed, support)? | `packages/games/<id>/profile`     |
-| Is it an item, a category or a builder template?                     | `packages/games/<id>/catalog`     |
-| Does it change a map, and could other games use it too?              | `packages/edit`                   |
-| Does it change a map, and only this game has it?                     | `packages/games/<id>/edit`        |
-| Is it about input, tools or the planner's screens?                   | `packages/planner`                |
-| Is it how the game looks in Glade (theme, icons, words on screen)?   | `packages/games/<id>/ui`          |
-| Is it a control every screen uses (a button, a slider)?              | `packages/ui`                     |
-| Is it about saving, sharing or the server?                           | `apps/server`, `packages/formats` |
+| Ask yourself                                                        | Home                              |
+| ------------------------------------------------------------------- | --------------------------------- |
+| Is it a fact about the game (grids, kinds, what's allowed, limits)? | `packages/games/<id>/profile`     |
+| Is it an item, a category or a builder template?                    | `packages/games/<id>/catalog`     |
+| Does it change a map, and could other games use it too?             | `packages/edit`                   |
+| Does it change a map, and only this game has it?                    | `packages/games/<id>/edit`        |
+| Is it about input, tools or the planner's screens?                  | `packages/planner`                |
+| Is it how the game looks in Glade (theme, icons, words on screen)?  | `packages/games/<id>/ui`          |
+| Is it a control every screen uses (a button, a slider)?             | `packages/ui`                     |
+| Is it about saving, sharing or the server?                          | `apps/server`, `packages/formats` |
 
 Something moves from a game into a shared package when a second game needs it.
 
@@ -251,7 +251,7 @@ glade/
 │  ├─ edit/                       editing: draft, patch, transaction, history
 │  │  └─ src/
 │  │     ├─ objects/              place, move, rotate, copy, delete
-│  │     └─ terrain/              raise, lower, sculpt, drag, and the support styles
+│  │     └─ paths/                paint, erase, fill, corners
 │  ├─ planner/                    pipeline, tools, selection, input, store, screens
 │  ├─ builder/                    smart parts engine and builder screens
 │  ├─ viewport/                   2D host, MapScene host, cameras, overlays, picking
@@ -263,7 +263,7 @@ glade/
 │     └─ petit-planet/
 │        ├─ profile/              @glade/petit-planet-profile
 │        ├─ catalog/              @glade/petit-planet-catalog
-│        ├─ edit/                 @glade/petit-planet-edit
+│        ├─ edit/                 @glade/petit-planet-edit: terrain, bridges
 │        ├─ ui/                   @glade/petit-planet-ui
 │        └─ references/           reference screenshots: local only, ignored by git
 ├─ tests/                         repo guards: import boundaries, references stay local
@@ -415,7 +415,8 @@ game and any set of views.
 | **Op**             | One edit, like `placeItem` or `raise`.                                                                                                                                                                                                           |
 | **Transaction**    | A group of ops that all succeed or all fail.                                                                                                                                                                                                     |
 | **Patch**          | The exact before and after of every changed cell. Used for undo.                                                                                                                                                                                 |
-| **Support style**  | A profile setting that says how terrain may hang over empty space: `full`, `none`, or a limited overhang.                                                                                                                                        |
+| **Terrace**        | Steps Glade adds around a terrain change, live, so no step breaks the step limit. Purple until you let go.                                                                                                                                       |
+| **Sculpt**         | Land merging into other land to form a new shape (after 1.0).                                                                                                                                                                                    |
 | **Catalog**        | The list of things you can place.                                                                                                                                                                                                                |
 | **Bind**           | Joining a catalog to a map type: `bind(planet, catalog)`. Rules and drawing work on the result.                                                                                                                                                  |
 | **Item**           | One catalog entry: a chair, a tree, a path type.                                                                                                                                                                                                 |

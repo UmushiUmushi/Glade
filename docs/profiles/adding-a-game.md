@@ -120,7 +120,7 @@ A profile never changes a map, so it has no ops: editing lives in `@glade/edit` 
 Rules check a document within a world-box scope (`scopeRange` and `inScope` help) and return
 violations with cells in the map's grids. Read every number a rule uses (a limit, a range) from the
 map's `params`, with your defaults there, so it can be changed with `customizeMap`. List your
-params in the profile's README. Settings that editing also needs (like a terrain support style)
+params in the profile's README. Settings that editing also needs (like a step limit)
 belong in the params too, so edits and rules read the same value. Local rules see only the region
 they are asked about plus the margin; make a rule non-local when it must see the whole map.
 `rulebook()` lists the rules, including informational entries.

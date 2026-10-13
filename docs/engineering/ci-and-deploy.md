@@ -131,7 +131,7 @@ flowchart TB
 ## Feature flags
 
 - A small `flags.json` in `/data` (and defaults in code).
-- Risky features ship behind flags: `terrain.stage2`, `terrain.stage3`, `builder.curves`, `signin.google`.
+- Risky features ship behind flags: `terrain.sculpt`, `builder.curves`, `signin.google`.
 - Changing a flag needs no redeploy: the server reads the file every minute and the app fetches flags on load.
 
 ## Monitoring

@@ -222,14 +222,14 @@ The coordinates follow the selected cell. With no selection, they follow the cur
 
 ### Highlights
 
-| State                                                                 | Look                                                | Not colour alone                |
-| --------------------------------------------------------------------- | --------------------------------------------------- | ------------------------------- |
-| Hover                                                                 | Yellow outline (`#F2B705`)                          | Outline gets thicker            |
-| Selected                                                              | Blue outline and soft glow (`#2F7DF6`)              | Dashed edge for area selections |
-| Invalid (while moving)                                                | Red outline (`#E03131`) + ⚠ yellow alert icon above | Icon + diagonal stripes         |
-| Cells causing a violation                                             | Flash red 3 times                                   | Flashing outline                |
-| Temporary terrain ([Moldable terrain](behaviour.md#moldable-terrain)) | See-through purple with stripes                     | Stripes                         |
-| Just changed                                                          | Short soft flash                                    | —                               |
+| State                                                               | Look                                                | Not colour alone                |
+| ------------------------------------------------------------------- | --------------------------------------------------- | ------------------------------- |
+| Hover                                                               | Yellow outline (`#F2B705`)                          | Outline gets thicker            |
+| Selected                                                            | Blue outline and soft glow (`#2F7DF6`)              | Dashed edge for area selections |
+| Invalid (while moving)                                              | Red outline (`#E03131`) + ⚠ yellow alert icon above | Icon + diagonal stripes         |
+| Cells causing a violation                                           | Flash red 3 times                                   | Flashing outline                |
+| Temporary terrain ([Shaping terrain](behaviour.md#shaping-terrain)) | See-through purple with stripes                     | Stripes                         |
+| Just changed                                                        | Short soft flash                                    | —                               |
 
 Settings has 2 extra colour sets for colour blindness (deuteranopia, tritanopia).
 
@@ -261,7 +261,7 @@ Pill text comes from the game's `ruleText` table, in its `ui` package ([Petit Pl
 | Furniture (area selection) | Copy · Paste · Duplicate · Delete · Select only… (houses / furniture / plants)                                                         |
 | Paths                      | Fill with… (palette) · Clear paths · Round corners · Cut corners · Copy · Paste · Delete                                               |
 | Cliffs                     | **Raise / lower** (first) · Copy · Paste · Delete (flatten to base level) · **Select ground too** (last, only when cliffs were picked) |
-| Water                      | Raise water level · Remove water · Copy · Paste · Delete                                                                               |
+| Water                      | **Raise / lower** (first) · Remove water · Copy · Paste · Delete                                                                       |
 | Empty selection            | Paste · Fill (Paths) · Raise (Cliffs) · Add water (Water)                                                                              |
 
 **Raise / lower control:** a vertical slider. 0 in the middle, and it snaps back to 0. Up raises, down lowers, 1 level per notch. The map preview updates as you slide. Letting go commits it as one undo step.
@@ -303,13 +303,13 @@ The palette shows each path type as a swatch with its pattern (cobble or plain) 
 
 ### Cliffs and Water modes
 
-Same tools, no Fill, no drawer.
+Same tools, no Fill, no drawer. Blocks a stroke can't change get red stripes and a violation pill ([brush and eraser](behaviour.md#brush-and-eraser-one-layer)).
 
-| Tool   | Cliffs                                                                         | Water                                    |
-| ------ | ------------------------------------------------------------------------------ | ---------------------------------------- |
-| Brush  | Raise land to a target level (or +1 per stroke). Settings: size, target level. | Add water on top blocks. Settings: size. |
-| Eraser | Lower land to the base level.                                                  | Remove water.                            |
-| Cut    | Shape cliff corners: square, round or cut (half a block).                      | Shape water corners.                     |
+| Tool   | Cliffs                                                                                                                         | Water                                                          |
+| ------ | ------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------- |
+| Brush  | Raises the stroke's level by one: only blocks at the level where you pressed. Other levels are borders. Setting: size (width). | Adds water on dry blocks at the stroke's level. Setting: size. |
+| Eraser | Lowers the stroke's level by one, the same way.                                                                                | Removes water at the stroke's level.                           |
+| Cut    | Shape cliff corners: square, round or cut (half a block).                                                                      | Shape water corners.                                           |
 
 ## More menu, game picker, settings, guide
 

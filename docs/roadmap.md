@@ -11,7 +11,7 @@ flowchart TB
     P1 --> P2["Phase 2<br/>Core editing"]
     P2 --> P3["Phase 3<br/>Selection + things on tables"]
     P3 --> P4["Phase 4<br/>Paths"]
-    P3 --> P5["Phase 5<br/>Terrain (stages 1-2)"]
+    P3 --> P5["Phase 5<br/>Terrain"]
     P2 --> P6["Phase 6<br/>Library + sharing"]
     P2 --> P7["Phase 7<br/>Builder MVP"]
     P4 & P5 & P6 & P7 --> P8["Phase 8<br/>Polish + audit → 1.0"]
@@ -95,18 +95,18 @@ table moves with the table.
 Brush, eraser, fill, cut; palette; brush settings; see-through items in Paths mode. **Exit:** J4
 passes.
 
-## Phase 5: Terrain, stages 1 and 2 (L)
+## Phase 5: Terrain (L)
 
-| Deliverables                                                                                                                                                                                                                                                                                                   |
-| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Cliffs and Water tools (brush, eraser, cut)                                                                                                                                                                                                                                                                    |
-| Raise/lower slider with terraces and skipped-block display                                                                                                                                                                                                                                                     |
-| Lift and drop (stage 1), last-good-position snap back                                                                                                                                                                                                                                                          |
-| Shared terrain ops in `packages/edit/terrain` with the `full` support style: `transplant`, terraces for raise/lower, `settle`; Petit Planet's waterfall handling in its `edit` package; temporary terrain overlay (stage 2). Built on the profile's `setTerrain`, `isEditableTerrain`, `edgeRun`, `fallSides`. |
-| Layer precedence rules ([moving things](planner/behaviour.md#moving-things))                                                                                                                                                                                                                                   |
+| Deliverables                                                                                                                                                                                                                                                         |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Cliffs and Water tools: one-layer brush and eraser with red stripes for blocked blocks, cut                                                                                                                                                                          |
+| Raise / lower slider for land **and water**, with live terraces and skipped-block display                                                                                                                                                                            |
+| Lift and drop with live terraces (temporary terrain overlay), last-good-position snap back. In the base release, no flag.                                                                                                                                            |
+| Terrain ops in `@glade/petit-planet-edit`: `brushLayer`, `raise` / `lower`, `raiseWater` / `lowerWater`, `transplant`, terraces, live waterfall checks. Built on the profile's `setTerrain`, `isEditableTerrain`, `edgeRun`, `fallSides`, `maxStepBetweenNeighbors`. |
+| Layer precedence rules ([moving things](planner/behaviour.md#moving-things))                                                                                                                                                                                         |
 
-**Exit:** J3 and J5 pass. Property test: after `settle`, rule T3 always holds in the settled area.
-Stage 2 behind flag `terrain.stage2` until approved.
+**Exit:** J3, J5 and J6 pass. Property test: after any terrain op, rule T3 holds in the changed
+area.
 
 ## Phase 6: Library and sharing (L)
 
@@ -148,7 +148,7 @@ checklist, first public release.
 
 ## Phase 9: Research features (L, ongoing)
 
-Terrain stage 3 (merge, dent, push/pull faces), curved toppings (mesh), more builder templates
+Sculpt (terrain merge, dent, push/pull faces), curved toppings (mesh), more builder templates
 (house, bridge, incline, tree), patterns on model parts (T-5).
 
 ## Phase 10: Homes (L)
@@ -168,8 +168,8 @@ another device.
 
 Home page · first-time tutorial overlay · live co-editing · Palworld · Stardew Valley ·
 translations · invite editors to a map (signed-in users) · Discord sign-in (Q-27) · custom home layouts (Q-24) · link a house on the island to its
-home (Q-25) · item states, like an open window (`itemModel`) · more terrain support styles, when a
-game needs them.
+home (Q-25) · item states, like an open window (`itemModel`) · terrain for other games (likely a new terrain model
+per game), when they arrive.
 
 ## Profile and engine tasks
 
@@ -177,14 +177,13 @@ Changes to the shared profile packages and Petit Planet's profile that the phase
 Each keeps the profile rules: shared packages stay game-free, rules stay customizable, every change
 has tests.
 
-| Id  | Change                                                                                                        | Why                                                                                        | Size | Phase          |
-| --- | ------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ | ---- | -------------- |
-| T-1 | **Split the island's `items` layer toggle** into buildings and other items (2D and 3D).                       | Separate Houses and Furniture layers.                                                      | S    | 2              |
-| T-2 | **Split the island's items chunk** by area, so changing one item rebuilds only the items near it.             | Today any item change rebuilds all 914 items and plants in 3D (15.6 ms on an Apple M4).    | S–M  | 2              |
-| T-3 | **A writer for things on tables** (`putOnSurface`), and `surfaceOf` in the public API.                        | Every other layer has a typed writer; this one has only a reader.                          | S    | 3              |
-| T-4 | **Build 3D chunks off the main thread** (let `MapScene` take chunks built in a worker).                       | The first 3D build of the island takes 0.65 s on an Apple M4. Only if phones are too slow. | M    | 1–2, if needed |
-| T-5 | **Patterns on model parts.**                                                                                  | Builder patterns. Patterns exist for wallpaper, flooring and paths, which is a start.      | M    | Later          |
-| T-6 | **A `support` param** in profiles with terrain (Petit Planet: `full`), read by the terrain ops and the rules. | One place for how terrain may overhang ([editing](edit/README.md#support-styles)).         | S    | 5              |
+| Id  | Change                                                                                            | Why                                                                                        | Size | Phase          |
+| --- | ------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ | ---- | -------------- |
+| T-1 | **Split the island's `items` layer toggle** into buildings and other items (2D and 3D).           | Separate Houses and Furniture layers.                                                      | S    | 2              |
+| T-2 | **Split the island's items chunk** by area, so changing one item rebuilds only the items near it. | Today any item change rebuilds all 914 items and plants in 3D (15.6 ms on an Apple M4).    | S–M  | 2              |
+| T-3 | **A writer for things on tables** (`putOnSurface`), and `surfaceOf` in the public API.            | Every other layer has a typed writer; this one has only a reader.                          | S    | 3              |
+| T-4 | **Build 3D chunks off the main thread** (let `MapScene` take chunks built in a worker).           | The first 3D build of the island takes 0.65 s on an Apple M4. Only if phones are too slow. | M    | 1–2, if needed |
+| T-5 | **Patterns on model parts.**                                                                      | Builder patterns. Patterns exist for wallpaper, flooring and paths, which is a start.      | M    | Later          |
 
 ### Measured speed
 
@@ -205,7 +204,7 @@ Apple M4, Node, a real-size island (375 items, 539 plants, 0 violations, 147 KB 
 
 | #   | Risk                                                                | Chance | Impact | What we do                                                                                 |
 | --- | ------------------------------------------------------------------- | ------ | ------ | ------------------------------------------------------------------------------------------ |
-| R1  | Moldable terrain (stage 3) is harder than hoped                     | High   | Medium | Ship stages 1–2 first. Stage 3 is research behind a flag.                                  |
+| R1  | Sculpt (merging terrain) is harder than hoped                       | High   | Medium | Ship lift and drop with live terraces first. Sculpt is research behind a flag.             |
 | R2  | 3D is slow on phones                                                | Medium | High   | Measure in Phase 1. Quality settings. Worker. 2D default on weak devices.                  |
 | R3  | Making enough base items takes long                                 | Medium | Medium | Start small, with the kinds every map needs. Community packs.                              |
 | R4  | Legal: fonts, names, look-alike items                               | Low    | High   | Open fonts only. Original models. No game assets. "Fan project, not affiliated" note.      |
@@ -224,33 +223,33 @@ Apple M4, Node, a real-size island (375 items, 539 plants, 0 violations, 147 KB 
 
 Each has a proposed answer.
 
-| #    | Question                                                                                                   | Proposed answer                                                                                                                   |
-| ---- | ---------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| Q-1  | What does **Home** do before the homepage exists?                                                          | A simple page listing games.                                                                                                      |
-| Q-2  | Which domain?                                                                                              | One domain. All URLs in these docs are placeholders.                                                                              |
-| Q-3  | Does Furniture mode include plants, houses and bridges?                                                    | Yes: it covers everything from the catalog drawer.                                                                                |
-| Q-4  | Are the key choices OK: Shift = swap tools, Ctrl = add, Alt = subtract, `[` `]` = rotate, `1`–`4` = modes? | Yes, and all keys can be changed.                                                                                                 |
-| Q-5  | Petit Planet item categories?                                                                              | Start with: Houses, Seating, Tables, Storage, Lights, Decor, Plants, Trees, Fences, Bridges and inclines, Outdoor.                |
-| Q-6  | Live co-editing (two people at once)?                                                                      | Not in 1.0. Each map has one owner; others make a copy. Later: invite editors who are signed in.                                  |
-| Q-7  | How does a library move to another device?                                                                 | Sign in with Google (optional). Without it, Download all my maps and Import.                                                      |
-| Q-8  | How long are shared maps kept?                                                                             | Snapshots: until the owner stops sharing, then 30 days. Drafts: kept. Pack versions: while a map uses them. Review at 10 GB.      |
-| Q-9  | Title font for Petit Planet?                                                                               | An open (OFL) rounded font such as Fredoka or Baloo 2.                                                                            |
-| Q-10 | Licence for the base catalog data?                                                                         | CC BY 4.0 (the code is MIT).                                                                                                      |
-| Q-11 | Where do bug reports go?                                                                                   | Stored on the server. A maintainer reviews them with `glade-log`, then one command opens a GitHub issue. Nothing posts by itself. |
-| Q-12 | Must a map follow all rules to be shared?                                                                  | No. Works in progress can be shared.                                                                                              |
-| Q-13 | Fences: fixed 1 × 1 footprint with a 0.5–1 tile body. OK?                                                  | Yes (linking pieces must be exactly one tile).                                                                                    |
-| Q-14 | Patterns in the builder for 1.0?                                                                           | No. Colours and finishes first.                                                                                                   |
-| Q-15 | What does "Raise water level" do?                                                                          | Raises the water body and its banks by one level, when valid.                                                                     |
-| Q-16 | Any usage analytics?                                                                                       | None. Only bug reports (opt-in) and server metrics.                                                                               |
-| Q-17 | Is 200 undo steps enough?                                                                                  | Yes.                                                                                                                              |
-| Q-18 | Keep local save points (version history) per map?                                                          | Yes, the last 20 named saves, on this device. Server-side draft history is a later idea.                                          |
-| Q-19 | Show the time slider range only from 7:00 to 21:00?                                                        | Yes, it matches Petit Planet's 4 presets.                                                                                         |
-| Q-20 | Default drag check rate (10 per second) and pill time (6 s)?                                               | Yes. Both can be changed in Settings.                                                                                             |
-| Q-21 | Homes (inside houses) in 1.0?                                                                              | No. The shell supports many map types from Phase 1 (cheap), but the Home planner is Phase 10, after 1.0.                          |
-| Q-22 | Things on tables in 1.0?                                                                                   | Yes, on the island, in Phase 3. It is small, and the base catalog will have tables.                                               |
-| Q-23 | Wallpaper and flooring with the user's own pictures?                                                       | Not at first: colours and shapes only. Pictures mean storing images, size limits and checking content.                            |
-| Q-24 | Let users design their own home layouts (rooms, doors)?                                                    | Not at first. Only the game's layouts. The profile can make a map for any layout, so this is possible later.                      |
-| Q-25 | Link a house on the island to its home design?                                                             | Later. Maps don't link to each other, so Glade would keep the link in its own map file.                                           |
-| Q-26 | Are the words OK: **map type** (island, home) and **map** (one design you make)?                           | Yes. The UI never says "map type"; it says "Island" or "Home".                                                                    |
-| Q-27 | Discord sign-in as well as Google?                                                                         | Later, if people ask. One config block in Better Auth.                                                                            |
-| Q-28 | Show an author name on shared maps?                                                                        | Not in 1.0. Later: an optional display name, never the Google name by default.                                                    |
+| #    | Question                                                                                                   | Proposed answer                                                                                                                                    |
+| ---- | ---------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Q-1  | What does **Home** do before the homepage exists?                                                          | A simple page listing games.                                                                                                                       |
+| Q-2  | Which domain?                                                                                              | One domain. All URLs in these docs are placeholders.                                                                                               |
+| Q-3  | Does Furniture mode include plants, houses and bridges?                                                    | Yes: it covers everything from the catalog drawer.                                                                                                 |
+| Q-4  | Are the key choices OK: Shift = swap tools, Ctrl = add, Alt = subtract, `[` `]` = rotate, `1`–`4` = modes? | Yes, and all keys can be changed.                                                                                                                  |
+| Q-5  | Petit Planet item categories?                                                                              | Start with: Houses, Seating, Tables, Storage, Lights, Decor, Plants, Trees, Fences, Bridges and inclines, Outdoor.                                 |
+| Q-6  | Live co-editing (two people at once)?                                                                      | Not in 1.0. Each map has one owner; others make a copy. Later: invite editors who are signed in.                                                   |
+| Q-7  | How does a library move to another device?                                                                 | Sign in with Google (optional). Without it, Download all my maps and Import.                                                                       |
+| Q-8  | How long are shared maps kept?                                                                             | Snapshots: until the owner stops sharing, then 30 days. Drafts: kept. Pack versions: while a map uses them. Review at 10 GB.                       |
+| Q-9  | Title font for Petit Planet?                                                                               | An open (OFL) rounded font such as Fredoka or Baloo 2.                                                                                             |
+| Q-10 | Licence for the base catalog data?                                                                         | CC BY 4.0 (the code is MIT).                                                                                                                       |
+| Q-11 | Where do bug reports go?                                                                                   | Stored on the server. A maintainer reviews them with `glade-log`, then one command opens a GitHub issue. Nothing posts by itself.                  |
+| Q-12 | Must a map follow all rules to be shared?                                                                  | No. Works in progress can be shared.                                                                                                               |
+| Q-13 | Fences: fixed 1 × 1 footprint with a 0.5–1 tile body. OK?                                                  | Yes (linking pieces must be exactly one tile).                                                                                                     |
+| Q-14 | Patterns in the builder for 1.0?                                                                           | No. Colours and finishes first.                                                                                                                    |
+| Q-15 | What does raising and lowering water do?                                                                   | Decided: water moves with the land under it and stays one block deep. It can't rise above the land around it; lowering adds terraces to the banks. |
+| Q-16 | Any usage analytics?                                                                                       | None. Only bug reports (opt-in) and server metrics.                                                                                                |
+| Q-17 | Is 200 undo steps enough?                                                                                  | Yes.                                                                                                                                               |
+| Q-18 | Keep local save points (version history) per map?                                                          | Yes, the last 20 named saves, on this device. Server-side draft history is a later idea.                                                           |
+| Q-19 | Show the time slider range only from 7:00 to 21:00?                                                        | Yes, it matches Petit Planet's 4 presets.                                                                                                          |
+| Q-20 | Default drag check rate (10 per second) and pill time (6 s)?                                               | Yes. Both can be changed in Settings.                                                                                                              |
+| Q-21 | Homes (inside houses) in 1.0?                                                                              | No. The shell supports many map types from Phase 1 (cheap), but the Home planner is Phase 10, after 1.0.                                           |
+| Q-22 | Things on tables in 1.0?                                                                                   | Yes, on the island, in Phase 3. It is small, and the base catalog will have tables.                                                                |
+| Q-23 | Wallpaper and flooring with the user's own pictures?                                                       | Not at first: colours and shapes only. Pictures mean storing images, size limits and checking content.                                             |
+| Q-24 | Let users design their own home layouts (rooms, doors)?                                                    | Not at first. Only the game's layouts. The profile can make a map for any layout, so this is possible later.                                       |
+| Q-25 | Link a house on the island to its home design?                                                             | Later. Maps don't link to each other, so Glade would keep the link in its own map file.                                                            |
+| Q-26 | Are the words OK: **map type** (island, home) and **map** (one design you make)?                           | Yes. The UI never says "map type"; it says "Island" or "Home".                                                                                     |
+| Q-27 | Discord sign-in as well as Google?                                                                         | Later, if people ask. One config block in Better Auth.                                                                                             |
+| Q-28 | Show an author name on shared maps?                                                                        | Not in 1.0. Later: an optional display name, never the Google name by default.                                                                     |
