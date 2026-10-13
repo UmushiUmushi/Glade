@@ -1,18 +1,18 @@
 # Accounts and sessions
 
 > **In short:** Nobody signs up. The first time you save, Glade quietly makes an **anonymous
-> account** for you and remembers it with a cookie. Your maps belong to that account. **Sign in
-> with Google** is optional: it keeps your maps safe and puts them on all your devices. There are no
+> account** for you and remembers it with a cookie. Your maps belong to that account. **Log in** (with Google) is
+> optional: it keeps your maps safe and puts them on all your devices. There are no
 > passwords and no keys to copy. [Better Auth](https://www.better-auth.com) does the work, inside
 > Glade's own server and SQLite file.
 
 ## Who owns what
 
-| You are…              | How Glade knows you       | What you can do                               |
-| --------------------- | ------------------------- | --------------------------------------------- |
-| A visitor (no saves)  | It doesn't                | Open shared links, look around, start a map   |
-| Anonymous             | A cookie in this browser  | Everything: save, share, copy, build packs    |
-| Signed in with Google | A cookie + your Google id | Everything, on every device where you sign in |
+| You are…              | How Glade knows you       | What you can do                              |
+| --------------------- | ------------------------- | -------------------------------------------- |
+| A visitor (no saves)  | It doesn't                | Open shared links, look around, start a map  |
+| Anonymous             | A cookie in this browser  | Everything: save, share, copy, build packs   |
+| Logged in with Google | A cookie + your Google id | Everything, on every device where you log in |
 
 A map or pack has exactly **one owner**. Only the owner can change it. Other people make their own
 copy ([sharing](sharing.md)). So there are no edit keys, no edit links and nothing to take back.
@@ -43,17 +43,27 @@ sequenceDiagram
 
 **The one risk:** an anonymous account lives in one browser's cookie. Clearing site data, or a new
 device, means a new empty account. Nobody can get the old one back, not even the site owner. That is
-why Glade nudges people to sign in.
+why Glade nudges people to log in.
 
-| When                     | Nudge (a pill, never a blocking dialog)                   |
-| ------------------------ | --------------------------------------------------------- |
-| After the first share    | "Sign in with Google so you don't lose this map."         |
-| When the 3rd map is made | "Sign in to keep your maps on all your devices."          |
-| Settings → Account       | Always shows **Sign in with Google** for anonymous users. |
+| When                        | Nudge (a pill, never a blocking dialog)              |
+| --------------------------- | ---------------------------------------------------- |
+| After the first share       | "Log in so you don't lose this map."                 |
+| When the 3rd map is made    | "Log in to keep your maps on all your devices."      |
+| Menu and Settings → Account | Always show a **Log in** button for anonymous users. |
 
-A nudge shows once. **Download all my maps** (Settings → Account) is always there as a backup.
+A nudge shows once.
 
-## Sign in with Google
+## Log in
+
+One **Log in** button (in the Menu and in Settings → Account) opens the **login screen**:
+
+> **Log in**
+> Your maps already save without an account. Log in to keep them safe and to use them on all your
+> devices. There is nothing to sign up for: your Google account is enough.
+>
+> **[Continue with Google]**
+
+Logging in the first time is the sign-up. There is no separate sign-up screen.
 
 Google is the only sign-in. No passwords means no "forgot password" emails, no email checks and no
 password storage.
@@ -64,7 +74,7 @@ sequenceDiagram
     participant G as Glade (browser)
     participant S as Glade server
     participant Go as Google
-    U->>G: Sign in with Google
+    U->>G: Log in → Continue with Google
     G->>Go: Google's sign-in page
     Go-->>S: callback with the Google id
     S->>S: find or create the Google user
@@ -78,7 +88,7 @@ sequenceDiagram
 | --------------------------------------------- | ------------------------------------------------------------------------------ |
 | First time with this Google account           | A Google user is made. Everything from the anonymous user moves to it.         |
 | This Google account already has maps (laptop) | Everything from this browser's anonymous user is **added** to the Google user. |
-| Already signed in on this device              | Nothing to move.                                                               |
+| Already logged in on this device              | Nothing to move.                                                               |
 
 Moving is one database transaction: it changes the `owner_id` of every draft, shared map and pack.
 Nothing is copied, and share links keep working.
@@ -92,7 +102,7 @@ block (Q-27).
 | ------------- | ---------------------------------------------- | ---------------------------------------------------------- |
 | Cookie name   | `glade.session_token`                          | Better Auth's cookie, with the `glade` prefix              |
 | Cookie flags  | `HttpOnly`, `Secure`, `SameSite=Lax`, `Path=/` | Scripts can't read it; other sites can't send it on a POST |
-| Lifetime      | 365 days, renewed once a day while used        | Anonymous users stay "signed in" while they keep coming    |
+| Lifetime      | 365 days, renewed once a day while used        | Anonymous users stay "logged in" while they keep coming    |
 | Stored where  | Better Auth's `session` table in `glade.db`    | One file, one backup                                       |
 | Other cookies | None                                           | No tracking, no cookie banner needed                       |
 
@@ -100,30 +110,41 @@ block (Q-27).
 (IndexedDB, localStorage) after 7 days without a visit. A cookie set by the server, on the same
 site, is not hit by that rule. So the account survives, and the maps live on the server.
 
-### Signing out
+### Logging out
 
-| You are               | Sign out                                                                                         |
-| --------------------- | ------------------------------------------------------------------------------------------------ |
-| Signed in with Google | Clears the cookie and this browser's cached maps. Your maps stay on the server.                  |
-| Anonymous             | **Hidden.** Signing out would lose the maps forever. Settings offers **Delete my data** instead. |
+| You are   | Log out                                                                                          |
+| --------- | ------------------------------------------------------------------------------------------------ |
+| Logged in | Clears the cookie and this browser's cached maps. Your maps stay on the server.                  |
+| Anonymous | **Hidden.** Logging out would lose the maps forever. Settings offers **Delete my data** instead. |
 
 ### Many devices
 
-Sign in with Google on each device. Each device has its own session. **Settings → Account →
-Devices** lists them (browser, last used) with **Sign out** on each.
+Log in on each device. Each device has its own session. **Settings → Account → Devices** lists
+them (browser, last used) with **Log out** on each.
 
 ### Two devices editing the same map
 
-Each draft has a **revision** number. A save says which revision it started from. If another
-device saved first, the server answers `409`, and Glade asks:
+There is no conflict dialog. **The newest saved version always wins**, and a device that is behind
+reloads it.
 
-| Choice                     | Does                                                              |
-| -------------------------- | ----------------------------------------------------------------- |
-| **Keep both**              | This device's version becomes a new draft: "Beach island (copy)". |
-| **Use the other device's** | Loads the newer one. This device's version is kept as a copy.     |
-| **Use this device's**      | Saves over it.                                                    |
+1. Each draft has a **revision** number. Every save says which revision it started from.
+2. When a tab comes back into view (you switch from your phone back to your laptop), Glade asks the
+   server for the draft's revision. If it is newer, Glade loads the newer version **before** you
+   edit. This catches almost every case.
+3. If a save still arrives late (another device saved first), the server answers `409`. Glade
+   loads the newest version and drops this device's unsaved edits: usually the last few seconds of
+   work.
+4. A pill says so: "This map changed on another device. Loaded the latest version." Undo history is
+   cleared, because it belongs to the old version.
 
-This only happens to one person on two devices at once, so it is rare.
+**Example:** you edit on your laptop, then on your phone, and leave the laptop tab open. Back on the
+laptop, the tab notices the phone's newer revision and reloads before your first click.
+
+## Your data
+
+**Settings → Account → Download my data** downloads a zip: your drafts, your shares and their
+versions, your packs, and your account details (dates, and your Google email if logged in). Privacy
+law gives people a right to a copy of their data, and this button is that copy.
 
 ## Deleting an account
 
@@ -161,7 +182,7 @@ There is no admin role in the web app. The site owner runs `glade-admin` on the 
 | Sessions: browser family and last-used date                  | IP addresses (only counted in memory for rate limits) |
 | Your drafts, shares and packs                                | Analytics, tracking cookies                           |
 
-The email is used for sign-in and to show "Signed in as …". Glade sends no emails. A short privacy
+The email is used for sign-in and to show "Logged in as …". Glade sends no emails. A short privacy
 page (`/privacy`) says all of this in plain words. Shared maps show no author name in 1.0 (Q-28).
 
 ## Setup

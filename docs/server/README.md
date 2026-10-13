@@ -13,20 +13,20 @@ Glade's API is under `/api/v1`. Better Auth's routes are under `/api/auth`. Bodi
 | Method | Path                                                          | Does                                                   |
 | ------ | ------------------------------------------------------------- | ------------------------------------------------------ |
 | `POST` | `/api/auth/sign-in/anonymous`                                 | Makes an anonymous user and a session (on first save). |
-| `POST` | `/api/auth/sign-in/social`                                    | Starts Sign in with Google (`provider: "google"`).     |
+| `POST` | `/api/auth/sign-in/social`                                    | Starts logging in with Google (`provider: "google"`).  |
 | `GET`  | `/api/auth/callback/google`                                   | Google sends the user back here.                       |
 | `GET`  | `/api/auth/get-session`                                       | Who am I: user (anonymous or Google), session.         |
 | `POST` | `/api/auth/sign-out`                                          | Ends this session.                                     |
-| `GET`  | `/api/auth/list-sessions` · `POST` `/api/auth/revoke-session` | Devices list and "sign out this device".               |
+| `GET`  | `/api/auth/list-sessions` · `POST` `/api/auth/revoke-session` | Devices list and "log out this device".                |
 
 **Drafts** (the things you are working on)
 
 | Method   | Path                | Needs                         | Does                                                                                                                                              |
 | -------- | ------------------- | ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `GET`    | `/drafts`           | Session                       | My drafts (maps and packs): names, badges, thumbnails. No contents.                                                                               |
-| `POST`   | `/drafts`           | Session                       | New draft (blank, imported or a copy). Returns `id`, `revision: 1`.                                                                               |
+| `POST`   | `/drafts`           | Session                       | New draft (blank or a copy). Returns `id`, `revision: 1`.                                                                                         |
 | `GET`    | `/drafts/:id`       | —                             | Owner: the draft's file and `revision`. Anyone else: `{ shareId }` if the draft is shared, otherwise `404` ([draft URLs](sharing.md#draft-urls)). |
-| `PUT`    | `/drafts/:id`       | Owner, `If-Match: <revision>` | Overwrite. `409` if another device saved first.                                                                                                   |
+| `PUT`    | `/drafts/:id`       | Owner, `If-Match: <revision>` | Overwrite. `409` if another device saved first; the app then reloads the latest ([two devices](accounts.md#two-devices-editing-the-same-map)).    |
 | `DELETE` | `/drafts/:id`       | Owner                         | Delete the draft. `?stop_sharing=1` also stops its share.                                                                                         |
 | `POST`   | `/drafts/:id/share` | Owner                         | Freeze the draft as a new snapshot. Makes the share on first use.                                                                                 |
 
@@ -44,14 +44,14 @@ Glade's API is under `/api/v1`. Better Auth's routes are under `/api/auth`. Bodi
 
 **Other**
 
-| Method   | Path         | Needs                | Does                                                                                  |
-| -------- | ------------ | -------------------- | ------------------------------------------------------------------------------------- |
-| `GET`    | `/me/export` | Session              | A zip of all my drafts and packs.                                                     |
-| `DELETE` | `/me`        | Session              | Delete my account ([accounts](accounts.md#deleting-an-account)).                      |
-| `POST`   | `/reports`   | —                    | Send a bug report (+ log file, + optional map).                                       |
-| `POST`   | `/abuse`     | Session              | Report a shared map or pack: reason + note ([abuse reports](admin.md#abuse-reports)). |
-| `GET`    | `/health`    | —                    | `200` when the database and disk work.                                                |
-| `GET`    | `/metrics`   | Private network only | Prometheus metrics.                                                                   |
+| Method   | Path         | Needs                | Does                                                                                                          |
+| -------- | ------------ | -------------------- | ------------------------------------------------------------------------------------------------------------- |
+| `GET`    | `/me/export` | Session              | Download my data: a zip of my drafts, shares, packs and account details ([your data](accounts.md#your-data)). |
+| `DELETE` | `/me`        | Session              | Delete my account ([accounts](accounts.md#deleting-an-account)).                                              |
+| `POST`   | `/reports`   | —                    | Send a bug report (+ log file, + optional map).                                                               |
+| `POST`   | `/abuse`     | Session              | Report a shared map or pack: reason + note ([abuse reports](admin.md#abuse-reports)).                         |
+| `GET`    | `/health`    | —                    | `200` when the database and disk work.                                                                        |
+| `GET`    | `/metrics`   | Private network only | Prometheus metrics.                                                                                           |
 
 **Error example**
 

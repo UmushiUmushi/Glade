@@ -9,8 +9,8 @@ has its own folder of docs with the details ([docs/README.md](README.md) lists t
 > **In short:** Glade has two tools per game: a **Planner** (design your island) and a **Builder**
 > (make your own items). Each game is described by a **profile**: its maps, rules, item kinds and
 > look. The rest of Glade is shared by every game: the screens, the tools, editing, saving and
-> sharing. No sign-up: every visitor quietly gets an account on first save, and Sign in with
-> Google is optional. It runs as one Docker container.
+> sharing. No sign-up: every visitor quietly gets an account on first save, and logging in
+> with Google is optional. It runs as one Docker container.
 
 ### What a user can do
 
@@ -148,7 +148,7 @@ flowchart LR
         API --> Blobs
     end
     Pipe -- "save drafts, share,<br/>open links, bug reports" --> API
-    Auth -- "Sign in with Google<br/>(optional)" --> Google["Google"]
+    Auth -- "Log in with Google<br/>(optional)" --> Google["Google"]
     Proxy["Reverse proxy<br/>(HTTPS)"] --- API
 ```
 
@@ -179,7 +179,7 @@ flowchart LR
 ```mermaid
 sequenceDiagram
     actor U as User
-    participant T as Pick tool
+    participant T as Pointer tool
     participant P as Pipeline
     participant W as Editor worker
     participant R as Profile rules
@@ -347,8 +347,8 @@ export interface GameUi {
 }
 
 export interface MapUi {
-  modes: ViewportMode[]; // island: Furniture, Paths, Cliffs, Water
-  layers: LayerDef[]; // island: Houses, Furniture, Plants, Paths, Grid, Area
+  modes: ViewportMode[]; // island: Items, Paths, Cliffs, Water
+  layers: LayerDef[]; // island: Buildings, Furniture, Plants, Paths, Grid, Area
   environment: EnvironmentDef; // time key points, season toggle (a home's look is fixed)
   ruleText: RuleTextTable; // friendly violation text
   describe: TextViews; // screen reader text
@@ -427,10 +427,10 @@ game and any set of views.
 | **Pack**           | A shareable bundle of custom items made in the builder.                                                                                                                                                                                          |
 | **Base catalog**   | The items Glade ships for a game (not custom).                                                                                                                                                                                                   |
 | **Viewport**       | The big area that shows the map.                                                                                                                                                                                                                 |
-| **Viewport mode**  | What you are working on: Furniture, Paths, Cliffs or Water.                                                                                                                                                                                      |
+| **Viewport mode**  | What you are working on: Items, Paths, Cliffs or Water.                                                                                                                                                                                          |
 | **Shell**          | The planner's shared frame: side panel, rail, viewport chrome, toolbox frame. The same in every game.                                                                                                                                            |
 | **Scope**          | What tools can touch in the current viewport mode.                                                                                                                                                                                               |
-| **Cursor control** | Hand (camera) or Pick (choose and move things).                                                                                                                                                                                                  |
+| **Cursor control** | Camera (move the view) or Pointer (choose and move things).                                                                                                                                                                                      |
 | **Select tool**    | Lasso, Rectangle, Circle or Magic.                                                                                                                                                                                                               |
 | **Select mode**    | Set (replace), Add, or Subtract.                                                                                                                                                                                                                 |
 | **Pill**           | A small message that slides in from the top. Used for violations.                                                                                                                                                                                |
@@ -443,7 +443,7 @@ game and any set of views.
 | **Intent**         | What the user meant, like "move these 3 chairs 2 tiles left".                                                                                                                                                                                    |
 | **Pipeline**       | The fixed steps every action goes through ([planner internals](planner/internals.md)).                                                                                                                                                           |
 | **Worker**         | A background thread in the browser. Editing and rule checks run there so the screen never freezes.                                                                                                                                               |
-| **Account**        | Who owns maps and packs. Anonymous (made on first save, kept by a cookie) or signed in with Google.                                                                                                                                              |
+| **Account**        | Who owns maps and packs. Anonymous (made on first save, kept by a cookie) or logged in with Google.                                                                                                                                              |
 | **Draft**          | A map or pack you are working on. Only its owner can change it. Autosaved to the server.                                                                                                                                                         |
 | **Snapshot**       | A frozen copy of a draft, made by Share or Update shared map. Never changes.                                                                                                                                                                     |
 | **Share link**     | Shows the latest snapshot of a shared map or pack, read-only.                                                                                                                                                                                    |

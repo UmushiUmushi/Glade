@@ -47,7 +47,7 @@
 // packages/games/petit-planet/edit/src/maps/planet/plans/furniture.test.ts
 it("plans one move op per selected item", () => {
   const ctx = fakeContext({ selection: ["chair-1", "chair-2"] });
-  const plan = planFurniture({ kind: "MoveSelection", dx: 2, dy: 0 }, ctx);
+  const plan = planItems({ kind: "MoveSelection", dx: 2, dy: 0 }, ctx);
   expect(plan).toEqual(
     ok({
       label: "Move 2 items",

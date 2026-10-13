@@ -52,6 +52,7 @@ docker compose exec glade glade-admin stats
 | `unban <user id>`                | Undoes `ban`. Hidden shares stay hidden until `unhide`.                                                                                                            |
 | `dismiss <case id>`              | Closes an abuse case: the reports were wrong. An auto-hidden map comes back.                                                                                       |
 | `bugs close <report id>`         | Marks a bug report done.                                                                                                                                           |
+| `export-user <user id \| email>` | Saves a zip of that user's drafts, shares and packs to the current folder, the same as **Download my data**, for someone who asks by email. Changes nothing.       |
 | `delete-user <user id \| email>` | Deletes an account, the same as **Delete my account** ([accounts](accounts.md#deleting-an-account)). For privacy requests by email. Takes a database backup first. |
 
 **Options for every command**

@@ -58,12 +58,12 @@ are cached in IndexedDB, so they still open.
 
 **Two devices at once:** see [accounts](accounts.md#two-devices-editing-the-same-map).
 
-**Save points:** **More → Save** makes a named save point of the current draft (Q-18). Save points
+**Save points:** **Menu → Save map** makes a named save point of the current draft (Q-18). Save points
 live in IndexedDB on this device.
 
 ## The Library
 
-One window, opened from **More → Open map…** or **More → Catalog packs…**. It lists what your
+One window, opened from **Menu → Load map…** or **Menu → View catalog packs…**. It lists what your
 account owns, from the server.
 
 | Part         | Detail                                                      |
@@ -73,7 +73,7 @@ account owns, from the server.
 | Search       | By name                                                     |
 | Sort         | Last opened (default) · Name · Last changed                 |
 | Card         | Thumbnail (a 3D snapshot), name, game, last changed, badges |
-| Card actions | Open · Rename · Duplicate · Share… · Export file · Delete   |
+| Card actions | Open · Rename · Duplicate · Share… · Delete                 |
 
 | Badge              | Meaning                                                    |
 | ------------------ | ---------------------------------------------------------- |
@@ -95,7 +95,7 @@ untouched and she keeps editing it. A draft that was never shared is never delet
 
 ## Share a map, step by step
 
-1. **More → Share…**
+1. **Menu → Share…**
 2. The dialog lists what will be published: the map, and any of **your packs** it uses that have
    changes ("This map uses 2 of your packs. They will be shared too.").
 3. Click **Create link**.
@@ -157,8 +157,8 @@ The private map page, inside the planner's frame:
 
 > **This map is private.** Only its owner can open it.
 >
-> **[Start a new map]** · **[Sign in with Google]** (shown when you are not signed in, in case
-> the map is yours from another device)
+> **[Start a new map]** · **[Log in]** (shown when you are not logged in, in case the map is
+> yours from another device)
 
 Never a silent redirect to a blank planner: that looks like the map loaded empty.
 
@@ -187,11 +187,12 @@ Packs work like maps: a draft that only you change, frozen published versions, a
 Only the site owner's `glade-admin hide` ([running the site](admin.md)) removes a pack version that maps use (for abuse). Those maps then show
 grey stubs and "3 items are no longer available".
 
-## Files
+## No files
 
-**Export file** downloads a `.glade-map.json` ([formats](formats.md)). **Import file** makes a new
-draft from one. **Settings → Account → Download all my maps** downloads a zip of every draft and
-pack. Files work with no account.
+Glade has no file import or export. Maps and packs live on the server, found by their ids, and
+links are how they move between people. The one exception is privacy: **Settings → Account →
+Download my data** gives you a zip of everything Glade holds for you
+([accounts](accounts.md#your-data)).
 
 ## What the server knows
 

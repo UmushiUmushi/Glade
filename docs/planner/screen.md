@@ -6,25 +6,25 @@
 
 ### Desktop
 
-| Part                             | Section                                                                          |
-| -------------------------------- | -------------------------------------------------------------------------------- |
-| More menu                        | [More menu, game picker, settings, guide](#more-menu-game-picker-settings-guide) |
-| Game picker                      | [More menu, game picker, settings, guide](#more-menu-game-picker-settings-guide) |
-| Cursor controls                  | [Cursor](#cursor)                                                                |
-| Select tools and modes           | [Select](#select)                                                                |
-| Environment: time and snow       | [Environment](#environment)                                                      |
-| Layers                           | [Layers](#layers)                                                                |
-| Collapse panel                   | [The rail (collapsed panel)](#the-rail-collapsed-panel)                          |
-| Viewport modes                   | [Viewport mode buttons (top left)](#viewport-mode-buttons-top-left)              |
-| Undo and redo                    | [Undo and redo](#undo-and-redo)                                                  |
-| Violation pills                  | [Violation pills](#violation-pills)                                              |
-| Viewport menu                    | [Viewport menu (top right)](#viewport-menu-top-right)                            |
-| Selected item with quick actions | [Highlights](#highlights)                                                        |
-| Hovered item                     | [Highlights](#highlights)                                                        |
-| FPS and coordinates              | [FPS and coordinates (bottom left)](#fps-and-coordinates-bottom-left)            |
-| Toolbox tabs and search          | [Toolbox](#toolbox)                                                              |
-| New item (opens the builder)     | [Furniture mode: the item drawer](#furniture-mode-the-item-drawer)               |
-| Item cards                       | [Furniture mode: the item drawer](#furniture-mode-the-item-drawer)               |
+| Part                         | Section                                                                |
+| ---------------------------- | ---------------------------------------------------------------------- |
+| Menu                         | [Menu, game picker, settings, guide](#menu-game-picker-settings-guide) |
+| Game picker                  | [Menu, game picker, settings, guide](#menu-game-picker-settings-guide) |
+| Tools (Camera, Pointer)      | [Tools](#tools)                                                        |
+| Select tools and modes       | [Select](#select)                                                      |
+| Environment: time and snow   | [Environment](#environment)                                            |
+| Layers                       | [Layers](#layers)                                                      |
+| Collapse panel               | [The rail (collapsed panel)](#the-rail-collapsed-panel)                |
+| Viewport modes               | [Viewport mode buttons (top left)](#viewport-mode-buttons-top-left)    |
+| Undo and redo                | [Undo and redo](#undo-and-redo)                                        |
+| Violation pills              | [Violation pills](#violation-pills)                                    |
+| Viewport menu                | [Viewport menu (top right)](#viewport-menu-top-right)                  |
+| Selection bar                | [Selection bar and actions menu](#selection-bar-and-actions-menu)      |
+| Hovered item                 | [Highlights](#highlights)                                              |
+| FPS and coordinates          | [FPS and coordinates (bottom left)](#fps-and-coordinates-bottom-left)  |
+| Toolbox tabs and search      | [Toolbox](#toolbox)                                                    |
+| New item (opens the builder) | [Items mode: the item drawer](#items-mode-the-item-drawer)             |
+| Item cards                   | [Items mode: the item drawer](#items-mode-the-item-drawer)             |
 
 ### Screen sizes
 
@@ -38,14 +38,14 @@ The user can force a layout in Settings: **Auto**, **Desktop**, **Phone portrait
 
 ### Phone
 
-| Part           | Where                                                                                                             |
-| -------------- | ----------------------------------------------------------------------------------------------------------------- |
-| Top bar        | Along the top. More menu and game picker stay pinned on the left. The rest scrolls sideways, with the rail icons. |
-| FPS and coords | Tiny, under the top bar.                                                                                          |
-| Viewport modes | Stacked down the left edge.                                                                                       |
-| Viewport menu  | On the right. It can still collapse into a slim tag.                                                              |
-| Undo and redo  | Under the viewport menu.                                                                                          |
-| Toolbox        | A bottom sheet over the viewport. It can collapse: tap or drag the handle up to open it.                          |
+| Part           | Where                                                                                                                                               |
+| -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Top bar        | Along the top. Menu and game picker stay pinned on the left. The rest scrolls sideways: tools, select, clear, ruler, time, snow, layers, always-on. |
+| Viewport menu  | On the right. It can still collapse into a slim tag.                                                                                                |
+| Undo and redo  | Under the viewport menu.                                                                                                                            |
+| Viewport modes | A row of buttons riding just above the toolbox sheet, on the left.                                                                                  |
+| FPS and coords | On the right of that same row.                                                                                                                      |
+| Toolbox        | A bottom sheet over the viewport. It can collapse: tap or drag the handle. Size and cut type sit on rows below the tools.                           |
 
 - Tap replaces hover: tap an icon to see its name and its flyout.
 - Long press opens the actions menu for a selection or item.
@@ -55,54 +55,77 @@ The user can force a layout in Settings: **Auto**, **Desktop**, **Phone portrait
 
 **Rules for the whole panel**
 
-- Width 300 px. Everything is left aligned.
-- Sections are split by thin lines.
-- The header (More menu + game picker) is **pinned**. The rest scrolls if the window is short.
+- Width 336 px. Everything is left aligned.
+- Sections are split by dotted lines.
+- The header (Menu, game picker, Minimize) is **pinned**. The rest scrolls if the window is short.
 - Each section heading is a real heading for screen readers (`h2`).
 - Each group of buttons is a **toolbar**: `Tab` enters it, arrow keys move inside it.
+- Tool buttons: idle = icon only; active = the icon in a sun-yellow circle.
 
 ### Header
 
-| Control     | Looks like                                      | Does                                                                                                           |
-| ----------- | ----------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
-| More menu   | `•••` button                                    | Opens the main menu ([More menu, game picker, settings, guide](#more-menu-game-picker-settings-guide)).        |
-| Game picker | Game title in the game's own title font, with ▾ | Lists games. Each title is drawn in that game's font. Picking one saves the map and opens that game's planner. |
+| Control     | Looks like                                           | Does                                                                                                                               |
+| ----------- | ---------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| Menu        | Round dark button                                    | Opens the main menu ([Menu, game picker, settings, guide](#menu-game-picker-settings-guide)).                                      |
+| Game picker | Dark pill with the game's title in its title font, ▾ | Lists games, each title in its own font. Games not ready yet show "Soon". Picking one saves the map and opens that game's planner. |
+| Minimize    | Round dark button                                    | Shrinks the panel to the rail ([The rail](#the-rail-collapsed-panel)).                                                             |
 
-### Cursor
+### Tools
 
-| Control        | Does                                                                                             | Key     |
-| -------------- | ------------------------------------------------------------------------------------------------ | ------- |
-| **Hand**       | Camera control. Left-drag orbits the camera around the centre of the view (3D) or pans (2D).     | `H`     |
-| **Pick**       | Click picks the thing in the cell (based on the viewport mode). Drag a thing to move it at once. | `V`     |
-| Hold **Shift** | Swaps to the other tool while held. Let go to go back.                                           | `Shift` |
+| Control        | Does                                                                                                                                                                      | Key     |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------- |
+| **Camera**     | Left-drag orbits the camera around the centre of the view (3D) or pans (2D).                                                                                              | `H`     |
+| **Pointer**    | Click picks the thing in the cell (based on the viewport mode). In Paths, Cliffs and Water, a click picks the **whole connected piece**. Drag a thing to move it at once. | `V`     |
+| Right-click    | With the Pointer: if something is selected, opens its actions menu. If not, selects what is under the cursor, then opens its menu.                                        | —       |
+| Hold **Shift** | Swaps Camera ↔ Pointer while held. Let go to go back.                                                                                                                     | `Shift` |
 
-The active tool is always highlighted. While Shift is held, the swapped tool shows highlighted with a small "held" dot.
+While Shift is held, the swapped tool shows highlighted with a small "held" dot.
+
+**One tool at a time.** Camera, Pointer, the 4 select tools and the paint tools (Brush, Eraser, Fill,
+Cut) share one "active tool". Picking one puts the last one down.
+
+- Clicking the active Camera, Pointer or select tool again does nothing.
+- Clicking the active Brush, Eraser, Fill or Cut again puts it down and goes back to the Pointer.
+
+**Cursors**
+
+| Tool                        | Cursor                                                              |
+| --------------------------- | ------------------------------------------------------------------- |
+| Camera                      | The browser's `grab`, and `grabbing` while dragging                 |
+| Pointer                     | The browser's `default`; `not-allowed` over a thing that can't move |
+| Select tools                | The browser's `crosshair`                                           |
+| Brush · Eraser · Fill · Cut | Drawn cursors: a paintbrush, an eraser, a fill bucket, scissors     |
+
+Camera, Pointer and select tools use the browser's own cursors. Browsers and operating systems
+have no brush, eraser, bucket or scissors cursors, so those four are drawn, in the game's `ui`
+package: 32 × 32 px, the hot spot at the tool's tip, a light outline so they show on dark and light
+ground, and `crosshair` as the fallback (`cursor: url(brush.svg) 3 29, crosshair`).
 
 ### Select
 
 One row: 4 tools on the left, 3 modes on the right.
 
-| Control                           | Does                                             | Key               |
-| --------------------------------- | ------------------------------------------------ | ----------------- |
-| **Lasso**                         | Draw any shape. Selects what is inside.          | `L`               |
-| **Rectangle**                     | Drag a box.                                      | `M`               |
-| **Circle**                        | Drag a circle from its centre.                   | `O`               |
-| **Magic**                         | Click to select everything connected (flood).    | `Y`               |
-| **Set**                           | New selection replaces the old one.              | —                 |
-| **Add**                           | New selection joins the old one.                 | hold `Ctrl` / `⌘` |
-| **Subtract**                      | New selection is removed from the old one.       | hold `Alt` / `⌥`  |
-| **Clear selection** (wide button) | Clears the selection.                            | `Esc`             |
-| **Ruler** (tick box)              | Shows sizes on the selection and while dragging. | `R`               |
+| Control                    | Does                                                                                                                           | Key               |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------ | ----------------- |
+| **Lasso**                  | Draw any shape. Selects what is inside.                                                                                        | `L`               |
+| **Rectangle**              | Drag a box.                                                                                                                    | `M`               |
+| **Circle**                 | Drag a circle from its centre.                                                                                                 | `O`               |
+| **Magic**                  | Click to select everything connected (flood).                                                                                  | `Y`               |
+| **Set**                    | New selection replaces the old one.                                                                                            | —                 |
+| **Add**                    | New selection joins the old one.                                                                                               | hold `Ctrl` / `⌘` |
+| **Subtract**               | New selection is removed from the old one.                                                                                     | hold `Alt` / `⌥`  |
+| **Clear selection** (pill) | Clears the selection.                                                                                                          | `Esc`             |
+| **Ruler** (tick box)       | Shows measure bars on the selection: width above it, height on its left. Tiles in Items and Paths, blocks in Cliffs and Water. | `R`               |
 
 What each tool selects depends on the viewport mode ([Selecting](behaviour.md#selecting)).
 
 ### Environment
 
-| Control                        | Does                                                                                                                                                                           |
-| ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **Time slider**                | Sets the time of day. Snaps to 4 key points (from the game's look): Morning 7:00, Midday 12:00, Afternoon 16:30, Night 21:00. You can also stop between them; the look blends. |
-| **Sun arc** (above the slider) | A half circle. The sun moves along it as you slide. The sky colours come from the game's look at that hour. After the afternoon, the sun becomes a moon.                       |
-| **Snow** (tick box)            | Turns on winter (season `winter`).                                                                                                                                             |
+| Control                         | Does                                                                                                                                                                                                                                      |
+| ------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Time slider**                 | Sets the time of day. Snaps to 4 key points (from the game's look): Morning 7:00, Midday 12:00, Afternoon 16:30, Night 21:00. You can also stop between them; the look blends.                                                            |
+| **Sky dome** (above the slider) | A small dome of sky. The sun travels along its arc as you slide and becomes a moon at night. Clouds by day turn into stars at night. A skyline silhouette stands in front of the sun. Sky colours come from the game's look at that hour. |
+| **Snow** (tick box)             | Turns on winter (season `winter`).                                                                                                                                                                                                        |
 
 A map type with a fixed look (one preset, no seasons, like a home) hides this whole section, in the panel and the rail.
 
@@ -117,7 +140,7 @@ A map type with a fixed look (one preset, no seasons, like a home) hides this wh
 
 | Row             | Shows / hides                          | Profile layer toggle         |
 | --------------- | -------------------------------------- | ---------------------------- |
-| Houses          | Items of kind `building`               | `items` (needs T-1 to split) |
+| Buildings       | Items of kind `building`               | `items` (needs T-1 to split) |
 | Furniture       | All other items, bridges, inclines     | `items`                      |
 | Plants          | Trees, bushes, flowers, crops          | `plants`                     |
 | Paths           | Paths                                  | `paths`                      |
@@ -127,6 +150,10 @@ A map type with a fixed look (one preset, no seasons, like a home) hides this wh
 | Always on: Grid | Tick box                               | —                            |
 
 Each row has an eye button. Clicking the row name also toggles it.
+
+**Hiding only hides.** A hidden layer is still on the map and still counts for every rule and tool.
+Example: with Furniture hidden, you still can't place a chair where a hidden table stands, and the
+violation pill says why.
 
 **How "Always on" works**
 
@@ -142,21 +169,21 @@ Each row has an eye button. Clicking the row name also toggles it.
 
 ## The rail (collapsed panel)
 
-The rail is 64 px wide. **Everything in the panel still works from the rail.**
+The rail is 76 px wide. **Everything in the panel still works from the rail.**
 
-| Rail item   | Shows                                                                      | Hover / focus / tap                   |
-| ----------- | -------------------------------------------------------------------------- | ------------------------------------- |
-| More        | `•••`                                                                      | Opens the More menu.                  |
-| Game        | Game's small logo                                                          | Opens the game picker.                |
-| Cursor      | The active tool (Hand or Pick). Changes while Shift is held.               | Click swaps tools. Flyout shows both. |
-| Select tool | The last select tool used, with a small badge for the mode (`=`, `+`, `−`) | Flyout shows the 4 tools and 3 modes. |
-| Clear       | Deselect icon                                                              | Clears the selection.                 |
-| Ruler       | Ruler icon, filled when on                                                 | Toggles the ruler.                    |
-| Time        | One of 4 icons: sunrise, sun, sunset, moon                                 | Flyout shows just the slider.         |
-| Snow        | Snowflake, filled when on                                                  | Toggles snow.                         |
-| Layers      | One icon per layer, filled when visible                                    | Click toggles.                        |
-| Always on   | Area icon and grid icon, filled when on                                    | Click toggles.                        |
-| Expand      | `»`                                                                        | Opens the full panel.                 |
+| Rail item   | Shows                                                                      | Hover / focus / tap                                                            |
+| ----------- | -------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| Menu        | Round dark button                                                          | Opens the Menu.                                                                |
+| Game        | Game's small logo                                                          | Opens the game picker.                                                         |
+| Tools       | The active tool (Camera or Pointer). Changes while Shift is held.          | Click swaps tools. Flyout shows both.                                          |
+| Select tool | The last select tool used, with a small badge for the mode (`=`, `+`, `−`) | Click activates the select tool it shows. Hover shows the 4 tools and 3 modes. |
+| Clear       | Deselect icon                                                              | Clears the selection.                                                          |
+| Ruler       | Ruler icon, filled when on                                                 | Toggles the ruler.                                                             |
+| Time        | One of 4 icons: sunrise, sun, sunset, moon                                 | Flyout shows just the slider.                                                  |
+| Snow        | Snowflake, filled when on                                                  | Toggles snow.                                                                  |
+| Layers      | One icon per layer: a filled disc when visible, outlined when hidden       | Click toggles.                                                                 |
+| Always on   | Area icon and grid icon, filled when on                                    | Click toggles.                                                                 |
+| Expand      | The Minimize button, turned around                                         | Opens the full panel.                                                          |
 
 Flyouts open on hover after 300 ms, or at once on click, tap or keyboard focus. `Esc` closes them.
 
@@ -173,15 +200,17 @@ The viewport shows the map in 2D or 3D. It fills all space right of the panel an
 
 ### Viewport mode buttons (top left)
 
-| Mode          | Grid used                            | Scope (what tools touch)                     | Other things                                                  |
-| ------------- | ------------------------------------ | -------------------------------------------- | ------------------------------------------------------------- |
-| **Furniture** | Base: half-tile snapping, tile lines | Houses, furniture, plants, bridges, inclines | —                                                             |
-| **Paths**     | Base: tiles                          | Paths only                                   | Items and plants turn see-through, so you can see under them. |
-| **Cliffs**    | Terrain: blocks                      | Land (heights) and what stands on it         | —                                                             |
-| **Water**     | Terrain: blocks                      | Water and what stands on it                  | —                                                             |
+| Mode       | Grid used                            | Scope (what tools touch)                     | Other things                                                  |
+| ---------- | ------------------------------------ | -------------------------------------------- | ------------------------------------------------------------- |
+| **Items**  | Base: half-tile snapping, tile lines | Houses, furniture, plants, bridges, inclines | —                                                             |
+| **Paths**  | Base: tiles                          | Paths only                                   | Items and plants turn see-through, so you can see under them. |
+| **Cliffs** | Terrain: blocks                      | Land (heights) and what stands on it         | —                                                             |
+| **Water**  | Terrain: blocks                      | Water and what stands on it                  | —                                                             |
 
-Keys: `1` Furniture, `2` Paths, `3` Cliffs, `4` Water.
-On phones the buttons stack down the left edge.
+Keys: `1` Items, `2` Paths, `3` Cliffs, `4` Water.
+
+The buttons' icons sit in a pill. Unselected: icon only. Selected: a sun-yellow pill, a bigger
+icon and the mode's name below. On phones they sit in a row above the toolbox.
 
 **Home modes (after 1.0).** A home has its own modes. Same keys, same places.
 
@@ -214,11 +243,11 @@ Example: `60 fps · Tile 34.5, 40 · Area C3`
 
 | Mode          | Coordinates shown                         |
 | ------------- | ----------------------------------------- |
-| Furniture     | Tile, in half steps: `Tile 34.5, 40`      |
+| Items         | Tile, in half steps: `Tile 34.5, 40`      |
 | Paths         | Tile: `Tile 34, 40`                       |
 | Cliffs, Water | Block and level: `Block 34, 40 · Level 3` |
 
-The coordinates follow the selected cell. With no selection, they follow the cursor. FPS can be hidden in Settings. On phones this is tiny text, top left, under the top bar.
+The coordinates follow the selected cell. With no selection, they follow the cursor. FPS can be hidden in Settings. On phones it sits right of the mode buttons, above the toolbox.
 
 ### Highlights
 
@@ -233,38 +262,49 @@ The coordinates follow the selected cell. With no selection, they follow the cur
 
 Settings has 2 extra colour sets for colour blindness (deuteranopia, tritanopia).
 
-**Quick actions on a picked item:** a small floating row above it: ⟲ rotate left, ⟳ rotate right, `•••` actions menu.
+Every selection also gets the [selection bar](#selection-bar-and-actions-menu).
 
 ## Violation pills
 
-| Part           | Detail                                                                                                                                                            |
-| -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Where          | Slide in from the top centre of the viewport.                                                                                                                     |
-| Shape          | A long pill: icon, short title, timer bar, expand chevron, close X.                                                                                               |
-| How many       | Up to 3 on screen. More wait in a queue, shown as "+2 more".                                                                                                      |
-| Repeats        | The same rule again merges into one pill with a count: "Items overlap (×3)".                                                                                      |
-| Timer          | 6 seconds by default (2 to 30 in Settings, or "until closed"). Pauses on hover, focus or when expanded.                                                           |
-| Ends           | Fades down and out. `X` closes early.                                                                                                                             |
-| Expanded       | Plain explanation · where it is · a fix tip · the rule id · buttons: **Show me** (camera goes there, cells flash), **Learn more** (guide page), **Report issue**. |
-| Screen readers | Read out politely when they appear ("Too steep, 4 levels, limit is 3").                                                                                           |
-| Keyboard       | `F8` jumps to the newest pill. `Esc` closes it.                                                                                                                   |
+| Part           | Detail                                                                                                                                                               |
+| -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Where          | Slide in from the top centre of the viewport.                                                                                                                        |
+| Shape          | A long pill: alert icon, message, details chevron, close X, and a timer bar along the bottom edge.                                                                   |
+| How many       | Up to 3 on screen. More wait in a queue, shown as "+2 more".                                                                                                         |
+| Repeats        | The same rule again merges into one pill with a count: "Items overlap (×3)".                                                                                         |
+| Timer          | 6 seconds by default (2 to 30 in Settings, or "until closed"). Pauses on hover, focus or when expanded.                                                              |
+| Ends           | Fades down and out. `X` closes early.                                                                                                                                |
+| Expanded       | Plain explanation · where it is · a fix tip · the rule id · buttons: **Show me** (camera goes there, cells flash), **Learn more** (guide page), **Report an issue**. |
+| Screen readers | Read out politely when they appear ("Too steep, 4 levels, limit is 3").                                                                                              |
+| Keyboard       | `F8` jumps to the newest pill. `Esc` closes it.                                                                                                                      |
 
 Pill text comes from the game's `ruleText` table, in its `ui` package ([Petit Planet's](../profiles/petit-planet.md#friendly-rule-text)).
 
-## Actions menu (the "more" menu on a selection)
+## Selection bar and actions menu
 
-**When it opens:** right after a selection is made, next to the cursor. It hangs off a small `•••` button at the corner of the selection nearest the cursor. `X` closes it. Click `•••`, right-click, long-press, or `Shift + F10` to open it again. Settings can turn off auto-open.
+Every selection, in every mode, gets the same small bar floating above it:
 
-| Mode                       | Options                                                                                                                                |
-| -------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
-| Furniture (picked item)    | Rotate left · Rotate right · Create new from this (opens builder) · Search similar · Copy · Paste · Duplicate · Add note · Delete      |
-| Furniture (area selection) | Copy · Paste · Duplicate · Delete · Select only… (houses / furniture / plants)                                                         |
-| Paths                      | Fill with… (palette) · Clear paths · Round corners · Cut corners · Copy · Paste · Delete                                               |
-| Cliffs                     | **Raise / lower** (first) · Copy · Paste · Delete (flatten to base level) · **Select ground too** (last, only when cliffs were picked) |
-| Water                      | **Raise / lower** (first) · Remove water · Copy · Paste · Delete                                                                       |
-| Empty selection            | Paste · Fill (Paths) · Raise (Cliffs) · Add water (Water)                                                                              |
+| Button         | Does                                                                               | Key           |
+| -------------- | ---------------------------------------------------------------------------------- | ------------- |
+| ⟲ Rotate left  | Turns the selection 90° ([rotating](behaviour.md#rotate))                          | `[`           |
+| ⟳ Rotate right | Turns it the other way                                                             | `]`           |
+| 🗑 Delete       | Deletes it ([what delete does per mode](behaviour.md#copy-paste-duplicate-delete)) | `Delete`      |
+| ••• More       | Opens the actions menu                                                             | `Shift + F10` |
 
-**Raise / lower control:** a vertical slider. 0 in the middle, and it snaps back to 0. Up raises, down lowers, 1 level per notch. The map preview updates as you slide. Letting go commits it as one undo step.
+Right-click and long-press also open the actions menu. The menu has a title and a close `X`.
+
+| Selection       | Actions menu                                                                                          |
+| --------------- | ----------------------------------------------------------------------------------------------------- |
+| Item            | Create new (opens the builder with a copy) · Search similar · Copy · Paste                            |
+| Cliff           | **Raise / lower** (first) · Copy · Paste · **Select ground too** (last, only when cliffs were picked) |
+| Pond (water)    | **Raise / lower** (first) · Copy · Paste                                                              |
+| Path            | Copy · Paste                                                                                          |
+| Empty selection | Paste                                                                                                 |
+
+**Raise / lower control:** a vertical slider. 0 in the middle is the selection's height now, and
+the slider snaps back to 0 after use. Up raises, down lowers, 1 level per notch. The top end is the
+highest the selection can go; the bottom end is the lowest. The map preview updates as you slide,
+with any terraces it needs. Letting go commits it as one undo step.
 
 ## Toolbox
 
@@ -273,7 +313,7 @@ Phone: a bottom sheet over the viewport. Drag its handle to open or close it.
 
 The toolbox **changes with the viewport mode**. It remembers the last tool, path type and item for each mode.
 
-### Furniture mode: the item drawer
+### Items mode: the item drawer
 
 | Part           | Detail                                                                                                                                                                                     |
 | -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -292,12 +332,16 @@ The toolbox **changes with the viewport mode**. It remembers the last tool, path
 
 A row of tools on top, a palette of path types below.
 
-| Tool       | Does                                                                                                                                                       | Settings (small ▾ on the button, or long press on phone) | Key |
-| ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- | --- |
-| **Brush**  | Paint the chosen path.                                                                                                                                     | Size 1, 2, 3 or 5 tiles · square or round                | `B` |
-| **Eraser** | Remove paths.                                                                                                                                              | Size, shape                                              | `X` |
-| **Fill**   | With a selection: click a palette swatch to fill it. No selection: click the map to fill the connected empty area.                                         | —                                                        | `G` |
-| **Cut**    | Click a path corner to cycle: square → round → cut. Only outer corners. Single tiles can't be cut (a game rule). Allowed corners show small dots on hover. | —                                                        | `T` |
+| Tool       | Does                                                                                                                                                                                                                      | Key |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --- |
+| **Brush**  | Paint the chosen path.                                                                                                                                                                                                    | `B` |
+| **Eraser** | Remove paths.                                                                                                                                                                                                             | `X` |
+| **Fill**   | Pick a path type in the palette, then click the selection or connected path tiles.                                                                                                                                        | `G` |
+| **Cut**    | Choose **Round** or **Clip**, then click an exposed corner of a piece at least 2 tiles long (a game rule). Allowed corners show small dots on hover. Clicking a corner that already has that shape makes it square again. | `T` |
+
+- **Size:** a slider from 1 to 5 appears right of Cut, only while Brush or Eraser is active.
+- **Cut type** (Round / Clip) appears there while Cut is active.
+- On phones, size and cut type sit on rows below the tools.
 
 The palette shows each path type as a swatch with its pattern (cobble or plain) and name.
 
@@ -309,40 +353,40 @@ Same tools, no Fill, no drawer. Blocks a stroke can't change get red stripes and
 | ------ | ------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------- |
 | Brush  | Raises the stroke's level by one: only blocks at the level where you pressed. Other levels are borders. Setting: size (width). | Adds water on dry blocks at the stroke's level. Setting: size. |
 | Eraser | Lowers the stroke's level by one, the same way.                                                                                | Removes water at the stroke's level.                           |
-| Cut    | Shape cliff corners: square, round or cut (half a block).                                                                      | Shape water corners.                                           |
+| Cut    | Choose Round or Clip, then click an exposed cliff corner (half a block).                                                       | The same, for water corners.                                   |
 
-## More menu, game picker, settings, guide
+## Menu, game picker, settings, guide
 
-### More menu
+### Menu
 
-| Item                  | Does                                                                                                                                                                                                                 |
-| --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Home                  | Goes to `/`. In the first version this opens a simple game list (see Q-1).                                                                                                                                           |
-| New map               | Starts a fresh map. The current one is already autosaved. When the game has more than one map type, a small dialog asks which: "Island" or a home layout ("Home, 1 room, 8 × 8"). In 1.0 only the island is offered. |
-| Open map…             | Opens the Library on the Maps tab.                                                                                                                                                                                   |
-| Save                  | Uploads the draft now (it also autosaves) and makes a named save point. Shows "Saved ✓".                                                                                                                             |
-| Save as…              | Saves a copy with a new name.                                                                                                                                                                                        |
-| Share…                | Publishes a frozen snapshot behind a link, or updates it, or stops sharing it ([sharing](../server/sharing.md)).                                                                                                     |
-| Import / Export file… | Load or download a `.glade-map.json` file.                                                                                                                                                                           |
-| Catalog packs…        | Opens the Library on the Packs tab.                                                                                                                                                                                  |
-| Settings              | Opens Settings.                                                                                                                                                                                                      |
-| Guide                 | Opens the Guide.                                                                                                                                                                                                     |
-| Report a problem      | Opens the bug report form ([bug reports](../logging/README.md#sending-a-bug-report)).                                                                                                                                |
+| Item                | Does                                                                                                                                                                                                                 |
+| ------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Home                | Goes to `/`. In the first version this opens a simple game list (see Q-1).                                                                                                                                           |
+| New map             | Starts a fresh map. The current one is already autosaved. When the game has more than one map type, a small dialog asks which: "Island" or a home layout ("Home, 1 room, 8 × 8"). In 1.0 only the island is offered. |
+| Load map…           | Opens the Library on the Maps tab.                                                                                                                                                                                   |
+| Save map            | Uploads the draft now (it also autosaves) and makes a named save point. Shows "Saved ✓".                                                                                                                             |
+| Save map as…        | Saves a copy with a new name.                                                                                                                                                                                        |
+| Share…              | Publishes a frozen snapshot behind a link, or updates it, or stops sharing it ([sharing](../server/sharing.md)).                                                                                                     |
+| View catalog packs… | Opens the Library on the Packs tab.                                                                                                                                                                                  |
+| Log in              | One button. Opens the login screen ([accounts](../server/accounts.md#log-in)). Logged in, it shows "Logged in as …" instead.                                                                                         |
+| Settings            | Opens Settings.                                                                                                                                                                                                      |
+| Guide               | Opens the Guide.                                                                                                                                                                                                     |
+| Report an issue     | Opens the issue form, to tell us about a bug ([bug reports](../logging/README.md#sending-a-bug-report)). Not the same as **Report** on a shared map, which flags someone's map.                                      |
 
 All items are for the current game only.
 
 ### Settings window (tabs)
 
-| Tab              | Options                                                                                                                                                                                      |
-| ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| General          | Theme (light, dark, game default) · Layout (Auto, Desktop, Phone portrait, Phone landscape) · Language (English for now)                                                                     |
-| Accessibility    | Text size · Dyslexia-friendly font (Atkinson Hyperlegible / OpenDyslexic) · High contrast · Reduce motion · Highlight colours · Pill duration · Tooltip delay                                |
-| Controls         | Key map editor · Mouse and touch speed · Invert zoom · Drag dead zone                                                                                                                        |
-| Planner          | Auto-open actions menu · Show FPS · Show coordinates · Autosave on/off (on by default)                                                                                                       |
-| Graphics         | Quality: low / medium / high · Shadows · Planet curvature                                                                                                                                    |
-| Account          | Signed in as … (or "Not signed in") · Sign in with Google · Devices · Download all my maps · Sign out (Google only) · Delete my account / Delete my data ([accounts](../server/accounts.md)) |
-| Privacy and logs | What gets logged (shown in plain words) · Detailed logs on/off · View log · Download log · Clear this browser's cache                                                                        |
-| About            | Glade version, licences                                                                                                                                                                      |
+| Tab              | Options                                                                                                                                                                        |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| General          | Theme (light, dark, game default) · Layout (Auto, Desktop, Phone portrait, Phone landscape) · Language (English for now)                                                       |
+| Accessibility    | Text size · Dyslexia-friendly font (Atkinson Hyperlegible / OpenDyslexic) · High contrast · Reduce motion · Highlight colours · Pill duration · Tooltip delay                  |
+| Controls         | Key map editor · Mouse and touch speed · Invert zoom · Drag dead zone                                                                                                          |
+| Planner          | Auto-open actions menu (off by default) · Show FPS · Show coordinates · Autosave on/off (on by default)                                                                        |
+| Graphics         | Quality: low / medium / high · Shadows · Planet curvature                                                                                                                      |
+| Account          | Logged in as … (or a **Log in** button) · Devices · Download my data · Log out (logged-in users only) · Delete my account / Delete my data ([accounts](../server/accounts.md)) |
+| Privacy and logs | What gets logged (shown in plain words) · Detailed logs on/off · View log · Download log · Clear this browser's cache                                                          |
+| About            | Glade version, licences                                                                                                                                                        |
 
 ### Guide
 

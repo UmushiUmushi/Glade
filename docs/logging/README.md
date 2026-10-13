@@ -98,7 +98,7 @@ Logs survive a crash because they are written to IndexedDB every 2 seconds and o
 
 ## Sending a bug report
 
-1. Open **Report a problem** (More menu, any error pill, or Settings).
+1. Open **Report an issue** (Menu, any error pill, or Settings).
 2. Write what happened (optional, but helps).
 3. Glade shows **exactly what will be sent**, in plain words, with a "View raw log" button.
 4. Optional, off by default, with a clear warning that they contain your work:

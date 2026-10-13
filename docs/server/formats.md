@@ -30,7 +30,7 @@
 | `view`            | Optional: how it was last viewed                                                                                                                          |
 | `map`             | The profile's own map file, unchanged (`serializeMap` output). Version 3: its `map` field says which map type it is (`planet`, `interior_home_1_8`, ...). |
 
-A plain map file (the inner `map` on its own) can also be imported. Glade wraps it. Version 2 files (from before map types) load as the island. Old game ids keep working too (`petite-planet`).
+Glade stores maps and packs in these formats on the server; people never handle the files. Version 2 files (from before map types) load as the island. Old game ids keep working too (`petite-planet`).
 
 ## Pack file (`.glade-pack.json`)
 

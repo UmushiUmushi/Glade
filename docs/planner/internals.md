@@ -75,9 +75,9 @@ React components **read** stores. They never write them directly; they send even
 - Why minor: tiles start on even minor lines, and terrain blocks start on odd ones. So the minor grid lines up with **every** Petit Planet grid.
 - Set = replace bits. Add = OR. Subtract = AND NOT. All are fast.
 - Each mode turns the mask into "what is selected here":
-  - Furniture: items and plants whose footprint touches the mask.
+  - Items: items and plants whose footprint touches the mask.
   - Paths: major cells covered by the mask.
-  - Cliffs / Water: terrain blocks covered by the mask, then filtered (cliff faces, water).
+  - Cliffs / Water: terrain cells covered by the mask, then filtered (cliff faces, water). Each cell also gets a **depth**: how many blocks from the top are selected ([selected blocks](behaviour.md#selected-blocks-cliffs-mode)).
 - The mask outline is drawn with marching squares and sent to the stage as an overlay.
 
 ## Drawing
@@ -87,7 +87,7 @@ React components **read** stores. They never write them directly; they send even
 ```mermaid
 flowchart LR
     subgraph VP["packages/viewport"]
-        Cam["Camera controller<br/>Hand, WASD, Q/E, gestures"]
+        Cam["Camera controller<br/>Camera tool, WASD, Q/E, gestures"]
         Ov["Overlays<br/>hover, selection, ghost,<br/>invalid, spotlight"]
         P2["2D host<br/>canvas, pan, zoom"]
     end

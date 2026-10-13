@@ -53,8 +53,8 @@ pass, including "op then undo = start".
 | Shell layout: side panel, rail, phone top bar, viewport chrome, toolbox frame, viewport menu, preview, FPS/coords                 |
 | Routing `/<game>/planner`, the game registry, game picker, theming                                                                |
 | The `_fixture` game's UI (both its maps) and Petit Planet's `ui` package with the island's UI (theme, modes, layers, environment) |
-| Hand tool, WASD, Q/E, zoom, touch gestures; time slider + sun arc; snow; layers                                                   |
-| Settings window (skeleton), More menu (skeleton)                                                                                  |
+| Camera tool, WASD, Q/E, zoom, touch gestures; time slider + sky dome; snow; layers                                                |
+| Settings window (skeleton), Menu (skeleton)                                                                                       |
 
 **Exit:** a real-size island opens in 2D and 3D on desktop and a real phone. The fixture's 2D-only
 map opens with no 3D switch. Every panel control works by keyboard. No axe errors. FPS and first 3D
@@ -68,7 +68,7 @@ build time measured on target devices (decides T-4).
 | The pipeline ([planner internals](planner/internals.md)) with log events for each step |
 | Shared object ops in `packages/edit` (place, move, rotate, remove) used by the island  |
 | Profile tasks T-1 (houses and furniture layers) and T-2 (split the items chunk)        |
-| Pick tool, hover/select highlights, drag move with live checks, rotate, delete         |
+| Pointer tool, hover/select highlights, drag move with live checks, rotate, delete      |
 | Item drawer: tabs, cards, thumbnails, search, click-to-place, keyboard place           |
 | `@glade/petit-planet-catalog`: base items with categories, bound with `bind`           |
 | Violation pills + rule text for every rule                                             |
@@ -114,8 +114,8 @@ area.
 | ------------------------------------------------------------------------------------------------------------------------------ |
 | Accounts: Better Auth with anonymous users and Google, sessions, moving ownership on sign-in, Settings → Account, privacy page |
 | Server: API, SQLite, drafts, snapshot blobs, upload checks, limits, clean-up, metrics                                          |
-| Draft autosave to the server, IndexedDB edit buffer, two-device conflict dialog                                                |
-| Library window, file import/export, download all my maps                                                                       |
+| Draft autosave to the server, IndexedDB edit buffer, reload on a newer revision (no conflict dialog)                           |
+| Library window, login screen                                                                                                   |
 | Share dialog, links, update and stop sharing, draft URLs and the private-map page, view-only mode, make a copy                 |
 | `glade-admin` CLI on the server: stats, abuse cases, hide, ban, delete user                                                    |
 | Abuse reports: Report button, cases, auto-hide, ntfy alerts, `glade-triage` with Claude Code                                   |
@@ -123,7 +123,7 @@ area.
 | Bug reports + `glade-log` CLI (show, filter, timeline, replay)                                                                 |
 
 **Exit:** these pass e2e: save anonymously → share → open on another device → make a copy;
-sign in with Google on two devices and see the same maps; the two-device conflict path; stop sharing
+log in on two devices and see the same maps; a stale device reloads the latest version; stop sharing
 leaves copies working. A report round trip works.
 
 **Milestone: Planner 1.0 beta** (Phases 0–6).
@@ -179,7 +179,7 @@ has tests.
 
 | Id  | Change                                                                                            | Why                                                                                        | Size | Phase          |
 | --- | ------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ | ---- | -------------- |
-| T-1 | **Split the island's `items` layer toggle** into buildings and other items (2D and 3D).           | Separate Houses and Furniture layers.                                                      | S    | 2              |
+| T-1 | **Split the island's `items` layer toggle** into buildings and other items (2D and 3D).           | Separate Buildings and Furniture layers.                                                   | S    | 2              |
 | T-2 | **Split the island's items chunk** by area, so changing one item rebuilds only the items near it. | Today any item change rebuilds all 914 items and plants in 3D (15.6 ms on an Apple M4).    | S–M  | 2              |
 | T-3 | **A writer for things on tables** (`putOnSurface`), and `surfaceOf` in the public API.            | Every other layer has a typed writer; this one has only a reader.                          | S    | 3              |
 | T-4 | **Build 3D chunks off the main thread** (let `MapScene` take chunks built in a worker).           | The first 3D build of the island takes 0.65 s on an Apple M4. Only if phones are too slow. | M    | 1–2, if needed |
@@ -217,7 +217,7 @@ Apple M4, Node, a real-size island (375 items, 539 plants, 0 violations, 147 KB 
 | R11 | Editing is a lot of code to keep right                              | Medium | High   | Small game-free core with property tests: any op, then undo, gives back the start.         |
 | R12 | Shared code bends to fit one game                                   | Medium | Medium | Build for the games that exist; move code up only when a second game needs it.             |
 | R13 | 3D is slow to update after edits on big islands (all items rebuild) | Medium | Medium | T-2. Until then, wait for the drag to end before calling `setDoc`.                         |
-| R14 | An anonymous user loses their account (cleared cookies, new device) | Medium | Medium | Nudges to sign in with Google after the first share and the 3rd map. Download all my maps. |
+| R14 | An anonymous user loses their account (cleared cookies, new device) | Medium | Medium | Nudges to log in after the first share and the 3rd map.                                    |
 
 ## Open questions
 
@@ -227,13 +227,13 @@ Each has a proposed answer.
 | ---- | ---------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Q-1  | What does **Home** do before the homepage exists?                                                          | A simple page listing games.                                                                                                                       |
 | Q-2  | Which domain?                                                                                              | One domain. All URLs in these docs are placeholders.                                                                                               |
-| Q-3  | Does Furniture mode include plants, houses and bridges?                                                    | Yes: it covers everything from the catalog drawer.                                                                                                 |
+| Q-3  | Does Items mode include plants, houses and bridges?                                                        | Yes: it covers everything from the catalog drawer.                                                                                                 |
 | Q-4  | Are the key choices OK: Shift = swap tools, Ctrl = add, Alt = subtract, `[` `]` = rotate, `1`–`4` = modes? | Yes, and all keys can be changed.                                                                                                                  |
 | Q-5  | Petit Planet item categories?                                                                              | Start with: Houses, Seating, Tables, Storage, Lights, Decor, Plants, Trees, Fences, Bridges and inclines, Outdoor.                                 |
-| Q-6  | Live co-editing (two people at once)?                                                                      | Not in 1.0. Each map has one owner; others make a copy. Later: invite editors who are signed in.                                                   |
-| Q-7  | How does a library move to another device?                                                                 | Sign in with Google (optional). Without it, Download all my maps and Import.                                                                       |
+| Q-6  | Live co-editing (two people at once)?                                                                      | Not in 1.0. Each map has one owner; others make a copy. Later: invite editors who are logged in.                                                   |
+| Q-7  | How does a library move to another device?                                                                 | Log in with Google (optional).                                                                                                                     |
 | Q-8  | How long are shared maps kept?                                                                             | Snapshots: until the owner stops sharing, then 30 days. Drafts: kept. Pack versions: while a map uses them. Review at 10 GB.                       |
-| Q-9  | Title font for Petit Planet?                                                                               | An open (OFL) rounded font such as Fredoka or Baloo 2.                                                                                             |
+| Q-9  | Fonts for Petit Planet?                                                                                    | Decided: Baloo 2 for titles, Nunito for the UI.                                                                                                    |
 | Q-10 | Licence for the base catalog data?                                                                         | CC BY 4.0 (the code is MIT).                                                                                                                       |
 | Q-11 | Where do bug reports go?                                                                                   | Stored on the server. A maintainer reviews them with `glade-log`, then one command opens a GitHub issue. Nothing posts by itself.                  |
 | Q-12 | Must a map follow all rules to be shared?                                                                  | No. Works in progress can be shared.                                                                                                               |

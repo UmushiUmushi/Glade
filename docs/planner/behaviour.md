@@ -1,6 +1,6 @@
 # How the planner behaves
 
-> **In short:** Pick what to work on (the mode). Choose Hand or Pick. Select things with a select tool or by clicking. Drag to move. Bad moves glow red and snap back. Every action is one undo step.
+> **In short:** Pick what to work on (the mode). Choose Camera or Pointer. Select things with a select tool or by clicking. Drag to move. Bad moves glow red and snap back. Every action is one undo step.
 
 ## Camera and cursor controls
 
@@ -8,7 +8,7 @@
 
 | Input                    | Does                                                                            |
 | ------------------------ | ------------------------------------------------------------------------------- |
-| Hand tool + left drag    | 3D: orbit around the centre of the view. 2D: pan.                               |
+| Camera tool + left drag  | 3D: orbit around the centre of the view. 2D: pan.                               |
 | `W` `A` `S` `D`          | Move the camera forward, left, back, right (slides, does not spin).             |
 | Arrow keys               | Same as WASD, unless the keyboard cursor is on ([Full key map](#full-key-map)). |
 | `Q` / `E`                | Turn the camera left / right.                                                   |
@@ -16,21 +16,21 @@
 | Trackpad pinch           | Zoom.                                                                           |
 | Trackpad two-finger move | Pan.                                                                            |
 | Middle mouse drag        | Pan, with any tool.                                                             |
-| Hold `Shift`             | Swap Hand ↔ Pick while held.                                                    |
+| Hold `Shift`             | Swap Camera ↔ Pointer while held.                                               |
 | Right click              | Open the actions menu for the selection, the picked item, or the hovered item.  |
 
 ### Touch (phones and tablets)
 
-| Gesture                          | Does                                                            |
-| -------------------------------- | --------------------------------------------------------------- |
-| Hand tool + one finger drag      | Orbit around the centre (3D) or pan (2D).                       |
-| Two finger drag                  | Pan, with any tool.                                             |
-| Pinch / spread                   | Zoom, with any tool.                                            |
-| Two finger twist                 | Turn the camera.                                                |
-| Pick or select tool + one finger | Use the tool (pick, drag, draw a selection).                    |
-| Long press (500 ms)              | Open the actions menu. A small ring fills up to show the press. |
-| Tap an icon                      | Show its name and flyout (replaces hover).                      |
-| Two finger tap                   | Undo (optional, off by default).                                |
+| Gesture                             | Does                                                            |
+| ----------------------------------- | --------------------------------------------------------------- |
+| Camera tool + one finger drag       | Orbit around the centre (3D) or pan (2D).                       |
+| Two finger drag                     | Pan, with any tool.                                             |
+| Pinch / spread                      | Zoom, with any tool.                                            |
+| Two finger twist                    | Turn the camera.                                                |
+| Pointer or select tool + one finger | Use the tool (pick, drag, draw a selection).                    |
+| Long press (500 ms)                 | Open the actions menu. A small ring fills up to show the press. |
+| Tap an icon                         | Show its name and flyout (replaces hover).                      |
+| Two finger tap                      | Undo (optional, off by default).                                |
 
 ## Selecting
 
@@ -45,14 +45,36 @@
 
 ### What each tool picks, per mode
 
-| Mode          | Lasso / Rectangle / Circle                                                                                                                             | Magic (click)                                                                                           |
-| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------- |
-| **Furniture** | Every house, furniture piece and plant whose footprint touches the shape.                                                                              | All connected items of the same kind (e.g. a whole fence line), or a group of touching items.           |
-| **Paths**     | Every tile in the shape where a path can go (on the map, not beach, not landmark). Empty tiles count, so you can fill them later.                      | All connected path tiles of the same type. On empty ground: the connected flat area where paths can go. |
-| **Cliffs**    | Flat ground: every block inside. With cliffs: only blocks that have a **cliff face** inside the shape, not the ground below. Things on top come along. | Everything that shares a cliff face, plus whatever stands on it (other cliffs, items, water).           |
-| **Water**     | Every water block inside, including the edge block that makes a waterfall.                                                                             | The whole connected water body.                                                                         |
+| Mode       | Lasso / Rectangle / Circle                                                                                                                                                     | Magic (click)                                                                                           |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------- |
+| **Items**  | Every house, furniture piece and plant whose footprint touches the shape.                                                                                                      | All connected items of the same kind (e.g. a whole fence line), or a group of touching items.           |
+| **Paths**  | Every tile in the shape where a path can go (on the map, not beach, not landmark). Empty tiles count, so you can fill them later.                                              | All connected path tiles of the same type. On empty ground: the connected flat area where paths can go. |
+| **Cliffs** | Flat ground: the **top block** of every cell inside. With cliffs: only the cliffs that have a **cliff face** inside the shape, not the ground below. Things on top come along. | Everything that shares a cliff face, plus whatever stands on it (other cliffs, items, water).           |
+| **Water**  | Every water block inside, including the edge block that makes a waterfall.                                                                                                     | The whole connected water body.                                                                         |
 
-**"Select ground too":** in Cliffs mode, after picking cliffs, this action adds the ground blocks inside the shape.
+**"Select ground too":** in Cliffs mode, after picking cliffs, this action adds the ground inside the shape: the top ground block of every cell, including the ground block under each picked cliff.
+
+### Selected blocks (Cliffs mode)
+
+A terrain selection picks **blocks**, not whole columns. For each cell it holds how many blocks are
+selected, counted down from the top.
+
+| What is picked           | Blocks selected in that cell                                           |
+| ------------------------ | ---------------------------------------------------------------------- |
+| A cliff                  | Every block of the cliff: from its top down to the ground it stands on |
+| Ground (flat, or "too")  | The top ground block: 1                                                |
+| A cliff, with ground too | The cliff's blocks, plus the ground block under it                     |
+
+**Example:** a 3 × 3 cube, 3 blocks tall, on flat ground at level 4. Its top is level 7.
+
+| You select                                   | Cube cells     | Ground cells    |
+| -------------------------------------------- | -------------- | --------------- |
+| Magic, or Pointer click on the cube          | 3 blocks each  | —               |
+| Lasso over one corner column and some ground | That column: 3 | — (cliffs only) |
+| The same lasso, then **Select ground too**   | That column: 4 | 1 each          |
+
+Every terrain action works on these selected blocks: Delete removes them, lift and drop carries
+them, Raise / lower moves them.
 
 **Things on terrain come along:** a terrain selection always includes the plants, furniture, houses and paths standing on it.
 
@@ -72,7 +94,7 @@ Example:
 
 ### Step by step (mouse)
 
-1. Press on a selected thing (or any thing, with the Pick tool).
+1. Press on a selected thing (or any thing, with the Pointer tool).
 2. Move more than 4 px (8 px on touch). This starts a drag. Less than that counts as a click.
 3. **Start check:** Glade checks if the thing can leave its place at all.
    - If not (for example, it is locked by a landmark rule): the cells that cause the problem flash red, a pill explains why, and nothing moves.
@@ -239,21 +261,59 @@ Default: Blend for land, Carve for water. A small toggle in the actions menu cha
 > Sculpt needs research ([roadmap, Phase 9](../roadmap.md#phase-9-research-features-l-ongoing)).
 > Until then, dropping land onto land replaces it (lift and drop).
 
+## Rotate
+
+`[` and `]`, or the rotate buttons on the [selection bar](screen.md#selection-bar-and-actions-menu),
+turn a selection 90° left or right. It works in every mode.
+
+| Mode          | What turns                                                                                                                                         |
+| ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Items         | Each picked item turns in place.                                                                                                                   |
+| Paths         | The selected path tiles turn around the selection's centre, with their corner shapes.                                                              |
+| Cliffs, Water | The selected piece of land turns around its centre, with **everything on it**: heights, water, waterfalls, corner shapes, items, plants and paths. |
+
+Turning terrain works like [lift and drop](#lift-and-drop) without moving: Glade lifts the piece,
+turns it, and puts it back in the same place.
+
+1. If the turned piece needs terraces to fit, Glade adds them **live**, shown purple, and keeps
+   them. Same undo step.
+2. If even terraces can't make it fit (a landmark or the beach is in the way), it glows red.
+   Deselect to return it to how it was.
+
+**Example:** an L-shaped cliff with a waterfall facing east. Press `]`. The cliff turns into the
+other L, the waterfall now faces south, and a tree on the cliff stays on the same block of the
+cliff.
+
+The centre is the middle of the selection's bounding box. When that falls between blocks, the
+turned piece snaps to the block grid.
+
 ## Copy, paste, duplicate, delete
 
-| Action    | Keys                   | Does                                                                                                 |
-| --------- | ---------------------- | ---------------------------------------------------------------------------------------------------- |
-| Copy      | `Ctrl/⌘ + C`           | Copies the selection or picked item, with everything in its scope.                                   |
-| Cut       | `Ctrl/⌘ + X`           | Copy, then delete.                                                                                   |
-| Paste     | `Ctrl/⌘ + V`           | The copy follows the cursor. Click to drop. `[` `]` rotate (items). `Esc` cancels.                   |
-| Duplicate | `Ctrl/⌘ + D`           | Copy and paste next to the original.                                                                 |
-| Delete    | `Delete` / `Backspace` | Furniture: removes items. Paths: clears paths. Cliffs: flattens to base level. Water: removes water. |
+**Delete in Cliffs mode, worked through** (the cube from [selected blocks](#selected-blocks-cliffs-mode): top 7, ground 4):
+
+| Selection                              | Delete does                                        | Result                                              |
+| -------------------------------------- | -------------------------------------------------- | --------------------------------------------------- |
+| The whole cube (Magic or Pointer)      | Each cube cell: 7 − 3 = 4                          | The cube is gone; flat ground at 4                  |
+| One corner column (lasso, cliffs only) | That cell: 7 − 3 = 4                               | The corner column is gone                           |
+| The same, plus **Select ground too**   | The column: 7 − 4 = 3. Each ground cell: 4 − 1 = 3 | A 1-deep hole where the corner and that ground were |
+| Flat ground only                       | Each cell: 4 − 1 = 3                               | A 1-deep hole                                       |
+
+If the result breaks a rule (a step taller than 3, say), Glade adds terraces live, as with any
+terrain change.
+
+| Action    | Keys                                              | Does                                                                                                                                                                                                                                                                  |
+| --------- | ------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Copy      | `Ctrl/⌘ + C`                                      | Copies the selection or picked item, with everything in its scope.                                                                                                                                                                                                    |
+| Cut       | `Ctrl/⌘ + X`                                      | Copy, then delete.                                                                                                                                                                                                                                                    |
+| Paste     | `Ctrl/⌘ + V`                                      | The copy follows the cursor. Click to drop. `[` `]` rotate it. `Esc` cancels. Terrain pastes like [lift and drop](#lift-and-drop): it replaces the land under it, with live terraces.                                                                                 |
+| Duplicate | `Ctrl/⌘ + D`                                      | Copy and paste next to the original.                                                                                                                                                                                                                                  |
+| Delete    | `Delete` / `Backspace`, or 🗑 on the selection bar | Items: removes them. Paths: clears them. Cliffs: removes the **selected blocks**: each cell drops by the number of blocks selected in it ([selected blocks](#selected-blocks-cliffs-mode)), with live terraces if the result breaks a rule. Water: removes the water. |
 
 Copies also go to the system clipboard as JSON, so you can paste between browser tabs and between maps.
 
-## The Pick tool as a state machine
+## The Pointer tool as a state machine
 
-Every tool is a state machine. This one shows the Pick tool. Every event is handled in every state, so nothing is missed.
+Every tool is a state machine. This one shows the Pointer tool. Every event is handled in every state, so nothing is missed.
 
 ```mermaid
 stateDiagram-v2
@@ -286,23 +346,23 @@ All keys can be changed in **Settings → Controls**. On Mac, `Ctrl` means `⌘`
 
 ### Tools and modes
 
-| Key                         | Action                               |
-| --------------------------- | ------------------------------------ |
-| `H`                         | Hand                                 |
-| `V`                         | Pick                                 |
-| Hold `Shift`                | Swap Hand ↔ Pick while held          |
-| `L`                         | Lasso                                |
-| `M`                         | Rectangle                            |
-| `O`                         | Circle                               |
-| `Y`                         | Magic                                |
-| Hold `Ctrl` while selecting | Add                                  |
-| Hold `Alt` while selecting  | Subtract                             |
-| `1` `2` `3` `4`             | Furniture, Paths, Cliffs, Water mode |
-| `B`                         | Brush                                |
-| `X`                         | Eraser                               |
-| `G`                         | Fill                                 |
-| `T`                         | Cut corners                          |
-| `R`                         | Ruler on/off                         |
+| Key                         | Action                           |
+| --------------------------- | -------------------------------- |
+| `H`                         | Camera                           |
+| `V`                         | Pointer                          |
+| Hold `Shift`                | Swap Camera ↔ Pointer while held |
+| `L`                         | Lasso                            |
+| `M`                         | Rectangle                        |
+| `O`                         | Circle                           |
+| `Y`                         | Magic                            |
+| Hold `Ctrl` while selecting | Add                              |
+| Hold `Alt` while selecting  | Subtract                         |
+| `1` `2` `3` `4`             | Items, Paths, Cliffs, Water mode |
+| `B`                         | Brush                            |
+| `X`                         | Eraser                           |
+| `G`                         | Fill                             |
+| `T`                         | Cut corners                      |
+| `R`                         | Ruler on/off                     |
 
 ### Camera and view
 
@@ -324,7 +384,7 @@ All keys can be changed in **Settings → Controls**. On Mac, `Ctrl` means `⌘`
 | `Ctrl + Y` or `Ctrl + Shift + Z` | Redo                                                          |
 | `Ctrl + C` / `X` / `V` / `D`     | Copy / cut / paste / duplicate                                |
 | `Delete` / `Backspace`           | Delete                                                        |
-| `[` / `]`                        | Rotate left / right (items)                                   |
+| `[` / `]`                        | Rotate the selection left / right                             |
 | `Esc`                            | Cancel drag or paste → else close menu → else clear selection |
 | `Shift + F10` or Menu key        | Actions menu                                                  |
 | `/`                              | Search items                                                  |
@@ -355,7 +415,7 @@ All keys can be changed in **Settings → Controls**. On Mac, `Ctrl` means `⌘`
 
 ### J1: Place a chair (mouse)
 
-1. Press `1` (Furniture mode).
+1. Press `1` (Items mode).
 2. In the toolbox, click the **Seating** tab.
 3. Drag **Chair** onto the map. A see-through chair follows the cursor and snaps to half tiles.
 4. Press `]` to turn it.
@@ -379,10 +439,10 @@ All keys can be changed in **Settings → Controls**. On Mac, `Ctrl` means `⌘`
 ### J4: Paint a path and round its corners
 
 1. Press `2` (Paths mode). Choose **Brush** (`B`). Pick **Cobble** in the palette.
-2. Open the brush settings (small ▾ on the button). Pick size 2.
+2. The **Size** slider appears next to the tools. Set it to 2.
 3. Paint a path across the grass.
-4. Choose **Cut** (`T`). Dots show on the corners that can be shaped.
-5. Click a corner dot twice: square → round.
+4. Choose **Cut** (`T`), then **Round**. Dots show on the corners that can be shaped.
+5. Click a corner dot. It turns round.
 
 ### J5: Raise a garden by one level
 
@@ -411,7 +471,7 @@ All keys can be changed in **Settings → Controls**. On Mac, `Ctrl` means `⌘`
 | Placeable      | A small thing that can stand on a surface (`placeable: { w, h }`)         |
 | Nothing stacks | An item has a surface **or** is placeable, never both                     |
 
-**How it works in Furniture mode**
+**How it works in Items mode**
 
 1. Drag a placeable item (a cup) over a table.
 2. The table's top shows its own small grid. The cup snaps to it.
