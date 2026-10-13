@@ -65,7 +65,7 @@ while dragging, and undo.
 | `history`             | Labels and selections for undo/redo                                      | Step 5                                           |
 | `pills`               | Visible pills and queue                                                  | Step 5                                           |
 | `catalog`             | Base items + loaded packs, search index                                  | Library actions                                  |
-| `library`             | Saved maps and packs (from IndexedDB)                                    | Library actions                                  |
+| `library`             | My drafts and packs (from the server, cached in IndexedDB)               | Library actions                                  |
 
 React components **read** stores. They never write them directly; they send events into the pipeline.
 
@@ -125,7 +125,7 @@ flowchart LR
 ```mermaid
 flowchart LR
     Base["Base catalog<br/>(@glade/petit-planet-catalog)"] --> Merge
-    Packs["Loaded packs<br/>(IndexedDB / server)"] --> Merge
+    Packs["Loaded packs<br/>(server, cached in IndexedDB)"] --> Merge
     Merge["Merge + check<br/>(catalogProblems)"] --> Bind["bind(map type, { entries, kinds })"]
     Bind --> W["Worker (rules)"]
     Bind --> St["Viewport (drawing)"]

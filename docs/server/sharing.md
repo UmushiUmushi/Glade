@@ -1,98 +1,205 @@
 # Saving, library and sharing
 
-> **In short:** Your maps and packs live in your browser's **Library**. To share, Glade uploads a copy and gives you two links: a **view link** and an **edit link**. Anyone with the edit link can change the map. Packs used by a map travel with it. No sign-up, ever.
+> **In short:** Your maps and packs are **drafts**, saved to the server as you work and owned by
+> your account ([accounts](accounts.md)). **Share** publishes a **snapshot**: a frozen copy that
+> never changes, behind a link anyone can open. To edit someone's map, you **make a copy**. The
+> copy is yours and doesn't depend on the original, so nothing breaks if the author changes or
+> removes theirs.
+
+## A map's life
+
+```mermaid
+flowchart LR
+    D["Draft<br/>(owner edits, autosaved)"] -- "Share" --> S1["Snapshot v1<br/>(frozen)"]
+    D -- "Update shared map" --> S2["Snapshot v2<br/>(frozen)"]
+    S1 --> L["Share link<br/>/m/7Hq2xV9…<br/>shows the latest snapshot"]
+    S2 --> L
+    L -- "Make a copy" --> C["Someone else's draft<br/>'copied from 7Hq2xV9 v2'"]
+```
+
+| Step                     | Who    | What happens                                                                          | Can it change later? |
+| ------------------------ | ------ | ------------------------------------------------------------------------------------- | -------------------- |
+| 1. **Draft**             | Owner  | The map autosaves to the server, owned by the owner's account.                        | ✅ By the owner      |
+| 2. **Share**             | Owner  | The server freezes the draft as snapshot v1 and returns a link.                       | ❌ Never             |
+| 3. **Open the link**     | Anyone | Shows the latest snapshot, read-only. No account needed.                              | —                    |
+| 4. **Make a copy**       | Anyone | A new draft for the visitor, with a note "copied from 7Hq2xV9 v1".                    | ✅ By the visitor    |
+| 5. **Update shared map** | Owner  | Freezes the current draft as snapshot v2. The link now shows v2. v1 still exists.     | ❌ v1 never changes  |
+| 6. **Stop sharing**      | Owner  | The link says "This map was removed by its author." Copies from step 4 are untouched. | —                    |
+
+So:
+
+- **Edit rights are always "only the owner".** No edit keys, no edit links, nothing to revoke.
+- **A shared map can't be wiped from under people.** Each copy holds its own full map. Example: 40
+  people copy Ana's island, then Ana stops sharing it. All 40 copies keep working.
+
+## Drafts and autosave
+
+```mermaid
+flowchart LR
+    W["Editor worker<br/>(each commit)"] --> B[("IndexedDB<br/>edit buffer")]
+    B -- "2 s quiet, or every 10 s<br/>while editing, or tab hidden" --> API["PUT /drafts/:id<br/>(If-Match: revision)"]
+    API --> Row[("drafts row<br/>overwritten in place")]
+```
+
+1. Every commit is written to **IndexedDB** at once (debounced by 1 second). This is a buffer, so a
+   closed tab or a dropped connection loses nothing.
+2. The browser uploads the draft after **2 seconds** with no edits, at most every **10 seconds**
+   while editing goes on, and when the tab is hidden.
+3. The server **overwrites** the draft's row and adds 1 to its `revision`. Drafts keep no history
+   on the server. Undo history lives in the browser.
+4. The draft's map file is checked like any upload ([upload checks](README.md#upload-checks-in-order)).
+
+Example: Amy places a brick, then another brick 1 second later. The server only ever sees the
+2-brick map, because the first upload waits for 2 quiet seconds.
+
+**Offline or server down:** editing goes on. Edits wait in IndexedDB and the map shows **⟳ Changes
+waiting**. Glade retries with back-off and uploads when the server is back. Maps opened recently
+are cached in IndexedDB, so they still open.
+
+**Two devices at once:** see [accounts](accounts.md#two-devices-editing-the-same-map).
+
+**Save points:** **More → Save** makes a named save point of the current draft (Q-18). Save points
+live in IndexedDB on this device.
 
 ## The Library
 
-One window, opened from **More → Open map…** or **More → Catalog packs…**.
+One window, opened from **More → Open map…** or **More → Catalog packs…**. It lists what your
+account owns, from the server.
 
-| Part         | Detail                                                                                                  |
-| ------------ | ------------------------------------------------------------------------------------------------------- |
-| Tabs         | **Maps** · **Packs**                                                                                    |
-| Filter       | All · Mine · Shared with me                                                                             |
-| Search       | By name                                                                                                 |
-| Sort         | Last opened (default) · Name · Last changed                                                             |
-| Card         | Thumbnail (a 3D snapshot), name, game, last changed, badges                                             |
-| Card actions | Open · Rename · Duplicate · Share… · Export file · Delete (or Remove from my library, for others' maps) |
+| Part         | Detail                                                      |
+| ------------ | ----------------------------------------------------------- |
+| Tabs         | **Maps** · **Packs**                                        |
+| Filter       | All · Drafts · Shared · Copies                              |
+| Search       | By name                                                     |
+| Sort         | Last opened (default) · Name · Last changed                 |
+| Card         | Thumbnail (a 3D snapshot), name, game, last changed, badges |
+| Card actions | Open · Rename · Duplicate · Share… · Export file · Delete   |
 
-| Badge             | Meaning                                                   |
-| ----------------- | --------------------------------------------------------- |
-| 💾 Local          | Only in this browser. Not shared.                         |
-| 🔗 Shared         | You shared it. You hold the edit key.                     |
-| ✏️ Can edit       | Someone shared it with you, with edit rights.             |
-| 👁 View only       | Someone shared it with you, view only.                    |
-| ⟳ Changes waiting | Your edits are not uploaded yet (offline or server down). |
-| ⬆ Newer version   | Someone else saved a newer version.                       |
+| Badge              | Meaning                                                    |
+| ------------------ | ---------------------------------------------------------- |
+| 📝 Draft           | Not shared.                                                |
+| 🔗 Shared          | Has a share link.                                          |
+| ✱ Unshared changes | Shared, and the draft has changed since the last snapshot. |
+| ↗ Copy             | Copied from someone's shared map. Hover shows which one.   |
+| ⟳ Changes waiting  | Edits not uploaded yet (offline or server down).           |
+
+The **Packs** tab also has **Used by my maps**: other people's packs that your maps use.
+
+**Delete** on a shared map asks: "Also stop sharing?" Deleting the draft but keeping the share
+keeps the link working, with no owner draft behind it.
+
+**Stop sharing never deletes your draft.** Only the frozen snapshot goes, 30 days later. Example:
+Amy shares her island, then clicks **Stop sharing**. The link now says "removed". Amy's draft is
+untouched and she keeps editing it. A draft that was never shared is never deleted (except by the
+[clean-up](accounts.md#clean-up) of anonymous accounts unused for 12 months).
 
 ## Share a map, step by step
 
 1. **More → Share…**
-2. The dialog lists what will be shared: the map, and any of **your packs** it uses ("This map uses 2 of your packs. They will be shared too.").
-3. Click **Create links**.
-4. Glade uploads the map and the packs.
-5. You get two links with copy buttons (and a QR code):
-   - **View link:** `https://glade.app/petit-planet/planner/m/7Hq2xV9pLk3mRt8wZ4bN1`
-   - **Edit link:** the same link plus `#edit=<secret key>`
+2. The dialog lists what will be published: the map, and any of **your packs** it uses that have
+   changes ("This map uses 2 of your packs. They will be shared too.").
+3. Click **Create link**.
+4. Glade publishes the packs, then the map.
+5. You get one link with a copy button (and a QR code):
+   `https://glade.app/petit-planet/planner/m/7Hq2xV9pLk3mRt8wZ4bN1`
 6. The map's badge changes to 🔗 Shared.
+
+Later, **Share…** on a shared map shows the link, the version list and two buttons: **Update
+shared map** and **Stop sharing**.
 
 ```mermaid
 sequenceDiagram
-    actor A as You
-    participant G as Glade (your browser)
+    actor A as Ana
+    participant G as Glade (Ana's browser)
     participant S as Glade server
-    actor B as Friend
+    actor B as Ben
     A->>G: Share…
-    G->>S: upload packs (if any)
-    S-->>G: pack ids + versions
-    G->>S: upload map (+ pack refs)
-    S-->>G: map id + edit key
-    G-->>A: view link, edit link
-    A->>B: sends edit link (chat, email…)
-    B->>S: open link: GET map + packs
-    S-->>B: map, packs
-    B->>B: edits (autosaved locally)
-    B->>S: save with edit key + version
-    S-->>B: ok, version 2
+    G->>S: publish changed packs
+    S-->>G: pack id + version
+    G->>S: POST /drafts/:id/share
+    S-->>G: share id, version 1
+    G-->>A: link
+    A->>B: sends the link (chat, email…)
+    B->>S: GET /shares/:id (no account needed)
+    S-->>B: snapshot v1 + its packs
+    B->>S: Make a copy (first save makes Ben's anonymous account)
+    S-->>B: Ben's own draft
 ```
 
-**Why the key is after `#`:** browsers never send the part after `#` to the server, so the key never appears in server or proxy logs. The app sends it in a request header only when saving.
+### Links
 
-## Editing a map someone shared
+Every map has two ids: a **draft id** and, once shared, a **share id**. They are different random
+strings, so a share link never gives away the draft id.
 
-1. Open the edit link. The map opens and is added to **Shared with me** (with its key).
-2. Edits save in your browser at once, as always.
-3. Every 10 seconds of quiet, and on **Save**, Glade uploads them.
-4. Each upload says which version it started from. If the server has a newer version, a dialog asks:
-   - **Keep both:** your version becomes a copy.
-   - **Use theirs:** load the newer version (your changes are kept as a local copy, just in case).
-   - **Use mine:** replace theirs (they can still get theirs back from version history).
-5. Live co-editing (two people at once, seeing each other) is **not** in the first version (Q-6).
+| Link                               | Example                                | Shows                                                             | Who can open it |
+| ---------------------------------- | -------------------------------------- | ----------------------------------------------------------------- | --------------- |
+| `/<game>/planner/d/<draft id>`     | `/petit-planet/planner/d/Xk82mQp4…`    | The draft, ready to edit. This is the address bar while you work. | The owner       |
+| `/<game>/planner/m/<share id>`     | `/petit-planet/planner/m/7Hq2xV9…`     | The latest snapshot. A note says "Version 3 · 2 days ago".        | Anyone          |
+| `/<game>/planner/m/<share id>?v=2` | `/petit-planet/planner/m/7Hq2xV9…?v=2` | Exactly version 2, forever. Good for guides and posts.            | Anyone          |
 
-**View-only links:** the map opens read-only. Editing tools are greyed. A banner offers **Make a copy** to edit your own version.
+Opening a share link shows the map read-only. Editing tools are greyed. A banner offers **Make a
+copy**. If you open your **own** share link, the banner says **Open my draft** instead. The **⋯**
+menu has **Report** ([abuse reports](admin.md#abuse-reports)).
+
+### Draft URLs
+
+Someone who isn't the owner opens a draft URL:
+
+| The draft is…                | They see                                                                            |
+| ---------------------------- | ----------------------------------------------------------------------------------- |
+| Not shared, or doesn't exist | The **private map** page (below). Both cases look the same, so ids can't be probed. |
+| Shared                       | A redirect to its share link, showing the latest snapshot.                          |
+
+The redirect covers a common mistake: the owner copies the address bar instead of using
+**Share…**. The owner already made that snapshot public, so the redirect gives nothing away.
+
+The private map page, inside the planner's frame:
+
+> **This map is private.** Only its owner can open it.
+>
+> **[Start a new map]** · **[Sign in with Google]** (shown when you are not signed in, in case
+> the map is yours from another device)
+
+Never a silent redirect to a blank planner: that looks like the map loaded empty.
 
 ## Packs
 
-| Rule                                                                     | Why                                       |
-| ------------------------------------------------------------------------ | ----------------------------------------- |
-| A pack has an id, a name, a game and a **version**.                      | So maps can say exactly what they need.   |
-| Published versions never change. Saving makes a new version.             | Old maps keep working.                    |
-| A map stores which pack versions it uses.                                | Opening a map loads exactly those.        |
-| When a newer pack version exists, the map shows "Pack update available". | You choose when to update.                |
-| Opening a shared map adds its packs to **Shared with me**.               | You can use those items in your own maps. |
-| Packs can be shared on their own, with the same view/edit links.         | Share an item set without a map.          |
+Packs work like maps: a draft that only you change, frozen published versions, and copies.
 
-## Moving to another device
+| Rule                                                                                   | Why                                     |
+| -------------------------------------------------------------------------------------- | --------------------------------------- |
+| A pack has an id, a name, a game and a **version**.                                    | So maps can say exactly what they need. |
+| Published versions never change. Publishing again makes a new version.                 | Old maps keep working.                  |
+| A map stores which pack versions it uses.                                              | Opening a map loads exactly those.      |
+| Your draft map may use your **draft** pack. Sharing the map publishes the pack first.  | A share link never points at a draft.   |
+| When a newer pack version exists, the map shows "Pack update available".               | You choose when to update.              |
+| A pack version that any map uses is **never deleted**, even after you stop sharing it. | Nobody's map loses its items.           |
+| Packs can be shared on their own, with the same kind of link.                          | Share an item set without a map.        |
 
-Without accounts, the library lives in one browser. Two ways to move it:
+**Stopping sharing a pack**, example:
 
-1. **Export library** (Settings → Privacy): downloads one file with all maps, packs and keys. Import it on the other device.
-2. **Library code** (optional, see Q-7): a secret code that stores your library list on the server. Enter it on another device to get the same list.
+1. Ana publishes "Garden pack v2".
+2. Ben copies Ana's map, which uses Garden pack v2.
+3. Ana stops sharing the Garden pack.
+4. The pack's own link says "removed", and nobody new can add it.
+5. Ben's map still loads Garden pack v2, because Ben's map uses Garden pack v2.
+
+Only the site owner's `glade-admin hide` ([running the site](admin.md)) removes a pack version that maps use (for abuse). Those maps then show
+grey stubs and "3 items are no longer available".
+
+## Files
+
+**Export file** downloads a `.glade-map.json` ([formats](formats.md)). **Import file** makes a new
+draft from one. **Settings → Account → Download all my maps** downloads a zip of every draft and
+pack. Files work with no account.
 
 ## What the server knows
 
-| Stored                                       | Not stored                          |
-| -------------------------------------------- | ----------------------------------- |
-| Shared maps and packs (only those you share) | Names, emails, accounts             |
-| Hashed edit keys                             | Edit keys themselves                |
-| When things were created and changed         | IP addresses (not kept in app logs) |
-| Bug reports you choose to send               | Anything you didn't share           |
+| Stored                                                    | Not stored                          |
+| --------------------------------------------------------- | ----------------------------------- |
+| Your drafts and packs (once you save), and what you share | Anything you never saved            |
+| Who owns each draft and share (an account id)             | Who opened a share link             |
+| When things were created and changed                      | IP addresses (not kept in app logs) |
+| Bug reports you choose to send                            | Analytics                           |
+
+What is stored about the account itself is in [accounts](accounts.md#what-glade-stores-about-people).

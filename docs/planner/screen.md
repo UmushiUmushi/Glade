@@ -320,9 +320,9 @@ Same tools, no Fill, no drawer.
 | Home                  | Goes to `/`. In the first version this opens a simple game list (see Q-1).                                                                                                                                           |
 | New map               | Starts a fresh map. The current one is already autosaved. When the game has more than one map type, a small dialog asks which: "Island" or a home layout ("Home, 1 room, 8 × 8"). In 1.0 only the island is offered. |
 | Open map…             | Opens the Library on the Maps tab.                                                                                                                                                                                   |
-| Save                  | Saves a named save point. If the map is shared with edit rights, also uploads it. Shows "Saved ✓".                                                                                                                   |
+| Save                  | Uploads the draft now (it also autosaves) and makes a named save point. Shows "Saved ✓".                                                                                                                             |
 | Save as…              | Saves a copy with a new name.                                                                                                                                                                                        |
-| Share…                | Makes view and edit links ([sharing](../server/sharing.md)).                                                                                                                                                         |
+| Share…                | Publishes a frozen snapshot behind a link, or updates it, or stops sharing it ([sharing](../server/sharing.md)).                                                                                                     |
 | Import / Export file… | Load or download a `.glade-map.json` file.                                                                                                                                                                           |
 | Catalog packs…        | Opens the Library on the Packs tab.                                                                                                                                                                                  |
 | Settings              | Opens Settings.                                                                                                                                                                                                      |
@@ -333,15 +333,16 @@ All items are for the current game only.
 
 ### Settings window (tabs)
 
-| Tab              | Options                                                                                                                                                       |
-| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| General          | Theme (light, dark, game default) · Layout (Auto, Desktop, Phone portrait, Phone landscape) · Language (English for now)                                      |
-| Accessibility    | Text size · Dyslexia-friendly font (Atkinson Hyperlegible / OpenDyslexic) · High contrast · Reduce motion · Highlight colours · Pill duration · Tooltip delay |
-| Controls         | Key map editor · Mouse and touch speed · Invert zoom · Drag dead zone                                                                                         |
-| Planner          | Auto-open actions menu · Show FPS · Show coordinates · Autosave on/off (on by default)                                                                        |
-| Graphics         | Quality: low / medium / high · Shadows · Planet curvature                                                                                                     |
-| Privacy and logs | What gets logged (shown in plain words) · Detailed logs on/off · View log · Download log · Delete all local data                                              |
-| About            | Glade version, licences                                                                                                                                       |
+| Tab              | Options                                                                                                                                                                                      |
+| ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| General          | Theme (light, dark, game default) · Layout (Auto, Desktop, Phone portrait, Phone landscape) · Language (English for now)                                                                     |
+| Accessibility    | Text size · Dyslexia-friendly font (Atkinson Hyperlegible / OpenDyslexic) · High contrast · Reduce motion · Highlight colours · Pill duration · Tooltip delay                                |
+| Controls         | Key map editor · Mouse and touch speed · Invert zoom · Drag dead zone                                                                                                                        |
+| Planner          | Auto-open actions menu · Show FPS · Show coordinates · Autosave on/off (on by default)                                                                                                       |
+| Graphics         | Quality: low / medium / high · Shadows · Planet curvature                                                                                                                                    |
+| Account          | Signed in as … (or "Not signed in") · Sign in with Google · Devices · Download all my maps · Sign out (Google only) · Delete my account / Delete my data ([accounts](../server/accounts.md)) |
+| Privacy and logs | What gets logged (shown in plain words) · Detailed logs on/off · View log · Download log · Clear this browser's cache                                                                        |
+| About            | Glade version, licences                                                                                                                                                                      |
 
 ### Guide
 

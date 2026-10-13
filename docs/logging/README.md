@@ -20,7 +20,7 @@
 | Sizes ("6 × 4 cells"), cell counts                       | Coordinates and positions                                                                  |
 | Rule ids that fired (`T3`) and counts                    | Notes, descriptions, any typed text                                                        |
 | Results: committed / rejected / unchanged                | Colours, models, recipes                                                                   |
-| Timings per step                                         | Share ids and edit keys                                                                    |
+| Timings per step                                         | Draft, share and user ids, emails, session cookies                                         |
 | Errors: code, step, stack trace                          | IP address, user agent string (only browser family and major version)                      |
 | Device class: screen size bucket, touch yes/no, GPU tier | Screenshots (unless you add one to a report)                                               |
 

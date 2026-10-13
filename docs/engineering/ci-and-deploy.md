@@ -74,6 +74,7 @@ services:
     restart: unless-stopped
     read_only: true
     tmpfs: [/tmp]
+    env_file: ./glade.env # BETTER_AUTH_SECRET, BETTER_AUTH_URL, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GLADE_NTFY_URL, GLADE_NTFY_TOKEN
     volumes:
       - ./data:/data
     mem_limit: 512m
@@ -120,17 +121,17 @@ flowchart TB
 
 ## Backups
 
-| What         | How                                                                  | When                             |
-| ------------ | -------------------------------------------------------------------- | -------------------------------- |
-| `glade.db`   | `sqlite3 .backup` to `data/backups/`                                 | Before every deploy, and nightly |
-| Blob files   | Already immutable (hash-named)                                       | —                                |
-| Off-site     | Copy the `data` folder to off-site storage                           | Nightly                          |
-| Restore test | Restore last night's backup into a temp container and call `/health` | Monthly (scheduled CI job)       |
+| What         | How                                                                   | When                             |
+| ------------ | --------------------------------------------------------------------- | -------------------------------- |
+| `glade.db`   | `sqlite3 .backup` to `data/backups/` (users, sessions, drafts, index) | Before every deploy, and nightly |
+| Blob files   | Already immutable (hash-named)                                        | —                                |
+| Off-site     | Copy the `data` folder to off-site storage                            | Nightly                          |
+| Restore test | Restore last night's backup into a temp container and call `/health`  | Monthly (scheduled CI job)       |
 
 ## Feature flags
 
 - A small `flags.json` in `/data` (and defaults in code).
-- Risky features ship behind flags: `terrain.stage2`, `terrain.stage3`, `builder.curves`, `library.code`.
+- Risky features ship behind flags: `terrain.stage2`, `terrain.stage3`, `builder.curves`, `signin.google`.
 - Changing a flag needs no redeploy: the server reads the file every minute and the app fetches flags on load.
 
 ## Monitoring
@@ -141,6 +142,8 @@ flowchart TB
 | `http_request_duration_seconds`                      | p95 > 500 ms for 10 min |
 | `glade_uploads_total`, `glade_upload_rejected_total` | Rejections spike        |
 | `glade_reports_total`                                | Any new report (info)   |
+| `glade_abuse_reports_open` (backup for ntfy)         | Above 0 for a day       |
+| `glade_notify_failed_total`                          | Any failure             |
 | `glade_disk_bytes`                                   | Data folder > 20 GB     |
 | Container up (cAdvisor)                              | Down for 2 min          |
 

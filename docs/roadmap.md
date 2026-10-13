@@ -110,16 +110,21 @@ Stage 2 behind flag `terrain.stage2` until approved.
 
 ## Phase 6: Library and sharing (L)
 
-| Deliverables                                                                 |
-| ---------------------------------------------------------------------------- |
-| Library window, file import/export, export library                           |
-| Server: API, SQLite, blobs, upload checks, limits, metrics                   |
-| Share dialog, links, edit sync, conflict dialog, view-only mode, make a copy |
-| Pack publishing and loading                                                  |
-| Bug reports + `glade-log` CLI (show, filter, timeline, replay)               |
+| Deliverables                                                                                                                   |
+| ------------------------------------------------------------------------------------------------------------------------------ |
+| Accounts: Better Auth with anonymous users and Google, sessions, moving ownership on sign-in, Settings → Account, privacy page |
+| Server: API, SQLite, drafts, snapshot blobs, upload checks, limits, clean-up, metrics                                          |
+| Draft autosave to the server, IndexedDB edit buffer, two-device conflict dialog                                                |
+| Library window, file import/export, download all my maps                                                                       |
+| Share dialog, links, update and stop sharing, draft URLs and the private-map page, view-only mode, make a copy                 |
+| `glade-admin` CLI on the server: stats, abuse cases, hide, ban, delete user                                                    |
+| Abuse reports: Report button, cases, auto-hide, ntfy alerts, `glade-triage` with Claude Code                                   |
+| Pack publishing and loading                                                                                                    |
+| Bug reports + `glade-log` CLI (show, filter, timeline, replay)                                                                 |
 
-**Exit:** share → open on another device → edit → conflict path all pass e2e. A report round trip
-works.
+**Exit:** these pass e2e: save anonymously → share → open on another device → make a copy;
+sign in with Google on two devices and see the same maps; the two-device conflict path; stop sharing
+leaves copies working. A report round trip works.
 
 **Milestone: Planner 1.0 beta** (Phases 0–6).
 
@@ -162,7 +167,7 @@ another device.
 ## Later
 
 Home page · first-time tutorial overlay · live co-editing · Palworld · Stardew Valley ·
-translations · library code sync · custom home layouts (Q-24) · link a house on the island to its
+translations · invite editors to a map (signed-in users) · Discord sign-in (Q-27) · custom home layouts (Q-24) · link a house on the island to its
 home (Q-25) · item states, like an open window (`itemModel`) · more terrain support styles, when a
 game needs them.
 
@@ -198,21 +203,22 @@ Apple M4, Node, a real-size island (375 items, 539 plants, 0 violations, 147 KB 
 
 ## Risks
 
-| #   | Risk                                                                | Chance | Impact | What we do                                                                            |
-| --- | ------------------------------------------------------------------- | ------ | ------ | ------------------------------------------------------------------------------------- |
-| R1  | Moldable terrain (stage 3) is harder than hoped                     | High   | Medium | Ship stages 1–2 first. Stage 3 is research behind a flag.                             |
-| R2  | 3D is slow on phones                                                | Medium | High   | Measure in Phase 1. Quality settings. Worker. 2D default on weak devices.             |
-| R3  | Making enough base items takes long                                 | Medium | Medium | Start small, with the kinds every map needs. Community packs.                         |
-| R4  | Legal: fonts, names, look-alike items                               | Low    | High   | Open fonts only. Original models. No game assets. "Fan project, not affiliated" note. |
-| R5  | Abuse of anonymous sharing                                          | Medium | Medium | Limits, abuse reports, unpublish tool, no HTML in content.                            |
-| R6  | The server goes down                                                | Medium | Low    | Local-first. Backups. Clear "sharing offline" message.                                |
-| R7  | Scope creep                                                         | High   | Medium | Phases with exit criteria. "Later" list.                                              |
-| R8  | A 3D canvas is hard for screen reader users                         | Medium | Medium | Keyboard cursor, text descriptions, testing with real users.                          |
-| R9  | A log leaks content by mistake                                      | Low    | High   | Registry with allowed fields only, redaction tests, review of every new event.        |
-| R10 | The builder doesn't feel "smart"                                    | Medium | Medium | Prototype layout rules in Storybook early; test with users before Phase 7.            |
-| R11 | Editing is a lot of code to keep right                              | Medium | High   | Small game-free core with property tests: any op, then undo, gives back the start.    |
-| R12 | Shared code bends to fit one game                                   | Medium | Medium | Build for the games that exist; move code up only when a second game needs it.        |
-| R13 | 3D is slow to update after edits on big islands (all items rebuild) | Medium | Medium | T-2. Until then, wait for the drag to end before calling `setDoc`.                    |
+| #   | Risk                                                                | Chance | Impact | What we do                                                                                 |
+| --- | ------------------------------------------------------------------- | ------ | ------ | ------------------------------------------------------------------------------------------ |
+| R1  | Moldable terrain (stage 3) is harder than hoped                     | High   | Medium | Ship stages 1–2 first. Stage 3 is research behind a flag.                                  |
+| R2  | 3D is slow on phones                                                | Medium | High   | Measure in Phase 1. Quality settings. Worker. 2D default on weak devices.                  |
+| R3  | Making enough base items takes long                                 | Medium | Medium | Start small, with the kinds every map needs. Community packs.                              |
+| R4  | Legal: fonts, names, look-alike items                               | Low    | High   | Open fonts only. Original models. No game assets. "Fan project, not affiliated" note.      |
+| R5  | Abuse of free accounts and sharing                                  | Medium | Medium | Limits per IP and per user, abuse reports, `glade-admin` hide and ban, no HTML in content. |
+| R6  | The server goes down                                                | Medium | Medium | Edits wait in IndexedDB; recent maps are cached. Backups. Clear "saving paused" message.   |
+| R7  | Scope creep                                                         | High   | Medium | Phases with exit criteria. "Later" list.                                                   |
+| R8  | A 3D canvas is hard for screen reader users                         | Medium | Medium | Keyboard cursor, text descriptions, testing with real users.                               |
+| R9  | A log leaks content by mistake                                      | Low    | High   | Registry with allowed fields only, redaction tests, review of every new event.             |
+| R10 | The builder doesn't feel "smart"                                    | Medium | Medium | Prototype layout rules in Storybook early; test with users before Phase 7.                 |
+| R11 | Editing is a lot of code to keep right                              | Medium | High   | Small game-free core with property tests: any op, then undo, gives back the start.         |
+| R12 | Shared code bends to fit one game                                   | Medium | Medium | Build for the games that exist; move code up only when a second game needs it.             |
+| R13 | 3D is slow to update after edits on big islands (all items rebuild) | Medium | Medium | T-2. Until then, wait for the drag to end before calling `setDoc`.                         |
+| R14 | An anonymous user loses their account (cleared cookies, new device) | Medium | Medium | Nudges to sign in with Google after the first share and the 3rd map. Download all my maps. |
 
 ## Open questions
 
@@ -225,9 +231,9 @@ Each has a proposed answer.
 | Q-3  | Does Furniture mode include plants, houses and bridges?                                                    | Yes: it covers everything from the catalog drawer.                                                                                |
 | Q-4  | Are the key choices OK: Shift = swap tools, Ctrl = add, Alt = subtract, `[` `]` = rotate, `1`–`4` = modes? | Yes, and all keys can be changed.                                                                                                 |
 | Q-5  | Petit Planet item categories?                                                                              | Start with: Houses, Seating, Tables, Storage, Lights, Decor, Plants, Trees, Fences, Bridges and inclines, Outdoor.                |
-| Q-6  | Live co-editing (two people at once)?                                                                      | Not in 1.0. Version checks and a conflict dialog instead.                                                                         |
-| Q-7  | Optional **library code** to sync a library across devices?                                                | Yes, as a stretch goal in Phase 6.                                                                                                |
-| Q-8  | How long are shared maps kept?                                                                             | Forever for now. Review when the data folder passes 10 GB.                                                                        |
+| Q-6  | Live co-editing (two people at once)?                                                                      | Not in 1.0. Each map has one owner; others make a copy. Later: invite editors who are signed in.                                  |
+| Q-7  | How does a library move to another device?                                                                 | Sign in with Google (optional). Without it, Download all my maps and Import.                                                      |
+| Q-8  | How long are shared maps kept?                                                                             | Snapshots: until the owner stops sharing, then 30 days. Drafts: kept. Pack versions: while a map uses them. Review at 10 GB.      |
 | Q-9  | Title font for Petit Planet?                                                                               | An open (OFL) rounded font such as Fredoka or Baloo 2.                                                                            |
 | Q-10 | Licence for the base catalog data?                                                                         | CC BY 4.0 (the code is MIT).                                                                                                      |
 | Q-11 | Where do bug reports go?                                                                                   | Stored on the server. A maintainer reviews them with `glade-log`, then one command opens a GitHub issue. Nothing posts by itself. |
@@ -237,7 +243,7 @@ Each has a proposed answer.
 | Q-15 | What does "Raise water level" do?                                                                          | Raises the water body and its banks by one level, when valid.                                                                     |
 | Q-16 | Any usage analytics?                                                                                       | None. Only bug reports (opt-in) and server metrics.                                                                               |
 | Q-17 | Is 200 undo steps enough?                                                                                  | Yes.                                                                                                                              |
-| Q-18 | Keep local save points (version history) per map?                                                          | Yes, the last 20 saves.                                                                                                           |
+| Q-18 | Keep local save points (version history) per map?                                                          | Yes, the last 20 named saves, on this device. Server-side draft history is a later idea.                                          |
 | Q-19 | Show the time slider range only from 7:00 to 21:00?                                                        | Yes, it matches Petit Planet's 4 presets.                                                                                         |
 | Q-20 | Default drag check rate (10 per second) and pill time (6 s)?                                               | Yes. Both can be changed in Settings.                                                                                             |
 | Q-21 | Homes (inside houses) in 1.0?                                                                              | No. The shell supports many map types from Phase 1 (cheap), but the Home planner is Phase 10, after 1.0.                          |
@@ -246,3 +252,5 @@ Each has a proposed answer.
 | Q-24 | Let users design their own home layouts (rooms, doors)?                                                    | Not at first. Only the game's layouts. The profile can make a map for any layout, so this is possible later.                      |
 | Q-25 | Link a house on the island to its home design?                                                             | Later. Maps don't link to each other, so Glade would keep the link in its own map file.                                           |
 | Q-26 | Are the words OK: **map type** (island, home) and **map** (one design you make)?                           | Yes. The UI never says "map type"; it says "Island" or "Home".                                                                    |
+| Q-27 | Discord sign-in as well as Google?                                                                         | Later, if people ask. One config block in Better Auth.                                                                            |
+| Q-28 | Show an author name on shared maps?                                                                        | Not in 1.0. Later: an optional display name, never the Google name by default.                                                    |

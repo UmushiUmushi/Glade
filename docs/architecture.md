@@ -9,7 +9,8 @@ has its own folder of docs with the details ([docs/README.md](README.md) lists t
 > **In short:** Glade has two tools per game: a **Planner** (design your island) and a **Builder**
 > (make your own items). Each game is described by a **profile**: its maps, rules, item kinds and
 > look. The rest of Glade is shared by every game: the screens, the tools, editing, saving and
-> sharing. No accounts. It runs as one Docker container.
+> sharing. No sign-up: every visitor quietly gets an account on first save, and Sign in with
+> Google is optional. It runs as one Docker container.
 
 ### What a user can do
 
@@ -18,7 +19,8 @@ has its own folder of docs with the details ([docs/README.md](README.md) lists t
 3. Place houses, furniture, plants, bridges. Paint paths. Shape cliffs and water.
 4. Get told, in plain words, when something breaks a game rule.
 5. Build a custom item in the Builder, like a lounge chair or a hedge.
-6. Save maps and items. Share them with a link. Open and edit maps other people shared.
+6. Save maps and items. Share them with a link. Open maps other people shared, and make your own
+   copy to edit.
 7. Put small things on tables. After 1.0: decorate the inside of homes.
 
 ### The two apps
@@ -116,9 +118,9 @@ Something moves from a game into a shared package when a second game needs it.
 
 ## Big picture
 
-> **In short:** Glade is a **browser app** plus a **small server**. The browser does almost
-> everything: drawing, editing, checking rules, saving locally. The server only stores shared maps
-> and packs, and takes bug reports. The game profiles run in both places.
+> **In short:** Glade is a **browser app** plus a **small server**. The browser does the work:
+> drawing, editing, checking rules. The server holds the real copy of everyone's maps and packs,
+> signs people in, serves share links, and takes bug reports. The game profiles run in both places.
 
 ```mermaid
 flowchart LR
@@ -127,7 +129,7 @@ flowchart LR
         Pipe["Action pipeline"]
         Worker["Editor worker<br/>(edit + profile rules)"]
         Stage["Viewport<br/>(2D canvas + MapScene)"]
-        IDB[("IndexedDB<br/>maps, packs, logs")]
+        IDB[("IndexedDB<br/>edit buffer, cache, logs")]
         UI --> Pipe
         Pipe --> Worker
         Worker --> Pipe
@@ -137,13 +139,16 @@ flowchart LR
     subgraph Server["Glade server (Docker)"]
         API["API<br/>(Fastify)"]
         Prof["Game profiles<br/>(check uploads)"]
-        DB[("SQLite<br/>index")]
-        Blobs[("Files<br/>maps, packs")]
+        Auth["Better Auth<br/>(sessions)"]
+        DB[("SQLite<br/>users, sessions, drafts")]
+        Blobs[("Files<br/>shared snapshots")]
         API --> Prof
+        API --> Auth
         API --> DB
         API --> Blobs
     end
-    Pipe -- "share, open links,<br/>bug reports" --> API
+    Pipe -- "save drafts, share,<br/>open links, bug reports" --> API
+    Auth -- "Sign in with Google<br/>(optional)" --> Google["Google"]
     Proxy["Reverse proxy<br/>(HTTPS)"] --- API
 ```
 
@@ -153,17 +158,21 @@ flowchart LR
 | Action pipeline        | Browser, main thread       | Turns every user action into checked edits ([planner internals](planner/internals.md)). |
 | Editor worker          | Browser, background thread | Holds the real map. Runs the ops and undo, and asks the profile's rules what is wrong.  |
 | Viewport               | Browser, main thread + GPU | Draws the map: 2D with the map's `plan.draw`, 3D with `MapScene`. Adds highlights.      |
-| IndexedDB              | Browser storage            | Autosaves maps, packs, settings, recent logs.                                           |
-| API                    | Server                     | Stores shared maps and packs. Takes bug reports.                                        |
+| IndexedDB              | Browser storage            | Buffers edits until the server has them. Caches recent maps, settings, recent logs.     |
+| API                    | Server                     | Signs people in. Stores drafts and shared snapshots. Takes bug reports.                 |
 | Profiles on the server | Server                     | Check that every upload is a real, valid file.                                          |
-| SQLite + files         | Server disk                | Index of shared things + their content.                                                 |
+| SQLite + files         | Server disk                | Users, sessions, drafts (one row each), and shared snapshots (one file each).           |
 
-### Local-first
+### Saving and sharing
 
-1. Every map lives in the browser first.
-2. Every change is saved to IndexedDB at once (debounced by 1 second).
-3. The server is only used when you **share**, **open a link**, or **send a bug report**.
-4. If the server is down, everything except sharing still works.
+1. Every map is a **draft** owned by an account. The first save quietly makes an anonymous
+   account ([accounts](server/accounts.md)).
+2. Every change goes to IndexedDB at once (debounced by 1 second), then to the server after
+   2 quiet seconds. The server's copy is the real one; IndexedDB is a buffer.
+3. **Share** freezes the draft as a **snapshot** behind a link. Snapshots never change. Other
+   people edit by making their own copy ([sharing](server/sharing.md)).
+4. If the server is down, editing goes on and changes wait in IndexedDB. Opening other maps and
+   sharing wait for the server.
 
 ### One action, start to end (example: move a chair)
 
@@ -203,6 +212,7 @@ sequenceDiagram
 | 3D                | three.js through `MapScene` (`@glade/three`) | Draws any map's render format, with no UI attached.                                                     |
 | Search            | MiniSearch                                   | Small, fast, fuzzy item search.                                                                         |
 | Server            | Node.js 22 + Fastify                         | Fast, typed, schema validation built in.                                                                |
+| Sign-in           | Better Auth (anonymous plugin + Google)      | Runs inside Glade's server and SQLite. No passwords, no outside auth service.                           |
 | Database          | SQLite (better-sqlite3)                      | One file. No extra service. Easy backup.                                                                |
 | Validation        | zod                                          | Shared between browser and server.                                                                      |
 | Unit tests        | Vitest                                       | Fast, and runs the TypeScript source directly.                                                          |
@@ -230,10 +240,12 @@ glade/
 │  │        └─ thumbs.worker.ts   item thumbnails
 │  └─ server/                     @glade/server: the API
 │     └─ src/
-│        ├─ routes/               maps, packs, reports, health, metrics
-│        ├─ domain/               share keys, versions, limits
+│        ├─ auth/                 Better Auth setup, moving ownership on sign-in
+│        ├─ routes/               drafts, shares, me, reports, abuse, health, metrics
+│        ├─ domain/               ownership, revisions, versions, limits, clean-up
 │        ├─ storage/              SQLite, blob files, migrations
-│        └─ checks/               upload checks (with the game profiles)
+│        ├─ checks/               upload checks (with the game profiles)
+│        └─ cli/                  glade-admin: the site owner's tool, run on the server
 ├─ packages/
 │  ├─ core/  render/  three/      the shared profile packages
 │  ├─ edit/                       editing: draft, patch, transaction, history
@@ -256,7 +268,7 @@ glade/
 │        └─ references/           reference screenshots: local only, ignored by git
 ├─ tests/                         repo guards: import boundaries, references stay local
 ├─ e2e/                           Playwright tests
-├─ docker/                        Dockerfile, compose.yml
+├─ docker/                        Dockerfile, compose.yml, triage/ (glade-triage for abuse cases)
 ├─ docs/
 └─ .github/workflows/
 ```
@@ -390,44 +402,48 @@ game and any set of views.
 
 ## Words we use
 
-| Word                      | Meaning                                                                                                                                                                                                                                          |
-| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **Game**                  | A game Glade supports, like Petit Planet.                                                                                                                                                                                                        |
-| **Profile**               | What a game is: its maps, grids, rules, item kinds, settings and look (`@glade/<id>-profile`). In code, a `GameProfile`.                                                                                                                         |
-| **Map type**              | One kind of world in a game. In code, a `MapDefinition`. Petit Planet has the island (`planet`) and homes (`interior_home_1_8`, `interior_home_1_10`). The UI never says "map type"; it says "Island" or "Home".                                 |
-| **Map**                   | One design you make and save: an island or a home. In code, a `Doc`.                                                                                                                                                                             |
-| **Layer**                 | One part of a map's data, like `terrain`, `paths`, `items`.                                                                                                                                                                                      |
-| **Grid**                  | A set of cells over the map. The island has `major` (tiles), `minor` (half tiles), `terrain` (blocks), `area` (16 × 16 tiles).                                                                                                                   |
-| **Rule**                  | A game rule, like "land can only step 3 levels". Rules only check; they never change a map.                                                                                                                                                      |
-| **Violation**             | A broken rule, with the cells involved.                                                                                                                                                                                                          |
-| **Op**                    | One edit, like `placeItem` or `raise`.                                                                                                                                                                                                           |
-| **Transaction**           | A group of ops that all succeed or all fail.                                                                                                                                                                                                     |
-| **Patch**                 | The exact before and after of every changed cell. Used for undo.                                                                                                                                                                                 |
-| **Support style**         | A profile setting that says how terrain may hang over empty space: `full`, `none`, or a limited overhang.                                                                                                                                        |
-| **Catalog**               | The list of things you can place.                                                                                                                                                                                                                |
-| **Bind**                  | Joining a catalog to a map type: `bind(planet, catalog)`. Rules and drawing work on the result.                                                                                                                                                  |
-| **Item**                  | One catalog entry: a chair, a tree, a path type.                                                                                                                                                                                                 |
-| **Kind**                  | The type of an item, defined by the profile. Kinds can have a parent: `tree` is a sort of `plant`. Island kinds: `plant`, `tree`, `shrub`, `flower`, `item`, `building`, `bridge`, `incline`, `path`. Home kinds add `wallpaper` and `flooring`. |
-| **Surface**               | The top of a table, stall or counter. Small **placeable** things stand on it.                                                                                                                                                                    |
-| **Mount**                 | Where a home item goes: floor, wall or ceiling.                                                                                                                                                                                                  |
-| **MapScene**              | The 3D drawing of one map (`@glade/three`). The viewport puts it on screen.                                                                                                                                                                      |
-| **Pack**                  | A shareable bundle of custom items made in the builder.                                                                                                                                                                                          |
-| **Base catalog**          | The items Glade ships for a game (not custom).                                                                                                                                                                                                   |
-| **Viewport**              | The big area that shows the map.                                                                                                                                                                                                                 |
-| **Viewport mode**         | What you are working on: Furniture, Paths, Cliffs or Water.                                                                                                                                                                                      |
-| **Shell**                 | The planner's shared frame: side panel, rail, viewport chrome, toolbox frame. The same in every game.                                                                                                                                            |
-| **Scope**                 | What tools can touch in the current viewport mode.                                                                                                                                                                                               |
-| **Cursor control**        | Hand (camera) or Pick (choose and move things).                                                                                                                                                                                                  |
-| **Select tool**           | Lasso, Rectangle, Circle or Magic.                                                                                                                                                                                                               |
-| **Select mode**           | Set (replace), Add, or Subtract.                                                                                                                                                                                                                 |
-| **Pill**                  | A small message that slides in from the top. Used for violations.                                                                                                                                                                                |
-| **Actions menu**          | The small menu next to a selection (the "more" menu).                                                                                                                                                                                            |
-| **Toolbox**               | The drawer under the viewport (or the bottom sheet on phones).                                                                                                                                                                                   |
-| **Rail**                  | The thin, collapsed version of the side panel.                                                                                                                                                                                                   |
-| **Template**              | A starting shape and rule set in the builder, like "Fence".                                                                                                                                                                                      |
-| **Part**                  | One piece of a built item, like a slab or a leg.                                                                                                                                                                                                 |
-| **Recipe**                | The builder's own editable description of an item. It compiles into a model.                                                                                                                                                                     |
-| **Intent**                | What the user meant, like "move these 3 chairs 2 tiles left".                                                                                                                                                                                    |
-| **Pipeline**              | The fixed steps every action goes through ([planner internals](planner/internals.md)).                                                                                                                                                           |
-| **Worker**                | A background thread in the browser. Editing and rule checks run there so the screen never freezes.                                                                                                                                               |
-| **Edit link / View link** | Share links. Edit links let others change the map. View links only show it.                                                                                                                                                                      |
+| Word               | Meaning                                                                                                                                                                                                                                          |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Game**           | A game Glade supports, like Petit Planet.                                                                                                                                                                                                        |
+| **Profile**        | What a game is: its maps, grids, rules, item kinds, settings and look (`@glade/<id>-profile`). In code, a `GameProfile`.                                                                                                                         |
+| **Map type**       | One kind of world in a game. In code, a `MapDefinition`. Petit Planet has the island (`planet`) and homes (`interior_home_1_8`, `interior_home_1_10`). The UI never says "map type"; it says "Island" or "Home".                                 |
+| **Map**            | One design you make and save: an island or a home. In code, a `Doc`.                                                                                                                                                                             |
+| **Layer**          | One part of a map's data, like `terrain`, `paths`, `items`.                                                                                                                                                                                      |
+| **Grid**           | A set of cells over the map. The island has `major` (tiles), `minor` (half tiles), `terrain` (blocks), `area` (16 × 16 tiles).                                                                                                                   |
+| **Rule**           | A game rule, like "land can only step 3 levels". Rules only check; they never change a map.                                                                                                                                                      |
+| **Violation**      | A broken rule, with the cells involved.                                                                                                                                                                                                          |
+| **Op**             | One edit, like `placeItem` or `raise`.                                                                                                                                                                                                           |
+| **Transaction**    | A group of ops that all succeed or all fail.                                                                                                                                                                                                     |
+| **Patch**          | The exact before and after of every changed cell. Used for undo.                                                                                                                                                                                 |
+| **Support style**  | A profile setting that says how terrain may hang over empty space: `full`, `none`, or a limited overhang.                                                                                                                                        |
+| **Catalog**        | The list of things you can place.                                                                                                                                                                                                                |
+| **Bind**           | Joining a catalog to a map type: `bind(planet, catalog)`. Rules and drawing work on the result.                                                                                                                                                  |
+| **Item**           | One catalog entry: a chair, a tree, a path type.                                                                                                                                                                                                 |
+| **Kind**           | The type of an item, defined by the profile. Kinds can have a parent: `tree` is a sort of `plant`. Island kinds: `plant`, `tree`, `shrub`, `flower`, `item`, `building`, `bridge`, `incline`, `path`. Home kinds add `wallpaper` and `flooring`. |
+| **Surface**        | The top of a table, stall or counter. Small **placeable** things stand on it.                                                                                                                                                                    |
+| **Mount**          | Where a home item goes: floor, wall or ceiling.                                                                                                                                                                                                  |
+| **MapScene**       | The 3D drawing of one map (`@glade/three`). The viewport puts it on screen.                                                                                                                                                                      |
+| **Pack**           | A shareable bundle of custom items made in the builder.                                                                                                                                                                                          |
+| **Base catalog**   | The items Glade ships for a game (not custom).                                                                                                                                                                                                   |
+| **Viewport**       | The big area that shows the map.                                                                                                                                                                                                                 |
+| **Viewport mode**  | What you are working on: Furniture, Paths, Cliffs or Water.                                                                                                                                                                                      |
+| **Shell**          | The planner's shared frame: side panel, rail, viewport chrome, toolbox frame. The same in every game.                                                                                                                                            |
+| **Scope**          | What tools can touch in the current viewport mode.                                                                                                                                                                                               |
+| **Cursor control** | Hand (camera) or Pick (choose and move things).                                                                                                                                                                                                  |
+| **Select tool**    | Lasso, Rectangle, Circle or Magic.                                                                                                                                                                                                               |
+| **Select mode**    | Set (replace), Add, or Subtract.                                                                                                                                                                                                                 |
+| **Pill**           | A small message that slides in from the top. Used for violations.                                                                                                                                                                                |
+| **Actions menu**   | The small menu next to a selection (the "more" menu).                                                                                                                                                                                            |
+| **Toolbox**        | The drawer under the viewport (or the bottom sheet on phones).                                                                                                                                                                                   |
+| **Rail**           | The thin, collapsed version of the side panel.                                                                                                                                                                                                   |
+| **Template**       | A starting shape and rule set in the builder, like "Fence".                                                                                                                                                                                      |
+| **Part**           | One piece of a built item, like a slab or a leg.                                                                                                                                                                                                 |
+| **Recipe**         | The builder's own editable description of an item. It compiles into a model.                                                                                                                                                                     |
+| **Intent**         | What the user meant, like "move these 3 chairs 2 tiles left".                                                                                                                                                                                    |
+| **Pipeline**       | The fixed steps every action goes through ([planner internals](planner/internals.md)).                                                                                                                                                           |
+| **Worker**         | A background thread in the browser. Editing and rule checks run there so the screen never freezes.                                                                                                                                               |
+| **Account**        | Who owns maps and packs. Anonymous (made on first save, kept by a cookie) or signed in with Google.                                                                                                                                              |
+| **Draft**          | A map or pack you are working on. Only its owner can change it. Autosaved to the server.                                                                                                                                                         |
+| **Snapshot**       | A frozen copy of a draft, made by Share or Update shared map. Never changes.                                                                                                                                                                     |
+| **Share link**     | Shows the latest snapshot of a shared map or pack, read-only.                                                                                                                                                                                    |
+| **Copy**           | A new draft made from someone's snapshot. Yours, and independent of the original.                                                                                                                                                                |
