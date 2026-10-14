@@ -128,18 +128,20 @@ leaves copies working. A report round trip works.
 
 **Milestone: Planner 1.0 beta** (Phases 0–6).
 
-## Phase 7: Builder MVP (L)
+## Phase 7: Builder (L)
 
-| Deliverables                                                                                                |
-| ----------------------------------------------------------------------------------------------------------- |
-| `packages/builder`: part tree, surfaces, layout rules, compile to a model, recipe format                    |
-| Builder window + standalone route                                                                           |
-| Templates: Other, Fence/hedge, Path tile, Lamp, Table, Small thing                                          |
-| Parts: slab (with 90°/60° bends), disc, cantilever and pillar legs, dome toppings with forms, simple shapes |
-| Paint, problems panel, file menu, save dialog, open from planner, connection preview                        |
+| Deliverables                                                                                                                                                                 |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/builder`: part tree, faces, layout rules, compile to a model, recipe format                                                                                        |
+| Builder window + standalone route; the Define → Build → Save step bar                                                                                                        |
+| Templates: Item, Fence / hedge, Building, Tree, Shrub / flower, Crop, Bridge, Incline, Path, Placeable; switching templates converts                                         |
+| Basic shapes; Spin and Push with the outline panel; smart parts: Legs, Case, Drawer, Drape, Sling, Cushion, Tube frame, Book row, Handle, Trim, Roof; catalog items as parts |
+| Drop onto faces (flat against curves), handles, mirror by default, row and circle repeat                                                                                     |
+| Materials and patterns (T-5); markings: Surface and Door (T-7)                                                                                                               |
+| Problems panel, save dialog, open from planner, connection preview                                                                                                           |
 
-**Exit:** both worked examples ([builder](builder/README.md)) pass as e2e tests. Every compiled
-recipe passes `entryProblems` (property test).
+**Exit:** the seven test items ([builder](builder/README.md#test-items)) pass as e2e tests, each in
+no more steps than its recipe. Every compiled recipe passes `entryProblems` (property test).
 
 ## Phase 8: Polish and audit (M) → 1.0
 
@@ -148,8 +150,8 @@ checklist, first public release.
 
 ## Phase 9: Research features (L, ongoing)
 
-Sculpt (terrain merge, dent, push/pull faces), curved toppings (mesh), more builder templates
-(house, bridge, incline, tree), patterns on model parts (T-5).
+Sculpt (terrain merge, dent, push/pull faces), builder parts that bend to a curve, soft blend,
+patterns you draw yourself.
 
 ## Phase 10: Homes (L)
 
@@ -177,13 +179,15 @@ Changes to the shared profile packages and Petit Planet's profile that the phase
 Each keeps the profile rules: shared packages stay game-free, rules stay customizable, every change
 has tests.
 
-| Id  | Change                                                                                            | Why                                                                                        | Size | Phase          |
-| --- | ------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ | ---- | -------------- |
-| T-1 | **Split the island's `items` layer toggle** into buildings and other items (2D and 3D).           | Separate Buildings and Furniture layers.                                                   | S    | 2              |
-| T-2 | **Split the island's items chunk** by area, so changing one item rebuilds only the items near it. | Today any item change rebuilds all 914 items and plants in 3D (15.6 ms on an Apple M4).    | S–M  | 2              |
-| T-3 | **A writer for things on tables** (`putOnSurface`), and `surfaceOf` in the public API.            | Every other layer has a typed writer; this one has only a reader.                          | S    | 3              |
-| T-4 | **Build 3D chunks off the main thread** (let `MapScene` take chunks built in a worker).           | The first 3D build of the island takes 0.65 s on an Apple M4. Only if phones are too slow. | M    | 1–2, if needed |
-| T-5 | **Patterns on model parts.**                                                                      | Builder patterns. Patterns exist for wallpaper, flooring and paths, which is a start.      | M    | Later          |
+| Id  | Change                                                                                                                                                | Why                                                                                        | Size | Phase          |
+| --- | ----------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ | ---- | -------------- |
+| T-1 | **Split the island's `items` layer toggle** into buildings and other items (2D and 3D).                                                               | Separate Buildings and Furniture layers.                                                   | S    | 2              |
+| T-2 | **Split the island's items chunk** by area, so changing one item rebuilds only the items near it.                                                     | Today any item change rebuilds all 914 items and plants in 3D (15.6 ms on an Apple M4).    | S–M  | 2              |
+| T-3 | **A writer for things on tables** (`putOnSurface`), and `surfaceOf` in the public API.                                                                | Every other layer has a typed writer; this one has only a reader.                          | S    | 3              |
+| T-4 | **Build 3D chunks off the main thread** (let `MapScene` take chunks built in a worker).                                                               | The first 3D build of the island takes 0.65 s on an Apple M4. Only if phones are too slow. | M    | 1–2, if needed |
+| T-5 | **Materials and patterns on model parts** (wood, marble, glass…; stripes, waves, scales…), made by rules from colours.                                | The builder's Paint. Patterns exist for wallpaper, flooring and paths, which is a start.   | M    | 7              |
+| T-6 | **A `crop` kind** under `plant`, with a 1 × 1 or 2 × 2 tile footprint (plants are one tile today).                                                    | The builder's Crop template.                                                               | S–M  | 7              |
+| T-7 | **A `door` field on buildings**: a marked part of the model. The item formula skips its own door when it is set, and rule B1 reads the front from it. | The builder's Building template.                                                           | S    | 7              |
 
 ### Measured speed
 
@@ -238,7 +242,7 @@ Each has a proposed answer.
 | Q-11 | Where do bug reports go?                                                                                   | Stored on the server. A maintainer reviews them with `glade-log`, then one command opens a GitHub issue. Nothing posts by itself.                  |
 | Q-12 | Must a map follow all rules to be shared?                                                                  | No. Works in progress can be shared.                                                                                                               |
 | Q-13 | Fences: fixed 1 × 1 footprint with a 0.5–1 tile body. OK?                                                  | Yes (linking pieces must be exactly one tile).                                                                                                     |
-| Q-14 | Patterns in the builder for 1.0?                                                                           | No. Colours and finishes first.                                                                                                                    |
+| Q-14 | Patterns in the builder for 1.0?                                                                           | Decided: yes. Most real items need them (stripes, waves, bricks).                                                                                  |
 | Q-15 | What does raising and lowering water do?                                                                   | Decided: water moves with the land under it and stays one block deep. It can't rise above the land around it; lowering adds terraces to the banks. |
 | Q-16 | Any usage analytics?                                                                                       | None. Only bug reports (opt-in) and server metrics.                                                                                                |
 | Q-17 | Is 200 undo steps enough?                                                                                  | Yes.                                                                                                                                               |

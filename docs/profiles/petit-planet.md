@@ -23,7 +23,7 @@ kinds and params). This page shows how the game's four packages fit together in 
 | Views             | 2D and 3D, curved planet                                                                                                              | 2D and 3D, flat; walls hide when the camera is behind them                                       |
 | Catalog           | Base catalog + packs. Hides what the island doesn't take (wall and ceiling items, wallpaper, flooring).                               | Same catalog. Hides plants, paths, bridges, inclines and buildings.                              |
 | Categories        | All, Houses, then game categories (Q-5)                                                                                               | All, then home categories (Q-5)                                                                  |
-| Builder templates | Other, Fence/hedge, House, Tree/plant, Bridge, Incline, Path tile, Lamp, Table, Small thing                                           | Adds Wall item, Ceiling item, Wallpaper, Flooring                                                |
+| Builder templates | Item, Fence / hedge, Building, Tree, Shrub / flower, Crop, Bridge, Incline, Path, Placeable                                           | Adds Wall item, Ceiling item, Wallpaper, Flooring                                                |
 | Title font        | An open font close to the game's title style (Q-9)                                                                                    | Same                                                                                             |
 
 ## Friendly rule text

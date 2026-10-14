@@ -1,28 +1,365 @@
 # The item builder
 
-> **In short:** The builder makes custom items from **smart parts**: slabs, legs, toppings, plants and shapes. Parts snap to each other and adjust when you change things, using fixed rules (no AI). A **template** sets the item type and its rules. The result is a normal model, saved in a **pack**.
+> **In short:** The builder makes custom items in three steps: **Define** (what it is and how big),
+> **Build** (add parts) and **Save**. You start from an empty item. Building is four moves: **drop**
+> a part onto the item, **pull** its handles, **repeat** it, **paint** it. A few general parts do
+> most of the work: draw an outline and **spin** or **push** it, or use a smart part (a case with
+> shelves, a draped cloth) that fills in its own detail by fixed rules, with no AI. The result is a
+> normal model, saved in a **pack**.
 
 ## Where it opens
 
 | Way in                                              | What happens                                                              |
 | --------------------------------------------------- | ------------------------------------------------------------------------- |
 | `/<game>/builder`                                   | Full page builder. Title bar has a game picker and (later) a Home button. |
-| **+ New item** in the planner toolbox               | Builder window opens empty, over the planner.                             |
-| **Create new** on an item (drawer card or map item) | Builder window opens with a copy of that item.                            |
+| **+ New item** in the planner toolbox               | Builder window opens on Define, empty, over the planner.                  |
+| **Create new** on an item (drawer card or map item) | Builder window opens on Build with a copy of that item.                   |
 | Phones                                              | Builder always opens full screen.                                         |
 
-## Layout
+## The three steps
 
-| Part               | Detail                                                                                                                                                                           |
-| ------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Title bar          | Item name and "not saved" state. Minimise, maximise, close. Standalone: game picker and Home instead of window buttons.                                                          |
-| Templates          | Scrollable list on the left. Picking one sets the kind, footprint limits and special rules.                                                                                      |
-| File, Undo, Redo   | Top left of the 3D view.                                                                                                                                                         |
-| 3D view            | Rotate with drag, zoom with wheel or pinch. A footprint grid sits under the item. Drag on empty space draws a selection box.                                                     |
-| Connection preview | Only for fence-like templates. Shows 3D previews of the item linked across, down and diagonally.                                                                                 |
-| Add panel          | Top right. Search, or scroll by category: Bases, Legs, Toppings, Greenery, Decoration, Simple shapes. Click to add, or drag onto a surface. Slides in when the footprint is set. |
-| Edit tools         | Bottom left. Slides in when a part is selected. General tools + the part's special tools.                                                                                        |
-| Problems           | Live check result and part count ("14 of 256 parts"). Click a problem to select its part.                                                                                        |
+A step bar runs along the top: **Define → Build → Save**. A step unlocks only when the one before it
+is done.
+
+| Step       | You do                                                       | Done when                                                            |
+| ---------- | ------------------------------------------------------------ | -------------------------------------------------------------------- |
+| **Define** | Pick a template (a kind or a trait), then draw the footprint | Both are set                                                         |
+| **Build**  | Add and shape parts                                          | The item has at least one part, and every part the template requires |
+| **Save**   | Name it, pick a pack and a category                          | Saved                                                                |
+
+You can go back to any earlier step. Going back to Define and changing the template **converts**
+the item ([switching templates](#switching-templates)).
+
+Every item starts empty. Deleting every part gives you an empty item again, so there is no separate
+"blank" template.
+
+## Define
+
+### Templates (Petit Planet)
+
+A template is a game **kind** or a **trait**. It sets the footprint limits, what the item must have,
+and what the preview shows. Templates live in the game's catalog package
+(`@glade/petit-planet-catalog`).
+
+| Template           | Kind + fields                               | Footprint                         | Must have / special                                                                                              |
+| ------------------ | ------------------------------------------- | --------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| **Item**           | `item`                                      | 0.5 × 0.5 to 4 × 4 tiles          | Option: **sits on water** (`onWater`, for boats). Option: mark a **surface**.                                    |
+| **Fence / hedge**  | `item` + `connects`                         | Always 1 × 1 tile; body 0.5 to 1  | Connection preview                                                                                               |
+| **Building**       | `building` (a sort of `item`)               | 2 × 2 to 6 × 6 tiles              | **A door is required** ([markings](#markings-surface-and-door)). Things you can enter: houses, shops, galleries. |
+| **Tree**           | `tree` (a sort of `plant`)                  | Whole tiles                       | Tree spacing (L6) shown as a ring                                                                                |
+| **Shrub / flower** | `shrub` or `flower`                         | Whole tiles                       | —                                                                                                                |
+| **Crop**           | `crop` (a sort of `plant`)                  | 1 × 1 or 2 × 2 tiles              | —                                                                                                                |
+| **Bridge**         | `bridge` + `majorSize`                      | 1 or 2 wide, 4 to 7 long          | Footprint must match `majorSize`                                                                                 |
+| **Incline**        | `incline`                                   | 1 × 2 or 2 × 2                    | Climbs one level                                                                                                 |
+| **Path**           | `path` + `color`, `pattern`, `allowsPlants` | —                                 | No model, so no Build step: pick colours, a pattern, "plants allowed"                                            |
+| **Placeable**      | `item` + `placeable`                        | 0.5 × 0.5 to 1 × 1                | Also its size on a table top. Preview on a sample table. Can't have a surface (nothing stacks).                  |
+| **Wall item**      | `item` + `mount: "wall"` (homes)            | Half cells across and up the wall | Faces south, back on the wall. Preview on a wall.                                                                |
+| **Ceiling item**   | `item` + `mount: "ceiling"` (homes)         | Like floor items                  | Preview from below                                                                                               |
+
+Big furniture is an **Item**, not a Building. A windmill you can't walk into is an item.
+
+Wallpaper and flooring (homes, after 1.0) are 2D sheets: colours and a pattern, no model.
+
+### The footprint
+
+Drag a box on the grid in the 3D view. It snaps to the template's grid and stays inside its limits.
+Example: a Crop snaps to 1 × 1 or 2 × 2 tiles and nothing else.
+
+### Switching templates
+
+Changing the template after building **converts** the item. Glade keeps every part and changes
+only what the new template needs.
+
+| From → to                    | What happens                                                                                     |
+| ---------------------------- | ------------------------------------------------------------------------------------------------ |
+| Item → Placeable             | Works if the footprint fits 1 × 1. A marked surface is dropped (nothing stacks); a pill says so. |
+| Item → Building              | Works. Build is not done until you mark a door.                                                  |
+| Building → Item              | Works. The door marking is dropped; the door part stays as a plain part.                         |
+| Item → Fence / hedge         | Works if the footprint is 1 × 1.                                                                 |
+| Tree ↔ Shrub ↔ Flower ↔ Crop | Works if the footprint fits the new template.                                                    |
+| Item → Wall or Ceiling item  | Works. The parts turn to face the wall, or to hang down.                                         |
+| Anything ↔ Path              | Can't convert: a path has no model.                                                              |
+
+When a footprint no longer fits, Glade first offers to **fit** it (shrink the footprint and scale
+the parts). When the item can't convert at all, Glade asks: **Save it first**, **Clear and switch**,
+or **Cancel**.
+
+## Build
+
+### The screen
+
+| Part               | Detail                                                                                                                        |
+| ------------------ | ----------------------------------------------------------------------------------------------------------------------------- |
+| Step bar           | Define → Build → Save, along the top                                                                                          |
+| 3D view            | Turn with drag, zoom with wheel or pinch. The footprint grid sits under the item. Click a part to select it.                  |
+| Shelf              | Right side. The parts, by group (below). Search with `/`. Drag a part onto the item, or click to add it to the selected part. |
+| Handles            | On the selected part, in the 3D view. Pull them to shape it.                                                                  |
+| Part panel         | Bottom left, when a part is selected: its settings, Repeat, Paint, Mark, Duplicate, Delete.                                   |
+| Problems           | Live check result and part count ("14 of 256 parts"). Click a problem to select its part.                                     |
+| Connection preview | Fences only: the item linked across, down and diagonally                                                                      |
+
+### Four moves
+
+| Move       | You do                                        | Example                                                    |
+| ---------- | --------------------------------------------- | ---------------------------------------------------------- |
+| **Drop**   | Drag a part from the shelf onto the item      | Drop **Legs** under a tabletop: they snap to its underside |
+| **Pull**   | Drag a handle on the selected part            | Pull the legs' height handle down to make a low table      |
+| **Repeat** | Mirror it, or copy it in a row or a circle    | Repeat a sail 4 times in a circle                          |
+| **Paint**  | Pick a material, a colour and maybe a pattern | Fabric, blue and white stripes                             |
+
+**Dropping:** a part lands on the face under the cursor, sized to fit it, facing out. On a curved
+face (a tower, a dome) it stays flat and is sunk into the face so its edges touch it
+([curved faces](#curved-faces)). A dropped part becomes a child of the part it lands on: move the
+parent and the child comes along.
+
+### Curved faces
+
+A flat part on a round wall touches the wall only in its middle; its edges stand off a little. So
+Glade **sinks** the part into the wall until its edges touch. The middle goes slightly inside the
+wall, where nobody sees it.
+
+How far it sinks depends on how wide the part is next to how round the wall is. For small parts on
+a big curve it is tiny.
+
+| On a tower of radius 0.9 tiles (a 2 × 2 windmill) | Part width | Edge gap before sinking |
+| ------------------------------------------------- | ---------- | ----------------------- |
+| Round window                                      | 0.35 tiles | 0.02 tiles              |
+| Arched door                                       | 0.5 tiles  | 0.035 tiles             |
+| A sign half the tower's width                     | 0.9 tiles  | 0.12 tiles              |
+
+The door and window look like they sit on the curve. A part as wide as the sign looks flat, so
+Glade shows a hint when the gap passes 0.1 tiles: "This part is wide for this curve." Bending a
+part to follow the curve is [later](#later).
+
+**Mirror is on by default** across the footprint's centre lines. Drop one leg near a corner and the
+other three appear. The Repeat button turns mirroring off for that part.
+
+**Handles** replace move, rotate and scale tools. A part shows only the handles it has: a box shows
+width, depth, height and corner rounding; legs show height, thickness and inset; a spin shape shows
+its outline's points. Drag a part's middle to slide it on its face. Rotate snaps every 15°.
+
+### The shelf: parts
+
+**Basic shapes**
+
+| Part     | Settings                                                   |
+| -------- | ---------------------------------------------------------- |
+| Box      | Size, corner rounding, cut corners (for angled fronts)     |
+| Cylinder | Radius, height, top radius (a tapered tower), sides (3–32) |
+| Sphere   | Radius, squash, half (a dome)                              |
+| Cone     | Radius, height, sides                                      |
+| Wedge    | Size                                                       |
+| Ring     | Radius, thickness, arc                                     |
+
+**Draw a shape.** Two parts take an outline you draw in a small 2D panel: click to add points, click
+a point to make it round or sharp. Points snap to a fine grid, and the outline can mirror itself
+(for arches).
+
+| Part     | Draw                                    | It makes                                                                                                  | Examples                                                                    |
+| -------- | --------------------------------------- | --------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| **Spin** | Half an outline, next to an axis        | A round shape: the outline spun around the axis. **Sides** (3–32) makes it faceted. **Ribs** adds flutes. | Lamp base and column, an 8-sided lamp shade, a tower, a bottle, a pot       |
+| **Push** | An outline, from the side or from above | The outline pushed out to a thickness                                                                     | Bookshelf sides, arched legs, an arched door, a 5-sided corner cabinet body |
+
+**Smart parts.** You set a few numbers; rules work out the rest.
+
+| Part           | Settings                                                                                        | Rules fill in                                                                                |
+| -------------- | ----------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| **Legs**       | Style (straight, tapered, arched, ball feet, cantilever, sled), count, height, thickness, inset | Spread evenly on the parent's underside: corners of a rectangle, around a circle             |
+| **Case**       | Outline (the footprint, or a drawn one), open sides, shelves, drawers, doors, inside colour     | Panels, shelves, drawer fronts, the back. No holes needed: open sides are just left out.     |
+| **Drawer**     | Count, handle style                                                                             | Drawer fronts in a column, each with a handle                                                |
+| **Drape**      | How far it falls, flare, hem (straight, wavy, scalloped, lace), lining colour                   | Cloth over the parent's edges: flat on top, hanging down the sides                           |
+| **Sling**      | The two parts it hangs between, sag                                                             | Cloth stretched between them: a deck-chair seat, a hammock                                   |
+| **Cushion**    | Size, puffiness                                                                                 | A soft rounded pad that fills the face it is dropped on                                      |
+| **Tube frame** | Points (clicked on a side view), thickness, sharp or round bends                                | A bent pipe through the points; mirrored like any part                                       |
+| **Book row**   | Fullness, colours, lean                                                                         | Books of varied height, width and colour along a shelf                                       |
+| **Handle**     | Style (knob, bar, ring, pull chain)                                                             | Sits at the middle of the face it is dropped on                                              |
+| **Trim**       | Thickness, style (line, beads, bricks)                                                          | Runs along an edge or an outline: the gold lines on a lamp shade, a brick arch around a door |
+| **Roof**       | Shape (cone, dome, gable), overhang                                                             | A roof sized to the part below it                                                            |
+
+**Items as parts.** The shelf's last group is the catalog: drop any item (base or from your packs)
+into a build. A bottle and a cup on a cabinet shelf are just two placeables dropped in. The item's
+model is copied in, so later changes to the original don't change your build.
+
+### Repeat
+
+| Repeat     | Does                                                 | Example                          |
+| ---------- | ---------------------------------------------------- | -------------------------------- |
+| **Mirror** | Copies across the footprint's centre lines (default) | 4 legs from 1                    |
+| **Row**    | N copies along a direction, evenly spaced            | 3 shelves, 2 drawers, flutes     |
+| **Circle** | N copies around an axis                              | 4 windmill sails, 8 shade panels |
+
+A repeat stays one part: change the original and every copy follows. It compiles to one group with
+`mirror` or `repeat`, which keeps models small ([item models](../profiles/models.md#groups)).
+
+### Paint: materials and patterns
+
+**Material** sets how a part looks; **colour** tints it; **pattern** adds a design on top. All of
+them are made by rules from a few colours (procedural): no pictures, no game assets, no AI.
+
+| Material | Look                 | Colours you pick           |
+| -------- | -------------------- | -------------------------- |
+| Wood     | Grain lines          | Wood, grain                |
+| Marble   | Soft veins           | Stone, veins               |
+| Stone    | Speckles             | Stone, speckles            |
+| Plaster  | Flat, slightly rough | One                        |
+| Fabric   | Soft weave           | One                        |
+| Metal    | Shiny                | One (gold, bronze, steel…) |
+| Ceramic  | Glossy               | One                        |
+| Glass    | See-through          | Tint                       |
+| Leaves   | Clumps               | Leaf, shade                |
+
+| Pattern | Settings                   | Seen on                  |
+| ------- | -------------------------- | ------------------------ |
+| Stripes | 2–4 colours, width, angle  | Beach lounger            |
+| Plaid   | 2–3 colours, size          | Cabinet cloth            |
+| Waves   | 2 colours, size            | Kotatsu blanket          |
+| Dots    | 2 colours, size, spacing   | —                        |
+| Flowers | 2–3 colours, size, spacing | Bedding                  |
+| Scales  | 2 colours, size            | Windmill roof tiles      |
+| Bricks  | 2 colours, size            | Door arches, bases       |
+| Panels  | Line colour, count         | Stained-glass lamp shade |
+
+**Glow** (any material): lit at night in the planner. A glass shade with Glow is a lamp.
+
+### Markings: surface and door
+
+Some parts mean something to the game. You **mark** them in the part panel.
+
+| Marking     | Templates     | Mark                         | Then                                                                                                                            |
+| ----------- | ------------- | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| **Surface** | Item, Fence   | The top face of a part       | Placeable things can stand on it. Glade lays the top's half-cell grid on that face (a 2 × 2 table's top might be 12 × 12).      |
+| **Door**    | Building only | A part (or a group of parts) | The door's wall is the building's **front**: the row in front must stay clear (rule B1). Required: Build isn't done without it. |
+
+A building needs exactly one door. Glade doesn't add one of its own when the entry has a marked
+door.
+
+### How "smart without AI" works
+
+1. **A tree of parts.** Each part sits on one face of its parent: `top`, `bottom`, `sides`,
+   `edges`, or a point on a curve.
+2. **Layout rules.** Each part type has one function: given its parent's face and its own
+   settings, work out where it goes and how big it is.
+   - Legs on a rectangle: at the corners, inset. Legs on a circle: evenly around the edge.
+   - A drape: flat on the parent's top, then down each side by its fall, flaring out.
+   - A case: one panel per closed side of its outline, shelves evenly spaced, drawers at the bottom.
+3. **Rebuild in order.** After any change Glade rebuilds top-down: footprint → parts on the
+   footprint → parts on those. Always the same order, so the same settings always give the same
+   item.
+4. **Compile.** The tree becomes plain model parts: boxes, wedges, cylinders, cones, spheres,
+   rings, tubes, groups, and **meshes** for spin, push, drape, sling and cushion. Mirrors and
+   repeats stay groups. Limit: 256 solids.
+5. **Check.** The profile's `entryProblems(planet, entry)` checks the entry: its fields, its model
+   against its footprint, the game's limits, the required markings. Problems name the part, so
+   Glade shows each one next to it.
+6. **Draw.** The 3D view uses `modelMesh(model, { blockSize })` from `@glade/render`. Each vertex
+   knows its part, so a click picks a part.
+
+**Recipe vs model:** a model stores only the finished parts, so the builder keeps its own settings.
+Each saved item has:
+
+- `entry`: the catalog entry with the compiled `model` (what the planner uses),
+- `recipe`: the builder's part tree, settings and outlines (what the builder edits).
+
+## Save
+
+| Field       | Required             | Example                         |
+| ----------- | -------------------- | ------------------------------- |
+| Name        | Yes                  | Beach lounger                   |
+| Pack        | Yes (pick or create) | My furniture                    |
+| Category    | Yes                  | Seating                         |
+| Tags        | No                   | striped, outdoor                |
+| Description | No                   | A folding lounger with a pillow |
+
+Kind, fields and markings come from Define and Build. Saving puts the item in its pack, and it
+appears in the planner's toolbox under its category.
+
+## Test items
+
+Seven real items from the game, from simple to hard. Each recipe is also an end-to-end test: it
+must work with no more steps than listed.
+
+### 1. Marble square table
+
+1. **Define:** Item, footprint 1 × 1.
+2. **Drop** a Box on the footprint. Pull its height handle to make a thick top; pull **rounding** up.
+3. **Paint:** Marble, cream with gold veins. **Mark → Surface.**
+4. **Drop** Legs under the top. Style **Arched**: the legs flare into the top's underside. Mirror
+   makes 4.
+5. **Paint** the legs: Metal, bronze. **Save.**
+
+### 2. Kotatsu
+
+1. **Define:** Item, footprint 2 × 2.
+2. **Drop** a Box: a low frame, painted dark green.
+3. **Drop** a Drape on it. Fall: to the floor. Flare: a little. Hem: wavy. Lining: white.
+4. **Paint** the drape: Fabric, light green, pattern **Waves**.
+5. **Drop** a Box on the drape: the tabletop. Pull rounding up. **Paint:** Wood, honey.
+   **Mark → Surface. Save.**
+
+### 3. Beach lounger
+
+1. **Define:** Item, footprint 1.5 × 2.
+2. **Drop** a Tube frame. On the side view, click 5 points: foot, seat, hip, back, top. Round
+   bends. Mirror makes the other side. **Paint:** Metal, white.
+3. **Drop** a Tube frame for the legs: a loop under the seat, and one under the back.
+4. **Drop** a Sling between the two side frames. **Paint:** Fabric, stripes (white, blue, yellow).
+5. **Drop** a Cushion at the top of the sling: the pillow, same stripes.
+6. **Drop** a Box on each side frame: the armrests. Round them. **Paint:** Wood, yellow. **Save.**
+
+### 4. Lamp
+
+1. **Define:** Item, footprint 1 × 1.
+2. **Drop** a Spin. Draw the base and column outline: a wide foot, a thin stem. **Ribs:** 12.
+   **Paint:** Metal, gold.
+3. **Drop** a Spin on top: the shade. Draw a bell outline. **Sides:** 8.
+4. **Paint** the shade: Glass, blue, pattern **Panels**, **Glow**. **Drop** Trim on its edges:
+   gold lines.
+5. **Drop** a Handle on the shade's rim, style **pull chain**. **Drop** a Cone on top: the
+   finial. **Save.**
+
+### 5. Bookshelf
+
+1. **Define:** Item, footprint 1 × 1.
+2. **Drop** a Case. Open side: front. Shelves: 3. Drawers: 1. Inside colour: darker wood.
+3. Select the Case's side panel. **Push** outline: draw the stepped curve of the top. Both sides
+   follow (mirror).
+4. **Drop** a Book row on each of the top 2 shelves. **Drop** Legs: style **Ball feet**.
+5. **Drop** items from the catalog onto the top and the shelves: a clock, a plant pot.
+6. **Paint:** Wood, red-brown. Handles: Metal, gold. **Save.**
+
+### 6. Corner cabinet
+
+1. **Define:** Item, footprint 1 × 1.
+2. **Drop** a Case. Outline: **draw** a 5-sided shape from above (a corner unit with an angled
+   front). Open: the upper front. Shelves: 1. Drawers: 2. Inside colour: dark red.
+3. **Drop** a Box on the drawers' top: the counter. **Paint:** Stone, grey.
+4. **Drop** a Drape under the upper shelf's top edge: falls a little, hem **lace**. **Paint:**
+   Fabric, plaid. **Drop** a small flower decoration on it.
+5. **Drop** a bottle and a cup from the catalog on the shelf. **Drop** Legs: short, 4.
+6. **Paint:** Wood, yellow. **Save.**
+
+### 7. Windmill or silo (farm furniture)
+
+1. **Define:** Item, footprint 2 × 2.
+2. **Drop** a Cylinder. Pull the **top radius** smaller: a tapered tower. **Paint:** Plaster,
+   yellow.
+3. **Drop** a Ring at its foot. **Paint:** Stone, pattern **Bricks**.
+4. **Drop** a Roof on top: cone. **Paint:** pattern **Scales**, red.
+5. **Drop** a Box on the tower's front: one sail. **Drop** a Cylinder at its centre: the hub.
+   **Repeat → Circle**, 4: four sails.
+6. **Drop** a Push on the tower: draw an arched door. **Paint:** Wood. **Drop** Trim around it,
+   style **bricks**. **Drop** a Spin for the round window, and a Box cross on it.
+7. **Save.**
+
+The door and window are flat parts on a round tower. Glade sinks each one into the wall just far
+enough that its edges touch the curve, so nothing floats ([curved faces](#curved-faces)).
+
+## Later
+
+- **Bend to a curve:** a part follows a curved face instead of sitting flat against it (a band
+  around a tower). This needs Glade to bend its own triangles (Phase 9).
+- **Soft blend:** parts melt smoothly into each other, for blobby, cushiony shapes.
+- More patterns and materials, and patterns you draw yourself.
 
 ## The builder window (inside the planner)
 
@@ -36,129 +373,6 @@
 | Close          | If not saved: "Save changes to Lounge chair?" Save / Don't save / Cancel. |
 | Keyboard       | `F6` moves focus between the planner and the builder.                     |
 
-## Templates (Petit Planet)
-
-Kinds have parents, so a template picks a **kind**, not a flag. (Old entries with `building: true` or `tree: true` load through the profile's `upgradeCatalog`.) Templates live in the game's catalog package (`@glade/petit-planet-catalog`).
-
-| Template                         | Kind + fields                               | Footprint limits                                       | Special rules / tools                                                                                                                                |
-| -------------------------------- | ------------------------------------------- | ------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Other                            | `item`                                      | 0.5 × 0.5 to 4 × 4 tiles                               | None                                                                                                                                                 |
-| Fence / hedge                    | `item` + `connects`                         | Always 1 × 1 tile. The body can be 0.5 to 1 tile wide. | Connection preview. The map formula makes plain wide boxes into rails and other parts into posts.                                                    |
-| House                            | `building` (a sort of `item`)               | 2 × 2 to 6 × 6 tiles                                   | Door added on the front by the game's item formula. Front row must stay clear (rule B1).                                                             |
-| Tree                             | `tree` (a sort of `plant`)                  | Whole tiles                                            | Tree spacing rule (L6) shown as a ring in the planner.                                                                                               |
-| Shrub / flower / plant           | `shrub`, `flower` or `plant`                | Whole tiles                                            | —                                                                                                                                                    |
-| Bridge                           | `bridge` + `majorSize`                      | 1 or 2 wide, 4 to 7 long                               | Footprint must match `majorSize`.                                                                                                                    |
-| Incline                          | `incline`                                   | 1 × 2 or 2 × 2                                         | Climbs one level.                                                                                                                                    |
-| Path tile                        | `path` + `color`, `pattern`, `allowsPlants` | —                                                      | No model. Pick a colour, a pattern (cobble / plain), "plants allowed".                                                                               |
-| Lamp / light                     | `item`                                      | 0.5 × 0.5 to 1 × 1                                     | Glow finish shown at night in the preview.                                                                                                           |
-| Boat                             | `item` + `onWater`                          | 1 × 1 to 2 × 3                                         | Can sit on water.                                                                                                                                    |
-| **Table / counter**              | `item` + `surface`                          | 1 × 1 to 4 × 2                                         | Draw the top's grid on the model's top face. Size of the top in half cells (a 2 × 2 table's top might be 12 × 12). Shows a cup on it in the preview. |
-| **Small thing**                  | `item` + `placeable`                        | 0.5 × 0.5 to 1 × 1                                     | Also set its size on a table top. Preview shows it on a sample table. Can't also have a surface (nothing stacks).                                    |
-| **Wall item** (homes)            | `item` + `mount: "wall"`                    | Half cells across and up the wall                      | Faces south with its back on the wall. Preview shows it on a wall.                                                                                   |
-| **Ceiling item** (homes)         | `item` + `mount: "ceiling"`                 | Like floor items                                       | Preview shows it from below.                                                                                                                         |
-| **Wallpaper / flooring** (homes) | `wallpaper` or `flooring` + `pattern`       | —                                                      | No model. A 2D sheet: colour + shapes (rects and circles). Pictures later (Q-23).                                                                    |
-
-## Smart parts
-
-Every part has **parameters**, **surfaces** you can attach things to, and **edit tools**.
-
-| Category      | Parts                                           | Key parameters                           | Special tools                                           |
-| ------------- | ----------------------------------------------- | ---------------------------------------- | ------------------------------------------------------- |
-| Bases         | Slab (rectangle), disc, ring, pot               | Width, depth, thickness, corner rounding | **Bend 90°**, **Bend 60°** (slabs)                      |
-| Legs          | Cantilever, pillar, tapered, sled, block        | Count, height, thickness, inset          | **Fewer / more legs**, rotate to the next pair of edges |
-| Toppings      | Dome, cushion, tent, roof, shrub top            | Height, softness, form                   | **Change form** (anything that fits a dome shape)       |
-| Greenery      | Leaf ball, grass tuft, vine, flowers            | Size, density, colour                    | Scatter count                                           |
-| Decoration    | Knob, trim, lantern, sign                       | Size                                     | —                                                       |
-| Simple shapes | Box, wedge, cylinder, cone, sphere, torus, tube | The model format's shape fields          | Free move, rotate, scale                                |
-
-**General tools for every part:** Move (on its surface), Rotate (snaps every 15°), Scale, Paint, Duplicate, Delete.
-
-**Paint:** solid colours from the game's palette, or any colour. Finish: matte, glow or glass. (Patterns later, see T-5.)
-
-## How "smart without AI" works
-
-1. **Surfaces.** Each part says which faces can hold other parts: `top`, `bottom`, `sides`, `edges`.
-2. **Attach.** A new part attaches to one surface of a parent. This makes a tree of parts.
-3. **Layout rules.** Each part type has one function: given its parent's surface, work out where I go and how big I am.
-   - Legs on a rectangle: one per edge pair, spread evenly, inset from the corners.
-   - Legs on a circle: spaced evenly around the edge.
-   - Toppings: fill the free area of the surface, with a small margin.
-4. **Rebuild in order.** After any change, Glade rebuilds top-down: footprint → bases → things on bases → things on those. Always the same order (a waterfall), so results are always the same.
-5. **Compile.** The tree becomes plain model parts (boxes, wedges, cylinders, cones, spheres, rings, tubes, meshes, groups). Groups can **mirror** and **repeat** parts (in rows, rings and spirals), so "4 legs" compiles to one leg in a mirrored group, and "5 slats" to one slat with `repeat`. This keeps models small (limit: 256 solids).
-6. **Check.** The profile's `entryProblems(planet, entry)` checks the whole entry: its fields, its model against its footprint, and the game's limits. Problems name the part (like `part 2 > 1 (box "leg")`), so Glade shows each one next to its part. `modelSchema` checks the shape of loaded data.
-7. **Draw.** The 3D view uses `modelMesh(model, { blockSize })` from `@glade/render`. Each vertex knows which part it belongs to, so a click picks a part. [Item models](../profiles/models.md#building-an-item-builder) describes how a builder works with the format: edit with `partAt`, `replacePart`, `insertPart` (they never change the old model, so undo is easy).
-
-```mermaid
-flowchart TB
-    FP["Footprint<br/>1 × 2 tiles"] --> Slab["Slab<br/>(base)"]
-    Slab -->|bottom| Legs["Cantilever legs × 2"]
-    Slab -->|top, segment 1| Dome1["Dome → cushion"]
-    Slab -->|top, segment 2| Dome2["Dome → cushion"]
-    Slab -.->|"Bend 60° splits<br/>into 2 segments"| Slab
-    subgraph Compile
-      P["Model parts:<br/>group(box, box), group(legs), sphere half, sphere half"]
-    end
-    Legs --> P
-    Dome1 --> P
-    Dome2 --> P
-```
-
-**Recipe vs model:** a model stores only the finished parts, so the builder keeps its own settings. Each saved item has:
-
-- `entry`: the catalog entry with the compiled `model` (what the planner uses),
-- `recipe`: the builder's part tree and parameters (what the builder edits).
-
-## Worked example: wooden lounge chair
-
-1. Click the **Other** template.
-2. Drag a box over the small grid in the 3D view: **1 × 2 tiles**. The Add panel slides in.
-3. **Bases → Rectangular wooden slab.** Click it (or drag it in). It fills the footprint, with a small margin. It is selected, so the edit tools slide in.
-4. **Paint → brown.**
-5. **Bend 60°.** Draw a line across the top end of the slab (the line snaps across or along the slab, never diagonal).
-   - The top part now tilts up at 60°. It is still joined, but is now its own segment.
-   - Select it and stretch its length in its new direction.
-6. Turn the camera to see the underside.
-7. **Legs → Cantilever** (default 2). Drop them on the bottom. They snap to two opposite edges.
-   - **Rotate** moves them to the other pair of edges.
-   - **More legs** adds one on a free edge. Past 4, two legs share an edge (up to the part's max).
-   - Leave at 2. Lower the height. **Paint → red.** The slab now rests on the legs, and the legs on the footprint.
-8. **Toppings → Dome.** Drag it onto the flat top. It fills the free space.
-9. Drag another dome onto the tilted segment. It fits that surface too.
-10. Select a dome. **Change form → Cushion.** Do the same for the other.
-11. **File → Save.** Name: "Lounge chair". Pack: "My furniture". Category: Seating.
-12. It appears in the planner's toolbox under **Seating**.
-
-## Worked example: square hedge
-
-1. Click **Fence / hedge**. The footprint is fixed at 1 × 1 tile. The body width slider allows 0.5 to 1 tile.
-2. **Bases → Rectangular slab.** Make it taller, like a square pot. **Paint → brown.**
-3. **Toppings → Dome** (or a cut sphere). It snaps on top.
-4. **Change form → Shrubbery.** It is now a hedge.
-5. Click the **connection preview** button (top right). See it linked across, down and diagonally, using the game's fence rules.
-
-## Curved surfaces (later)
-
-Snapping a square topping to a sphere makes it bend along the face. This needs Glade to build its own triangles and save them as a `mesh` part. It is planned for Phase 9.
-
-## File menu and save dialog
-
-| File menu    | Does                                                                          |
-| ------------ | ----------------------------------------------------------------------------- |
-| New          | Empty builder (asks to save first if needed).                                 |
-| Open…        | Pick an item from your packs or the base catalog (base items open as a copy). |
-| Save         | Saves into its pack.                                                          |
-| Save as…     | Saves a copy (new name, maybe another pack).                                  |
-| Export item… | Downloads a single-item file.                                                 |
-
-| Save dialog field | Required             | Example                                                                                       |
-| ----------------- | -------------------- | --------------------------------------------------------------------------------------------- |
-| Name              | Yes                  | Lounge chair                                                                                  |
-| Pack              | Yes (pick or create) | My furniture                                                                                  |
-| Category          | Yes                  | Seating                                                                                       |
-| Tags              | No                   | wood, outdoor                                                                                 |
-| Description       | No                   | A low wooden chair with cushions                                                              |
-| Kind and fields   | From the template    | Kind: `building`, `tree`, `item`. Fields: on water, plants allowed, surface, placeable, mount |
-
 ## Builder keys
 
 | Key                     | Action                                                     |
@@ -170,5 +384,4 @@ Snapping a square topping to a sphere makes it bend along the face. This needs G
 | `.` / `,`               | Select next / previous part (`Tab` stays for moving focus) |
 | `Q` / `E`               | Turn the view                                              |
 | `F`                     | Fit the item                                               |
-| `G` / `R` / `S`         | Move / rotate / scale tool (like Blender)                  |
-| `/`                     | Search the Add panel                                       |
+| `/`                     | Search the shelf                                           |
