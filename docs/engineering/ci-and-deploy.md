@@ -1,8 +1,8 @@
 # CI, Docker, deploy and rollback
 
-> **In short:** Every pull request runs all checks and builds the Docker image. Merging to `main` publishes the image to GitHub's registry. A deploy job updates the host, waits for a health check, and **rolls back by itself** if the check fails. Rolling back by hand is one button.
+> **In short:** Every push, to any branch, runs all checks and builds the Docker image. `main` only takes commits whose checks passed. Merging to `main` publishes the image to GitHub's registry. A deploy job updates the host, waits for a health check, and **rolls back by itself** if the check fails. Rolling back by hand is one button.
 
-## CI on every pull request
+## CI on every push
 
 Today CI runs lint, typecheck and the tests (`.github/workflows/ci.yml`). The other jobs below are
 added as the apps they check arrive.
@@ -21,22 +21,30 @@ flowchart LR
     I & J & K --> Done["✅ Ready to merge"]
 ```
 
-| Job                        | Fails the PR when                                                              |
+| Job                        | Fails the run when                                                             |
 | -------------------------- | ------------------------------------------------------------------------------ |
 | Lint                       | ESLint, Prettier or the boundaries test fails                                  |
 | Typecheck                  | `tsc` finds an error                                                           |
 | Unit / property / contract | Any test fails, or coverage drops under target                                 |
 | Storybook                  | A play test or an axe check fails                                              |
 | E2E                        | A journey fails in any browser                                                 |
-| Visual                     | Screenshots differ (a person must approve new ones)                            |
-| Perf                       | A budget is broken (warning on PR, failure on `main`)                          |
+| Visual                     | Screenshots differ (new ones are approved by updating them on purpose)         |
+| Perf                       | A budget is broken (warning on branches, failure on `main`)                    |
 | Docker                     | The image doesn't build, or `/health` doesn't answer in 30 s                   |
 | Bundle / audit             | First load JS > 400 KB gzip, a high-severity advisory, or a disallowed licence |
 
 ## Branches and versions
 
-- `main` is protected: pull request + green CI + one review (or self-review checklist).
-- Commit messages follow **Conventional Commits** (`feat:`, `fix:`, `docs:`…).
+- Work happens on a branch. CI runs on every push to it.
+- `main` is protected by a GitHub ruleset: **required status checks** (the `check` job), **block
+  force pushes**, **restrict deletions**, and an empty bypass list. GitHub then refuses any commit
+  on `main` whose checks haven't passed, from anyone. No pull request or review is needed.
+- To merge: rebase the branch on `main`, wait for green checks, then fast-forward `main` to it
+  (`git switch main && git merge --ff-only <branch> && git push`). It must be a fast-forward:
+  a merge commit is a new commit with no checks, so GitHub would refuse it.
+- Outside contributors can't push to the repo, so they open a pull request from a fork. Its checks
+  must pass before it can be merged. CI runs for a first-time contributor only after you approve
+  it (GitHub's default).
 - Versions follow **SemVer**. **Changesets** writes the changelog.
 - Every image gets two tags: `sha-<short commit>` and, on release, `vX.Y.Z`. The deployed one also gets `stable`.
 
@@ -78,12 +86,18 @@ services:
     volumes:
       - ./data:/data
     mem_limit: 512m
+    labels:
+      - com.centurylinklabs.watchtower.enable=false # the deploy job updates Glade, not Watchtower
     ports:
       - "127.0.0.1:8080:8080" # behind a reverse proxy that serves HTTPS
 ```
 
-Any reverse proxy works (Caddy, nginx, Traefik). It adds HTTPS and HSTS. Automatic image
-updaters should leave Glade alone: deploys are health-gated instead.
+Any reverse proxy works (Caddy, nginx, Traefik). It adds HTTPS and HSTS.
+
+**Automatic image updaters (like Watchtower) must leave Glade alone.** The deploy job below does
+what they don't: it backs up the database first, checks health, and puts the old version back if
+the new one is broken. If both ran, they would fight over the same container. The label above tells
+Watchtower to skip Glade.
 
 ## Deploy (automatic, after merge to `main`)
 

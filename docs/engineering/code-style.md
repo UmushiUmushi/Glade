@@ -53,7 +53,7 @@ export function loadMapFile(text: string, deps: LoadDeps): Result<LoadedMap, Gla
 
 ## Lint rules that enforce this
 
-- `no-restricted-imports`: the boundaries in 6.2.
+- `no-restricted-imports`: the [import rules](../architecture.md#import-rules).
 - `no-empty` (including empty `catch`).
 - `@typescript-eslint/no-explicit-any`, `no-floating-promises`.
 - `import/no-default-export`.

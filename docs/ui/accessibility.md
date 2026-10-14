@@ -29,4 +29,4 @@
 | Commit                     | "Moved 3 chairs."                                               |
 | Undo                       | "Undid: move 3 chairs."                                         |
 
-**How we test:** axe checks in Storybook and Playwright on every PR, keyboard-only end-to-end tests, and a manual VoiceOver + NVDA pass before each release ([testing](../engineering/testing.md)).
+**How we test:** axe checks in Storybook and Playwright on every push, keyboard-only end-to-end tests, and a manual VoiceOver + NVDA pass before each release ([testing](../engineering/testing.md)).

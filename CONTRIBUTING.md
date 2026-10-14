@@ -6,7 +6,7 @@ structural.
 
 ## Setup
 
-Requires Node 20+ and pnpm.
+Requires Node 22+ and pnpm.
 
 ```sh
 git clone https://github.com/UmushiUmushi/Glade.git
@@ -25,7 +25,7 @@ pnpm install
 commands (`pnpm dev`, `pnpm storybook`, `pnpm e2e`) arrive with the apps; see the
 [roadmap](docs/roadmap.md).
 
-## Before you open a pull request
+## Before you push
 
 These must pass:
 
@@ -46,9 +46,6 @@ Checklist:
 - [ ] Guide updated if behaviour changed.
 - [ ] Screenshots or a short video for UI changes.
 - [ ] No game assets added.
-
-Commit messages follow [Conventional Commits](https://www.conventionalcommits.org/) (`feat:`,
-`fix:`, `docs:`, ...).
 
 ## Rules
 

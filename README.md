@@ -50,7 +50,7 @@ const problems = validate(island.newDoc("my-island"), island); // [] for the bas
 
 ## Development
 
-Requires Node 20+ and pnpm.
+Requires Node 22+ and pnpm.
 
 ```sh
 pnpm install

@@ -100,7 +100,8 @@ Logs survive a crash because they are written to IndexedDB every 2 seconds and o
 
 1. Open **Report an issue** (Menu, any error pill, or Settings).
 2. Write what happened (optional, but helps).
-3. Glade shows **exactly what will be sent**, in plain words, with a "View raw log" button.
+3. Glade shows **exactly what will be sent**, in plain words, with a **View logs** button: the
+   same log viewer as **Settings → Debugging → View logs**.
 4. Optional, off by default, with a clear warning that they contain your work:
    - ☐ Attach my map (lets the developer replay your session exactly)
    - ☐ Attach a screenshot
