@@ -427,7 +427,7 @@ All keys can be changed in **Settings → Controls**. On Mac, `Ctrl` means `⌘`
 ### J1: Place a chair (mouse)
 
 1. Press `1` (Items mode).
-2. In the toolbox, click the **Seating** tab.
+2. In the toolbox, click the **Basic Furniture** tab.
 3. Drag **Chair** onto the map. A see-through chair follows the cursor and snaps to half tiles.
 4. Press `]` to turn it.
 5. Let go. The chair is placed. "Undo: place chair" is now possible.

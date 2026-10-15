@@ -81,7 +81,8 @@ Wallpaper and flooring (homes, after 1.0) are 2D sheets: colours and a pattern, 
 Drag the footprint's corners on the grid in the 3D view. It snaps to the template's grid and stays
 inside its limits, and a readout under it says its size ("1.5 × 2 tiles").
 
-The width and depth steppers are one row of floating cream pills **in the 3D view**, never in the
+The width and depth steppers are one row of floating pills (the theme's map buttons; cream in
+Petit Planet) **in the 3D view**, never in the
 template panel: bottom left of the view on the page, just above the sheet in the window and on a
 phone. Any on/off options a template has sit in the same row as small pills. A fixed footprint
 (Path, Tree) shows its size but no handles or steppers.

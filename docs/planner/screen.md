@@ -2,6 +2,10 @@
 
 > **In short:** Left: the side panel (shared by all games). Right: the viewport (the map) with the toolbox under it. The panel can shrink to a thin rail that still does everything. On phones, the panel becomes a top bar and the toolbox becomes a bottom sheet.
 
+The layout and the controls are the same in every game. The look (colours, fonts, icons) and some
+contents (modes, layers, categories) come from the game's `ui` package. The examples on this page
+are Petit Planet's.
+
 ## Layouts
 
 ### Desktop
@@ -61,7 +65,8 @@ The user can force a layout in Settings: **Auto**, **Desktop**, **Phone portrait
 - The header (Menu, game picker, Minimize) is **pinned**. The rest scrolls if the window is short.
 - Each section heading is a real heading for screen readers (`h2`).
 - Each group of buttons is a **toolbar**: `Tab` enters it, arrow keys move inside it.
-- Tool buttons: idle = icon only; active = the icon in a sun-yellow circle.
+- Tool buttons: idle = icon only; active = the icon in a circle of the theme's selected colour
+  (Petit Planet: sun yellow).
 
 ### Header
 
@@ -201,6 +206,10 @@ The viewport shows the map in 2D or 3D. It fills all space right of the panel an
 
 ### Viewport mode buttons (top left)
 
+Each game sets its own modes, per map, in its `ui` package
+([what each game gives Glade](../architecture.md#what-each-game-gives-glade)). The buttons always
+sit here and work the same way. These are Petit Planet's island modes:
+
 | Mode       | Grid used                            | Scope (what tools touch)                     | Other things                                                  |
 | ---------- | ------------------------------------ | -------------------------------------------- | ------------------------------------------------------------- |
 | **Items**  | Base: half-tile snapping, tile lines | Houses, furniture, plants, bridges, inclines | —                                                             |
@@ -210,7 +219,8 @@ The viewport shows the map in 2D or 3D. It fills all space right of the panel an
 
 Keys: `1` Items, `2` Paths, `3` Cliffs, `4` Water.
 
-The buttons' icons sit in a pill. Unselected: icon only. Selected: a sun-yellow pill, a bigger
+The buttons' icons sit in a pill. Unselected: icon only. Selected: a pill in the theme's selected
+colour (Petit Planet: sun yellow), a bigger
 icon and the mode's name below. On phones they sit in a row above the toolbox.
 
 **Home modes (after 1.0).** A home has its own modes. Same keys, same places.

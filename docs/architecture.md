@@ -25,11 +25,11 @@ has its own folder of docs with the details ([docs/README.md](README.md) lists t
 
 ### The two apps
 
-| App          | URL               | Job                                                                    |
-| ------------ | ----------------- | ---------------------------------------------------------------------- |
-| Planner      | `/<game>/planner` | Design a map.                                                          |
-| Builder      | `/<game>/builder` | Make custom items. Can also open as a small window inside the planner. |
-| Home (later) | `/`               | Pick a game. Not in the first version.                                 |
+| App     | URL               | Job                                                                    |
+| ------- | ----------------- | ---------------------------------------------------------------------- |
+| Planner | `/<game>/planner` | Design a map.                                                          |
+| Builder | `/<game>/builder` | Make custom items. Can also open as a small window inside the planner. |
+| Home    | `/`               | Pick a game. For now a generic stub with no game's look.               |
 
 ### Games
 
@@ -404,6 +404,7 @@ Every game passes the contract tests in `packages/testkit`, for every map it has
 8. Each op's patch, undone, gives back the map it started from.
 9. Theme colours pass contrast checks (4.5 : 1 for text).
 10. Every map in the profile either has a UI or is listed as "not supported yet".
+11. Every icon id a screen uses resolves, to the game's own drawing or to the shared set.
 
 The `_fixture` game, with a 2D-only map, passes too. This proves the shared code works with any
 game and any set of views.

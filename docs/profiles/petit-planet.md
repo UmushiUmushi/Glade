@@ -9,7 +9,7 @@ kinds and params). This page shows how the game's five packages fit together in 
 | `@glade/petit-planet-profile` | The island and the homes: grids, layers, rules, kinds, params, look. Exists today.                         |
 | `@glade/petit-planet-catalog` | Base items with original models, categories.                                                               |
 | `@glade/petit-planet-edit`    | Terrain editing (brush, raise / lower, lift and drop, terraces, later sculpt) and bridges that span a gap. |
-| `@glade/petit-planet-ui`      | Theme, fonts, the Grab tool icon, modes, layers, rule text, guide pages.                                   |
+| `@glade/petit-planet-ui`      | Theme, fonts, hand-drawn icons (the Grab glove, plants, items…), modes, layers, rule text, guide pages.    |
 | `@glade/petit-planet-builder` | The builder's side of the game: 12 templates, smart parts, materials, the builder's look.                  |
 
 ## Per map
@@ -23,7 +23,7 @@ kinds and params). This page shows how the game's five packages fit together in 
 | Terrain           | A heightmap: one height (0–8) per block, with an optional water block on top. No overhangs. Edited by Petit Planet's own terrain ops. | No terrain                                                                                       |
 | Views             | 2D and 3D, curved planet                                                                                                              | 2D and 3D, flat; walls hide when the camera is behind them                                       |
 | Catalog           | Base catalog + packs. Hides what the island doesn't take (wall and ceiling items, wallpaper, flooring).                               | Same catalog. Hides plants, paths, bridges, inclines and buildings.                              |
-| Categories        | All, Houses, then game categories (Q-5)                                                                                               | All, then home categories (Q-5)                                                                  |
+| Categories        | All, Basic Furniture, Functional, Interior Fixtures, Decorations, Greenery, Outdoor, Facilities, Plants, Other (Q-5)                  | All, then the categories a home uses (Phase 10)                                                  |
 | Builder templates | Item, Fence / hedge, Building, Tree, Shrub / flower, Crop, Bridge, Incline, Path, Placeable                                           | Adds Wall item, Ceiling item, Wallpaper, Flooring                                                |
 | Title font        | An open font close to the game's title style (Q-9)                                                                                    | Same                                                                                             |
 

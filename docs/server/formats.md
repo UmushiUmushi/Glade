@@ -54,7 +54,11 @@ Glade stores maps and packs in these formats on the server; people never handle 
         "glyph": "c",
         "model": { "parts": [] }
       },
-      "meta": { "name": "Lounge chair", "category": "seating", "tags": ["wood", "outdoor"] },
+      "meta": {
+        "name": "Lounge chair",
+        "category": "basic-furniture",
+        "tags": ["wood", "outdoor"]
+      },
       "recipe": { "builder": 1, "template": "item", "footprint": [1, 2], "parts": [] }
     }
   ]

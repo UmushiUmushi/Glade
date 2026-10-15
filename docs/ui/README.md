@@ -29,7 +29,7 @@ tokens, never raw colours, so every game gets its own look with the same control
 | Colours     | `--ground`, `--paper`, `--ink`, `--sun`, `--alert` | Warm cream cards on a tan tray. Cocoa is the one dark fill. Sun yellow means "selected". Light and dark.             |
 | Fonts       | `--font-title`, `--font-ui`                        | Baloo 2 (titles, weight 800) and Nunito (UI, 700–900). Nothing lighter than 700.                                     |
 | Shape       | `--radius`, `--border`, `--lip`                    | Three cards (panel, viewport, toolbox) on the tray: 28 px corners, 3 px border, a solid 5 px bottom lip, 12 px gaps. |
-| Icons       | Icon set id                                        | Hand-drawn game icons ([icons](#icons-and-cursors)) plus the shared open-source set                                  |
+| Icons       | Icon map: the icons the game draws itself          | Hand-drawn complex icons ([icons](#icons-and-cursors)); generic icons from the shared open-source set                |
 
 **Petit Planet colours**
 
@@ -63,17 +63,28 @@ Rules:
 
 All icons, cursors and artwork in Glade are drawn by people, not by AI.
 
-| Icons                                                               | Where they come from                                    |
-| ------------------------------------------------------------------- | ------------------------------------------------------- |
-| Tools (Camera uses the Grab icon, Pointer)                          | Hand-drawn, in the game's `ui` package (`theme/icons/`) |
-| Select tools (Lasso, Rectangle, Circle, Magic)                      | Hand-drawn, same place                                  |
-| Layers                                                              | Hand-drawn, same place                                  |
-| Viewport mode buttons                                               | Hand-drawn, same place                                  |
-| Paint tools (Brush, Eraser, Fill, Cut) and their cursors            | Hand-drawn, same place                                  |
-| Everything else: menu, close, chevrons, undo and redo, eye, search… | A standard open-source icon set in `@glade/ui`          |
-| Camera, Pointer and select cursors                                  | The browser's own (`grab`, `default`, `crosshair`)      |
+Icons come from two places:
 
-How cursors behave: [the planner screen](../planner/screen.md#tools).
+1. **The shared set.** `@glade/ui` holds a standard open-source icon set. It has an icon for every
+   icon id the shared screens use, so a game works with no icons of its own.
+2. **The game's own.** A game's `ui` package can draw its own version of any icon, as an SVG file
+   in `theme/icons/` (like `Grab.svg`). Its icon map lists the icons it replaces. Every other icon
+   comes from the shared set.
+
+Each game chooses per icon. The rule of thumb: a game draws its complex, characterful icons (the
+glove, plants, items) and takes generic icons (close, undo, eye, search) from the shared set.
+
+| Icons                                                       | Petit Planet                                       | A game that draws few icons (likely Palworld) |
+| ----------------------------------------------------------- | -------------------------------------------------- | --------------------------------------------- |
+| Tools (Camera uses the Grab glove, Pointer)                 | Hand-drawn, in `ui/theme/icons/`                   | Shared set                                    |
+| Select tools, viewport modes, layers, paint tools           | Hand-drawn, same place                             | Shared set                                    |
+| Plants and items                                            | Hand-drawn, same place                             | Shared set                                    |
+| Generic: menu, close, chevrons, undo and redo, eye, search… | Shared set                                         | Shared set                                    |
+| Paint tool cursors                                          | From the paint tool icons                          | From the paint tool icons                     |
+| Camera, Pointer and select cursors                          | The browser's own (`grab`, `default`, `crosshair`) | The browser's own                             |
+
+A contract test checks that every icon id a screen uses resolves, to the game's drawing or to the
+shared set. How cursors behave: [the planner screen](../planner/screen.md#tools).
 
 ## Where UI code lives
 
