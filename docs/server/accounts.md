@@ -11,8 +11,8 @@
 | You are…              | How Glade knows you       | What you can do                              |
 | --------------------- | ------------------------- | -------------------------------------------- |
 | A visitor (no saves)  | It doesn't                | Open shared links, look around, start a map  |
-| Anonymous             | A cookie in this browser  | Everything: save, share, copy, build packs   |
-| Logged in with Google | A cookie + your Google id | Everything, on every device where you log in |
+| Anonymous             | A cookie in this browser  | Save, share, copy, build packs (not AI apps) |
+| Logged in with Google | A cookie + your Google id | Everything, on every device, and AI apps     |
 
 A map or pack has exactly **one owner**. Only the owner can change it. Other people make their own
 copy ([sharing](sharing.md)). So there are no edit keys, no edit links and nothing to take back.
@@ -121,6 +121,9 @@ site, is not hit by that rule. So the account survives, and the maps live on the
 
 Log in on each device. Each device has its own session. **Settings → Account → Devices** lists
 them (browser, last used) with **Log out** on each.
+
+**Settings → Account → MCP** lists the AI apps you connected, with **Disconnect** on each. AI
+apps need a logged-in account ([AI apps (MCP)](mcp.md#settings--account--mcp)).
 
 ### Two devices editing the same map
 

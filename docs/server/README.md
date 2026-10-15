@@ -1,6 +1,6 @@
 # The server
 
-> **In short:** A small Node.js server in the same Docker image as the web app. The site owner manages it with the `glade-admin` command on the server ([running the site](admin.md)), never through the web. It serves the app's files, signs people in ([accounts](accounts.md)), stores everyone's **drafts** and **shared snapshots** ([sharing](sharing.md)) in SQLite plus files on disk, checks every upload with the game profiles, and takes bug reports.
+> **In short:** A small Node.js server in the same Docker image as the web app. The site owner manages it with the `glade-admin` command on the server ([running the site](admin.md)), never through the web. It serves the app's files, signs people in ([accounts](accounts.md)), stores everyone's **drafts** and **shared snapshots** ([sharing](sharing.md)) in SQLite plus files on disk, checks every upload with the game profiles, and takes bug reports. It also relays calls from AI apps to your open Glade tab ([AI apps (MCP)](mcp.md)).
 
 ## API
 
@@ -52,6 +52,8 @@ Glade's API is under `/api/v1`. Better Auth's routes are under `/api/auth`. Bodi
 | `POST`   | `/abuse`     | Session              | Report a shared map or pack: reason + note ([abuse reports](admin.md#abuse-reports)).                         |
 | `GET`    | `/health`    | —                    | `200` when the database and disk work.                                                                        |
 | `GET`    | `/metrics`   | Private network only | Prometheus metrics.                                                                                           |
+
+**AI apps:** `/mcp`, the tab's live socket `/api/v1/live` and the OAuth routes are in [AI apps (MCP)](mcp.md#api).
 
 **Error example**
 

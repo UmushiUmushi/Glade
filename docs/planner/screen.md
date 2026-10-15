@@ -377,17 +377,17 @@ All items are for the current game only.
 
 ### Settings window (tabs)
 
-| Tab           | Options                                                                                                                                                                        |
-| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| General       | Theme (light, dark, game default) · Layout (Auto, Desktop, Phone portrait, Phone landscape) · Language (English for now)                                                       |
-| Accessibility | Text size · Dyslexia-friendly font (Atkinson Hyperlegible / OpenDyslexic) · High contrast · Reduce motion · Highlight colours · Pill duration · Tooltip delay                  |
-| Controls      | Key map editor · Mouse and touch speed · Invert zoom · Drag dead zone                                                                                                          |
-| Planner       | Auto-open actions menu (off by default) · Show FPS · Show coordinates · Autosave on/off (on by default)                                                                        |
-| Graphics      | Quality: low / medium / high · Shadows · Planet curvature                                                                                                                      |
-| Account       | Logged in as … (or a **Log in** button) · Devices · Download my data · Log out (logged-in users only) · Delete my account / Delete my data ([accounts](../server/accounts.md)) |
-| Privacy       | What gets logged (shown in plain words) · Clear this browser's cache                                                                                                           |
-| Debugging     | **View logs** · Download log · Detailed logs on/off                                                                                                                            |
-| About         | Glade version, licences                                                                                                                                                        |
+| Tab           | Options                                                                                                                                                                                                                  |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| General       | Theme (light, dark, game default) · Layout (Auto, Desktop, Phone portrait, Phone landscape) · Language (English for now)                                                                                                 |
+| Accessibility | Text size · Dyslexia-friendly font (Atkinson Hyperlegible / OpenDyslexic) · High contrast · Reduce motion · Highlight colours · Pill duration · Tooltip delay                                                            |
+| Controls      | Key map editor · Mouse and touch speed · Invert zoom · Drag dead zone                                                                                                                                                    |
+| Planner       | Auto-open actions menu (off by default) · Show FPS · Show coordinates · Autosave on/off (on by default)                                                                                                                  |
+| Graphics      | Quality: low / medium / high · Shadows · Planet curvature                                                                                                                                                                |
+| Account       | Logged in as … (or a **Log in** button) · Devices · MCP (connected AI apps, how to connect) · Download my data · Log out (logged-in users only) · Delete my account / Delete my data ([accounts](../server/accounts.md)) |
+| Privacy       | What gets logged (shown in plain words) · Clear this browser's cache                                                                                                                                                     |
+| Debugging     | **View logs** · Download log · Detailed logs on/off                                                                                                                                                                      |
+| About         | Glade version, licences                                                                                                                                                                                                  |
 
 ### Guide
 

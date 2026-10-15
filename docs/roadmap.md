@@ -166,6 +166,24 @@ patterns you draw yourself.
 **Exit:** make a home, hang a picture, lay a floor, set a cup on a table, share it, open it on
 another device.
 
+## Phase 11: AI apps (MCP) (M)
+
+Needs Phase 6 (accounts and the server). Can move earlier once Phase 6 is done. Pack tools need
+Phase 7.
+
+| Deliverables                                                                                                                        |
+| ----------------------------------------------------------------------------------------------------------------------------------- |
+| Better Auth MCP plugin: app registration, the Allow page, tokens, Settings → Account → MCP section (connected apps, how to connect) |
+| `/mcp` (Streamable HTTP) with the fixed tool list, relaying calls to the newest focused tab                                         |
+| The live socket (`/api/v1/live`): hello, focus, heartbeat, calls and results                                                        |
+| `AppCall` events in the pipeline, the "Claude placed 14 items · Undo" pill, the working badge                                       |
+| `describe` and `view` text from each game's `ui` package; `get_picture` with an off-screen `MapScene`                               |
+| Pack tools, once the builder exists                                                                                                 |
+
+**Exit:** from Claude Code, with Glade open: place 20 items in one `transaction`, see them appear in
+the tab at once, undo them with ⌘Z. With Glade closed, every tool answers "Glade isn't open".
+([AI apps (MCP)](server/mcp.md))
+
 ## Later
 
 Home page · first-time tutorial overlay · live co-editing · Palworld · Stardew Valley ·
@@ -222,6 +240,7 @@ Apple M4, Node, a real-size island (375 items, 539 plants, 0 violations, 147 KB 
 | R12 | Shared code bends to fit one game                                   | Medium | Medium | Build for the games that exist; move code up only when a second game needs it.             |
 | R13 | 3D is slow to update after edits on big islands (all items rebuild) | Medium | Medium | T-2. Until then, wait for the drag to end before calling `setDoc`.                         |
 | R14 | An anonymous user loses their account (cleared cookies, new device) | Medium | Medium | Nudges to log in after the first share and the 3rd map.                                    |
+| R15 | A connected AI app makes changes you didn't want                    | Medium | Low    | Every call is one undo step with a pill. Tools can't share or delete. Disconnect at once.  |
 
 ## Open questions
 
@@ -257,3 +276,4 @@ Each has a proposed answer.
 | Q-26 | Are the words OK: **map type** (island, home) and **map** (one design you make)?                           | Yes. The UI never says "map type"; it says "Island" or "Home".                                                                                     |
 | Q-27 | Discord sign-in as well as Google?                                                                         | Later, if people ask. One config block in Better Auth.                                                                                             |
 | Q-28 | Show an author name on shared maps?                                                                        | Not in 1.0. Later: an optional display name, never the Google name by default.                                                                     |
+| Q-29 | Can anonymous accounts connect AI apps?                                                                    | Decided: no. AI apps need a logged-in account, so they work across browsers and devices. The Allow page asks to log in first.                      |
