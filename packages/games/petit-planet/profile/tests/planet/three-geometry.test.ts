@@ -603,31 +603,35 @@ describe("chunk rebuilds", () => {
     expect(dirtyChunks(spec, before, blankMap()).size).toBe(0);
   });
 
-  it("rebuilding a one-area change takes well under 50 ms", () => {
-    const before = blankMap();
-    const after = fillTerrain(blankMap(), 50, 50, 10, 10, 3);
-    fillTerrain(after, 53, 52, 2, 6, 3, true);
-    // As in the viewer, the land was built before (the shared noise texture, warm code).
-    for (const key of dirtyChunks(spec, before, after)) {
-      const [cx, cy] = key.split(",").map(Number);
-      buildTerrainChunk(after, profile, g, spec, { cx, cy });
-      buildCushionChunk(after, profile, g, spec, { cx, cy });
-    }
-    // The fastest of three, so other test files running in parallel don't decide it.
-    let best = Infinity;
-    for (let run = 0; run < 3; run++) {
-      const t0 = performance.now();
+  // A speed budget, so opt-in: shared CI machines are too slow to judge it. GLADE_PERF=1 runs it.
+  it.runIf(process.env.GLADE_PERF === "1")(
+    "rebuilding a one-area change takes well under 50 ms",
+    () => {
+      const before = blankMap();
+      const after = fillTerrain(blankMap(), 50, 50, 10, 10, 3);
+      fillTerrain(after, 53, 52, 2, 6, 3, true);
+      // As in the viewer, the land was built before (the shared noise texture, warm code).
       for (const key of dirtyChunks(spec, before, after)) {
         const [cx, cy] = key.split(",").map(Number);
         buildTerrainChunk(after, profile, g, spec, { cx, cy });
         buildCushionChunk(after, profile, g, spec, { cx, cy });
-        buildWaterChunk(after, profile, g, spec, { cx, cy });
-        buildPathChunk(after, profile, catalog, g, spec, { cx, cy });
       }
-      best = Math.min(best, performance.now() - t0);
-    }
-    expect(best).toBeLessThan(50);
-  });
+      // The fastest of three, so other test files running in parallel don't decide it.
+      let best = Infinity;
+      for (let run = 0; run < 3; run++) {
+        const t0 = performance.now();
+        for (const key of dirtyChunks(spec, before, after)) {
+          const [cx, cy] = key.split(",").map(Number);
+          buildTerrainChunk(after, profile, g, spec, { cx, cy });
+          buildCushionChunk(after, profile, g, spec, { cx, cy });
+          buildWaterChunk(after, profile, g, spec, { cx, cy });
+          buildPathChunk(after, profile, catalog, g, spec, { cx, cy });
+        }
+        best = Math.min(best, performance.now() - t0);
+      }
+      expect(best).toBeLessThan(50);
+    },
+  );
 });
 
 describe("water stamps", () => {

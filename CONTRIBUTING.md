@@ -21,7 +21,8 @@ pnpm install
 | `pnpm lint`      | ESLint and Prettier check               |
 | `pnpm format`    | Formats everything with Prettier        |
 
-`GLADE_RENDER=1 pnpm test packages/testkit/render` runs the render goldens (needs Chrome). More
+`GLADE_RENDER=1 pnpm test packages/testkit/render` runs the render goldens (needs Chrome).
+`GLADE_PERF=1 pnpm test` also runs the speed tests, which CI skips. More
 commands (`pnpm dev`, `pnpm storybook`, `pnpm e2e`) arrive with the apps; see the
 [roadmap](docs/roadmap.md).
 

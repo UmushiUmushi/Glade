@@ -23,6 +23,10 @@
 | Container            | Docker + curl                                              | Image boots, `/health` is OK, app page loads                                                                                                                                                                                                                                   | CI job                            | Every push                                     |
 | Manual               | Checklist                                                  | VoiceOver, NVDA, real phones, real GPU                                                                                                                                                                                                                                         | The release checklist (Phase 8)   | Before each release                            |
 
+**Speed tests are opt-in.** Shared CI machines vary too much in speed to judge a time budget, so
+a test that times code runs only with `GLADE_PERF=1` (`GLADE_PERF=1 pnpm test`), and never blocks
+a push. Until `bench/` exists, mark such a test with `it.runIf(process.env.GLADE_PERF === "1")`.
+
 ## Coverage targets
 
 | Code                                                                                                       | Lines covered |
