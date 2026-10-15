@@ -1,0 +1,11 @@
+{
+  "name": "@glade/errors",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Result, the error shape, the error code registry and the plain-language error texts",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  }
+}

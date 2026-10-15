@@ -12,7 +12,7 @@ working on.
 | [builder/](builder/README.md)          | How are custom items made?                                                                                                                                                                             |
 | [ui/](ui/README.md)                    | UX principles, game themes, [accessibility](ui/accessibility.md).                                                                                                                                      |
 | [server/](server/README.md)            | The API, [accounts and sessions](server/accounts.md), [running the site](server/admin.md), [saving and sharing](server/sharing.md), [file formats](server/formats.md), [AI apps (MCP)](server/mcp.md). |
-| [logging/](logging/README.md)          | Logs and bug reports, [error handling](logging/errors.md), [debugging](logging/debugging.md).                                                                                                          |
+| [logging/](logging/README.md)          | Logs and bug reports, [error handling](logging/errors.md) and [the error codes](error-codes.md), [debugging](logging/debugging.md).                                                                    |
 | [engineering/](engineering/testing.md) | [Testing](engineering/testing.md), [CI and deploy](engineering/ci-and-deploy.md), [code style](engineering/code-style.md).                                                                             |
 | [roadmap.md](roadmap.md)               | What gets built in what order, risks, and open questions.                                                                                                                                              |
 

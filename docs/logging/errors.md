@@ -5,7 +5,7 @@
 ## Rules
 
 1. **Errors are values.** Functions return `Result<T, GladeError>`. Only truly unexpected bugs throw, and those are caught at the edges ([Safety nets (the edges)](#safety-nets-the-edges)).
-2. **Every error has a code.** Codes live in one registry file. `docs/error-codes.md` is generated from it.
+2. **Every error has a code.** Codes live in one registry file, `packages/errors/src/codes.ts`. [The list of codes](../error-codes.md) is generated from it by a test.
 3. **Handled once.** The step that handles an error logs it. Nobody logs and re-throws.
 4. **Never silent.** No empty `catch`. ESLint blocks it.
 5. **User first.** Every user-visible error says what happened, whether work is safe, and what to do.
@@ -25,26 +25,30 @@ export interface GladeError {
 }
 ```
 
-**Code format:** `GLD-<AREA>-<NUMBER>`. Areas: `INT` (interpret), `PLAN`, `CHECK`, `PRES` (present), `WORKER`, `STAGE`, `STORE` (storage), `NET`, `API`, `FILE`, `BUILD` (builder), `UI`.
+**Code format:** `GLD-<AREA>-<NUMBER>`. Areas: `INT` (interpret), `PLAN`, `CHECK`, `PRES` (present), `WORKER`, `STAGE`, `STORE` (storage), `NET`, `API`, `FILE`, `BUILD` (builder), `UI`, and `APP` for anything unexpected.
+
+**User text.** `userText` is a key into `packages/errors/src/texts.ts`. Each text says what happened, whether work is safe, and what to do, and lists the buttons to offer (Report, Retry, Log in…). Texts can have slots filled from `detail`: `"{count} items need the pack “{pack}”."`. Several codes can share one text.
+
+**Making one:** `gladeError("GLD-WORKER-001", { detail: { waitedMs: 5000 } })`. The registry fills in the step, severity and text, so a code means the same thing everywhere. `toGladeError(thrown)` wraps anything thrown at the edges.
 
 ## Kinds of errors
 
-| Kind                       | Example                            | Caught in       | User sees                                                              | Recovery                                                                               |
-| -------------------------- | ---------------------------------- | --------------- | ---------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| Rule violation (expected)  | Items overlap                      | Check step      | Problem                                                                | Thing snaps back or glows red                                                          |
-| Bad op input (a Glade bug) | A Glade op gets input it can't use | Check step      | Note: "Something went wrong. Your map is safe." + Report               | Action cancelled, draft thrown away, auto-logged as error                              |
-| Plan error                 | Mode has no plan for this intent   | Plan step       | Note with the same safe message                                        | Action cancelled                                                                       |
-| Worker crash or timeout    | Out of memory                      | Worker bridge   | Note: "Restarted the editor. Undo history was reset."                  | New worker loads the mirror ([The editor worker](../edit/README.md#the-editor-worker)) |
-| 3D context lost            | GPU reset, tab in background       | Stage host      | Banner: "3D view paused." + Retry                                      | Switch to 2D, try 3D again                                                             |
-| Storage unavailable        | Private window, disk full          | Storage adapter | Badge "⟳ Changes waiting" only if the server is also unreachable       | Edits go straight to the server; nothing is buffered                                   |
-| Offline / server down      | Network error                      | API client      | Badge "⟳ Changes waiting"                                              | Retry with back-off: 2 s, 4 s, 8 s … up to 5 min                                       |
-| Version conflict           | Another device saved first         | API client      | Note: "This map changed on another device. Loaded the latest version." | Load the latest; this device's unsaved edits are dropped                               |
-| Logged out                 | Session ended or expired           | API client      | Banner: "You were logged out." + Log in                                | Edits wait in IndexedDB until logged in again                                          |
-| Bad file                   | Not JSON, wrong game, too new      | File loader     | Dialog: plain reason + "Show details"                                  | Nothing loads; current map untouched                                                   |
-| Old file                   | Older format                       | File loader     | Note: "Updated from an older version"                                  | Migrations run ([Format versions](../server/formats.md#format-versions))               |
-| Missing pack items         | Pack not loaded                    | Catalog         | Banner: "3 items need pack 'Garden Set'" + Find                        | Grey stubs drawn                                                                       |
-| UI crash                   | A React render error               | Error boundary  | That region shows "This part stopped working" + Reload part + Report   | Other regions keep working                                                             |
-| Unknown error              | Anything else                      | Global handler  | Note: "Something went wrong. Your map is safe."                        | Logged as `fatal` with stack                                                           |
+| Kind                       | Code                     | Example                            | Caught in       | User sees                                                              | Recovery                                                                               |
+| -------------------------- | ------------------------ | ---------------------------------- | --------------- | ---------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| Rule violation (expected)  | none (a problem)         | Items overlap                      | Check step      | Problem                                                                | Thing snaps back or glows red                                                          |
+| Bad op input (a Glade bug) | `GLD-CHECK-001`          | A Glade op gets input it can't use | Check step      | Note: "Something went wrong. Your map is safe." + Report               | Action cancelled, draft thrown away, auto-logged as error                              |
+| Plan error                 | `GLD-PLAN-001`           | Mode has no plan for this intent   | Plan step       | Note with the same safe message                                        | Action cancelled                                                                       |
+| Worker crash or timeout    | `GLD-WORKER-001`, `-002` | Out of memory                      | Worker bridge   | Note: "Restarted the editor. Undo history was reset."                  | New worker loads the mirror ([The editor worker](../edit/README.md#the-editor-worker)) |
+| 3D context lost            | `GLD-STAGE-001`          | GPU reset, tab in background       | Stage host      | Banner: "3D view paused." + Retry                                      | Switch to 2D, try 3D again                                                             |
+| Storage unavailable        | `GLD-STORE-001`          | Private window, disk full          | Storage adapter | Badge "⟳ Changes waiting" only if the server is also unreachable       | Edits go straight to the server; nothing is buffered                                   |
+| Offline / server down      | `GLD-NET-001`            | Network error                      | API client      | Badge "⟳ Changes waiting"                                              | Retry with back-off: 2 s, 4 s, 8 s … up to 5 min                                       |
+| Version conflict           | `GLD-API-409`            | Another device saved first         | API client      | Note: "This map changed on another device. Loaded the latest version." | Load the latest; this device's unsaved edits are dropped                               |
+| Logged out                 | `GLD-API-401`            | Session ended or expired           | API client      | Banner: "You were logged out." + Log in                                | Edits wait in IndexedDB until logged in again                                          |
+| Bad file                   | `GLD-FILE-001` to `-003` | Not JSON, wrong game, too new      | File loader     | Dialog: plain reason + "Show details"                                  | Nothing loads; current map untouched                                                   |
+| Old file                   | none (a note)            | Older format                       | File loader     | Note: "Updated from an older version"                                  | Migrations run ([Format versions](../server/formats.md#format-versions))               |
+| Missing pack items         | `GLD-FILE-004`           | Pack not loaded                    | Catalog         | Banner: "3 items need pack 'Garden Set'" + Find                        | Grey stubs drawn                                                                       |
+| UI crash                   | `GLD-UI-001`             | A React render error               | Error boundary  | That region shows "This part stopped working" + Reload part + Report   | Other regions keep working                                                             |
+| Unknown error              | `GLD-APP-001`            | Anything else                      | Global handler  | Note: "Something went wrong. Your map is safe."                        | Logged as `fatal` with stack                                                           |
 
 ## The error path
 

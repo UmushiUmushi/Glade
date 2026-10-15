@@ -71,6 +71,8 @@ importers:
 
   packages/core: {}
 
+  packages/errors: {}
+
   packages/games/_fixture/profile:
     dependencies:
       '@glade/core':

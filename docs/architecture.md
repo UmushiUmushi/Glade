@@ -98,8 +98,8 @@ a shared package only if a second game uses the same model.
 | **Apps**     | `@glade/web`          | The browser app: routes, the game registry, storage, the worker, the API client.                                                                                     |
 |              | `@glade/server`       | The API: shared maps and packs, upload checks, bug reports.                                                                                                          |
 
-Today the shared profile packages (`core`, `render`, `three`, `testkit`) and Petit Planet's profile
-exist. The other packages are made when their code arrives, in the order of the
+Today the shared profile packages (`core`, `render`, `three`, `testkit`), `errors` and Petit
+Planet's profile exist. The other packages are made when their code arrives, in the order of the
 [roadmap](roadmap.md).
 
 ### Where does it go?
