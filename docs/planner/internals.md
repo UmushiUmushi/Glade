@@ -9,7 +9,7 @@ flowchart LR
     A["1. Capture<br/>raw input → clean event"] --> B["2. Interpret<br/>tool state machine → intent"]
     B --> C["3. Plan<br/>intent → ops"]
     C --> D["4. Check<br/>worker runs transaction,<br/>rules check"]
-    D --> E["5. Present<br/>update screen, pills,<br/>autosave, log"]
+    D --> E["5. Present<br/>update screen, problems,<br/>autosave, log"]
     B -. "no intent<br/>(e.g. hover)" .-> E
     C -. "plan error" .-> E
 ```
@@ -20,7 +20,7 @@ flowchart LR
 | 2. Interpret | `InputEvent` + tool state                | `Intent` or nothing                                                                                                 | `GLD-INT-*`                  | Yes                                  |
 | 3. Plan      | `Intent` + mode + selection + map mirror | `Op[]` + label ("move 3 chairs")                                                                                    | `GLD-PLAN-*`                 | Yes                                  |
 | 4. Check     | `Op[]`                                   | `TxResult` (committed / rejected / unchanged) + patch. The editor runs the ops; `validate` checks the changed area. | `GLD-CHECK-*`, worker errors | No (runs in the worker)              |
-| 5. Present   | Result of any step                       | Store updates, stage update, pills, announcement, autosave, log                                                     | `GLD-PRES-*`                 | No (the only step with side effects) |
+| 5. Present   | Result of any step                       | Store updates, stage update, problems, announcement, autosave, log                                                  | `GLD-PRES-*`                 | No (the only step with side effects) |
 
 **Rules**
 
@@ -63,7 +63,7 @@ while dragging, and undo.
 | `view`                | 2D/3D, camera view mode, preview, layers, always-on flags                | Step 5                                           |
 | `environment`         | Time (hour), snow                                                        | Step 5                                           |
 | `history`             | Labels and selections for undo/redo                                      | Step 5                                           |
-| `pills`               | Visible pills and queue                                                  | Step 5                                           |
+| `problems`            | Messages in the problems chip and tray                                   | Step 5                                           |
 | `catalog`             | Base items + loaded packs, search index                                  | Library actions                                  |
 | `library`             | My drafts and packs (from the server, cached in IndexedDB)               | Library actions                                  |
 

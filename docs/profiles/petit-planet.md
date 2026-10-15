@@ -2,14 +2,15 @@
 
 Petit Planet is the first game in Glade. Its profile is `@glade/petit-planet-profile`
 ([its README](../../packages/games/petit-planet/profile/README.md) has the grids, layers, rules,
-kinds and params). This page shows how the game's four packages fit together in Glade.
+kinds and params). This page shows how the game's five packages fit together in Glade.
 
 | Package                       | Holds                                                                                                      |
 | ----------------------------- | ---------------------------------------------------------------------------------------------------------- |
 | `@glade/petit-planet-profile` | The island and the homes: grids, layers, rules, kinds, params, look. Exists today.                         |
-| `@glade/petit-planet-catalog` | Base items with original models, categories, builder templates.                                            |
+| `@glade/petit-planet-catalog` | Base items with original models, categories.                                                               |
 | `@glade/petit-planet-edit`    | Terrain editing (brush, raise / lower, lift and drop, terraces, later sculpt) and bridges that span a gap. |
 | `@glade/petit-planet-ui`      | Theme, fonts, the Grab tool icon, modes, layers, rule text, guide pages.                                   |
+| `@glade/petit-planet-builder` | The builder's side of the game: 12 templates, smart parts, materials, the builder's look.                  |
 
 ## Per map
 
@@ -28,14 +29,14 @@ kinds and params). This page shows how the game's four packages fit together in 
 
 ## Friendly rule text
 
-Used by pills (title) and by expanded pills (explanation and fix tip). Lives in the game's `ui`
+Used by the problems chip and tray: the title, then the explanation and fix tip under **Details**. Lives in the game's `ui`
 package, per map: `packages/games/petit-planet/ui/src/maps/<map>/rule-text.ts`. The same id can
 mean different things on different map types (`O1`, `O2`, `K1`), so each map type has its own
 table. A contract test checks that every rule in each map type's rulebook has an entry.
 
 ### The island (`planet`)
 
-| Rule | Pill title                     | Explanation                                                                                    | Fix tip                                                 |
+| Rule | Title                          | Explanation                                                                                    | Fix tip                                                 |
 | ---- | ------------------------------ | ---------------------------------------------------------------------------------------------- | ------------------------------------------------------- |
 | T1   | Height out of range            | Land can go from level 0 to level 8.                                                           | Keep it between 0 and 8.                                |
 | T2   | Island edge is fixed           | The beach and the ring of land next to it keep their height.                                   | Work further inside the island.                         |
@@ -67,11 +68,11 @@ table. A contract test checks that every rule in each map type's rulebook has an
 | S2   | Doesn't fit on the table       | A thing on a table must stand wholly on its top.                                               | Move it inward, or use a bigger table.                  |
 | S3   | Things on the table overlap    | Two things on one table top can't share space.                                                 | Move one of them.                                       |
 | K1   | Not for the island             | Wall and ceiling items, wallpaper and flooring go in homes, not on the island.                 | Use it in a home instead.                               |
-| W3   | (info only)                    | Tells ponds from streams. Never shown as a pill.                                               | —                                                       |
+| W3   | (info only)                    | Tells ponds from streams. Never shown as a problem.                                            | —                                                       |
 
 ### Homes (after 1.0)
 
-| Rule  | Pill title                           | Explanation                                                                                                  | Fix tip                                         |
+| Rule  | Title                                | Explanation                                                                                                  | Fix tip                                         |
 | ----- | ------------------------------------ | ------------------------------------------------------------------------------------------------------------ | ----------------------------------------------- |
 | O1    | Wrong place for this item            | Floor items go on floors, wall items on walls, ceiling items on ceilings. Floor items turn in quarter turns. | Move it to the right place.                     |
 | O2    | Two things share an id               | This is a bug, not your mistake.                                                                             | Please send a report.                           |

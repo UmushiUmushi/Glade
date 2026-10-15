@@ -6,7 +6,7 @@
 
 | Page                            | What it answers                                                                                 |
 | ------------------------------- | ----------------------------------------------------------------------------------------------- |
-| [The planner screen](screen.md) | What is on screen: the side panel, rail, viewport, pills, menus, toolbox.                       |
+| [The planner screen](screen.md) | What is on screen: the side panel, rail, viewport, problems, menus, toolbox.                    |
 | [How it behaves](behaviour.md)  | Camera, selecting, moving, shaping terrain, copy and paste, keys, user journeys.                |
 | [Internals](internals.md)       | The action pipeline, state, the selection mask, drawing, the catalog at runtime, speed budgets. |
 

@@ -17,7 +17,8 @@
 | Collapse panel               | [The rail (collapsed panel)](#the-rail-collapsed-panel)                |
 | Viewport modes               | [Viewport mode buttons (top left)](#viewport-mode-buttons-top-left)    |
 | Undo and redo                | [Undo and redo](#undo-and-redo)                                        |
-| Violation pills              | [Violation pills](#violation-pills)                                    |
+| Problems chip and tray       | [Problems](#problems)                                                  |
+| Save status and share chip   | [Save status and sharing](#save-status-and-sharing)                    |
 | Viewport menu                | [Viewport menu (top right)](#viewport-menu-top-right)                  |
 | Selection bar                | [Selection bar and actions menu](#selection-bar-and-actions-menu)      |
 | Hovered item                 | [Highlights](#highlights)                                              |
@@ -123,7 +124,7 @@ What each tool selects depends on the viewport mode ([Selecting](behaviour.md#se
 
 | Control                         | Does                                                                                                                                                                                                                                      |
 | ------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Time slider**                 | Sets the time of day. Snaps to 4 key points (from the game's look): Morning 7:00, Midday 12:00, Afternoon 16:30, Night 21:00. You can also stop between them; the look blends.                                                            |
+| **Time slider**                 | Sets the time of day. Snaps to 4 key points (the hours come from the game's look, the names from its `ui` package): Dawn 7:00, Day 12:00, Dusk 16:30, Night 21:00. You can also stop between them; the look blends.                       |
 | **Sky dome** (above the slider) | A small dome of sky. The sun travels along its arc as you slide and becomes a moon at night. Clouds by day turn into stars at night. A skyline silhouette stands in front of the sun. Sky colours come from the game's look at that hour. |
 | **Snow** (tick box)             | Turns on winter (season `winter`).                                                                                                                                                                                                        |
 
@@ -134,7 +135,7 @@ A map type with a fixed look (one preset, no seasons, like a home) hides this wh
 - Range: 7:00 to 21:00.
 - Magnet zone: within 0.75 hours of a key point, it snaps there.
 - Keyboard: `←` `→` move 15 minutes. `Page Up` / `Page Down` jump to the next key point. `Home` / `End` go to the ends.
-- Screen readers hear: "Time of day, Afternoon, 4:30 PM".
+- Screen readers hear: "Time of day, Dusk, 4:30 PM".
 
 ### Layers
 
@@ -153,7 +154,7 @@ Each row has an eye button. Clicking the row name also toggles it.
 
 **Hiding only hides.** A hidden layer is still on the map and still counts for every rule and tool.
 Example: with Furniture hidden, you still can't place a chair where a hidden table stands, and the
-violation pill says why.
+problems chip says why.
 
 **How "Always on" works**
 
@@ -229,6 +230,8 @@ icon and the mode's name below. On phones they sit in a row above the toolbox.
 
 ### Viewport menu (top right)
 
+The top-right corner holds, left to right: the share chip, the problems chip, the viewport menu.
+
 | Row                 | Does                                                                                                                                  | Key   |
 | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------- | ----- |
 | 👁 Preview           | Hides all panels and controls. The map fills the screen. Only a closed-eye button stays, top right. Click it (or `Esc`) to come back. | `P`   |
@@ -264,21 +267,39 @@ Settings has 2 extra colour sets for colour blindness (deuteranopia, tritanopia)
 
 Every selection also gets the [selection bar](#selection-bar-and-actions-menu).
 
-## Violation pills
+## Problems
 
-| Part           | Detail                                                                                                                                                               |
-| -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Where          | Slide in from the top centre of the viewport.                                                                                                                        |
-| Shape          | A long pill: alert icon, message, details chevron, close X, and a timer bar along the bottom edge.                                                                   |
-| How many       | Up to 3 on screen. More wait in a queue, shown as "+2 more".                                                                                                         |
-| Repeats        | The same rule again merges into one pill with a count: "Items overlap (×3)".                                                                                         |
-| Timer          | 6 seconds by default (2 to 30 in Settings, or "until closed"). Pauses on hover, focus or when expanded.                                                              |
-| Ends           | Fades down and out. `X` closes early.                                                                                                                                |
-| Expanded       | Plain explanation · where it is · a fix tip · the rule id · buttons: **Show me** (camera goes there, cells flash), **Learn more** (guide page), **Report an issue**. |
-| Screen readers | Read out politely when they appear ("Too steep, 4 levels, limit is 3").                                                                                              |
-| Keyboard       | `F8` jumps to the newest pill. `Esc` closes it.                                                                                                                      |
+Problems never cover the map. They gather in a small **problems chip** in the top-right corner of
+the viewport, between the share chip and the viewport menu.
 
-Pill text comes from the game's `ruleText` table, in its `ui` package ([Petit Planet's](../profiles/petit-planet.md#friendly-rule-text)).
+| Part           | Detail                                                                                                                                                                                                                            |
+| -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Chip           | An alert disc and the count of messages. Hidden when there are none.                                                                                                                                                              |
+| Peek           | A new message widens the chip for 4 seconds to show its title, then it shrinks back. It stays wide while the pointer is over it, and shrinks 1.5 s after it leaves. Settings → Appearance → **Peek new problems** turns this off. |
+| Tray           | Click the chip: a tray drops down under it, listing each message. **Dismiss all** and a close `X` at the top.                                                                                                                     |
+| A message      | Title, then **Details** (the plain explanation and a fix tip), **Show me** (the camera goes there, the cells flash) and **Dismiss**.                                                                                              |
+| Two kinds      | **Problems**: a rule the change broke (red alert disc). **Notes**: something that worked but needs saying, like "12 blocks skipped: under items" (blue info disc).                                                                |
+| Repeats        | The same rule again counts up on the same message ("×3") instead of adding another.                                                                                                                                               |
+| How long       | A message closes by itself after 8 seconds unless the tray is open; at most 6 are kept.                                                                                                                                           |
+| Screen readers | The chip's name reads the newest title and the count: "New: Too steep. 2 messages. Show details". New messages are announced politely.                                                                                            |
+| Keyboard       | `F8` opens the tray and focuses the newest message. `Esc` closes it.                                                                                                                                                              |
+
+Message text comes from the game's `ruleText` table, in its `ui` package ([Petit Planet's](../profiles/petit-planet.md#friendly-rule-text)).
+
+## Save status and sharing
+
+| Part        | Where                               | Detail                                                                                                                                                    |
+| ----------- | ----------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Save status | Top left, after Undo and Redo       | "Saved", "Saving…" or "Couldn't save". Its tooltip says where the map lives ("on this device" until accounts exist).                                      |
+| Share chip  | Top right, before the problems chip | Private, Public, or Public with changes not shared yet (✱). Click it to open the share dialog ([sharing](../server/sharing.md#share-a-map-step-by-step)). |
+
+### Someone else's map (view only)
+
+Opening a shared link that isn't yours shows the map with its view controls only: select, ruler,
+looking at items, environment and layers. The toolbox and every editing control are gone. A **view
+bar** along the top has a "View only" tag, **Make a copy** (it goes in your Library as a draft) and
+a `⋯` menu with the version ("Version 4 · shared 2 hours ago") and **Report map**. Your own shared
+version reads "Your shared version · View only", and its main button is **Open my draft**.
 
 ## Selection bar and actions menu
 
@@ -315,18 +336,25 @@ The toolbox **changes with the viewport mode**. It remembers the last tool, path
 
 ### Items mode: the item drawer
 
-| Part           | Detail                                                                                                                                                                                     |
-| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Search icon    | Left of the tabs. Click (or `/`) and it grows into a search bar about 60% of the toolbox width.                                                                                            |
-| Tabs           | All · Houses · then the game's categories · then one tab per pack you have ("My packs").                                                                                                   |
-| **+ New item** | Big button on the right. Opens a blank builder.                                                                                                                                            |
-| Cards          | Thumbnail, name, small pack badge if it is from a pack. Footprint shown on hover ("1 × 2 tiles").                                                                                          |
-| Drag a card    | Drag it into the viewport. A see-through copy follows the cursor and snaps to the grid. It turns red if it can't go there. `[` and `]` rotate while dragging.                              |
-| Click a card   | Highlights it and shows `•••` at its top right. Then click on the map to place it (repeat to place more). `Esc` stops placing.                                                             |
-| Card `•••`     | **Create new** (open in builder as a copy) · **Search similar**.                                                                                                                           |
-| Search         | Matches name, description, id, kind, category and tags, ignoring tabs. Typo-tolerant.                                                                                                      |
-| Search similar | Puts the item's kind or category into the bar as a chip, like `kind: fence`, and searches. A kind chip also finds sub-kinds: `kind: plant` finds trees, shrubs and flowers.                |
-| What shows     | Only items the open map type takes. The island hides wall and ceiling items, wallpaper and flooring. Glade asks the profile (`excludedBy`), so no item needs an "indoor" or "outdoor" tag. |
+The top row, left to right: search, category tabs, Sort, Filter, the item count. Under it: the
+**New Item** tile, then the item cards.
+
+| Part           | Detail                                                                                                                                                                                                                                                                                                                                             |
+| -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Search         | A round button; click (or `/`) and it grows into a field about 60 % of the row. Matches name, kind, id, category and tags, ignoring tabs. Typo-tolerant.                                                                                                                                                                                           |
+| Tabs           | **All**, then the game's own categories, one level (Petit Planet: Basic Furniture, Functional, Interior Fixtures, Decorations, Greenery, Outdoor, Facilities, Plants, Other). The row scrolls sideways and fades at its right edge.                                                                                                                |
+| Sort           | A menu that opens upward: Name A–Z, Newest first, Biggest first, Pack.                                                                                                                                                                                                                                                                             |
+| Filter         | A 288 px panel that opens upward, with no dimmed backdrop: a **Water decor** switch, chip groups for **Trait**, **Material** and **Pack** (from the game's `ui` package), and a pinned footer with **Clear all** and **Show N items**. Changes are drafts until **Show N items**. With filters on, the button turns sun yellow and shows how many. |
+| Item count     | "19 items", or "3 items match" when filtered.                                                                                                                                                                                                                                                                                                      |
+| **New Item**   | The first tile. Opens a blank builder.                                                                                                                                                                                                                                                                                                             |
+| Cards          | Thumbnail and name. Items that can go on water have a small sky-blue badge with three wavy lines in the top-left corner. Footprint shown on hover ("1 × 2 tiles").                                                                                                                                                                                 |
+| Drag a card    | Drag it into the viewport. A see-through copy follows the cursor and snaps to the grid. It turns red if it can't go there. `[` and `]` rotate while dragging.                                                                                                                                                                                      |
+| Click a card   | Highlights it and shows `•••` at its top right. Then click on the map to place it (repeat to place more). `Esc` stops placing.                                                                                                                                                                                                                     |
+| Card `•••`     | **Create new** (open in builder as a copy) · **Search similar**.                                                                                                                                                                                                                                                                                   |
+| Search similar | Puts the item's kind or category into the bar as a chip, like `kind: fence`, and searches. A kind chip also finds sub-kinds: `kind: plant` finds trees, shrubs and flowers.                                                                                                                                                                        |
+| What shows     | Only items the open map type takes. The island hides wall and ceiling items, wallpaper and flooring. Glade asks the profile (`excludedBy`), so no item needs an "indoor" or "outdoor" tag.                                                                                                                                                         |
+
+There is no tag filter: tags are free words, so search covers them.
 
 ### Paths mode
 
@@ -347,7 +375,7 @@ The palette shows each path type as a swatch with its pattern (cobble or plain) 
 
 ### Cliffs and Water modes
 
-Same tools, no Fill, no drawer. Blocks a stroke can't change get red stripes and a violation pill ([brush and eraser](behaviour.md#brush-and-eraser-one-layer)).
+Same tools, no Fill, no drawer. Blocks a stroke can't change get red stripes and a message in the problems chip ([brush and eraser](behaviour.md#brush-and-eraser-one-layer)).
 
 | Tool   | Cliffs                                                                                                                         | Water                                                          |
 | ------ | ------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------- |
@@ -359,40 +387,38 @@ Same tools, no Fill, no drawer. Blocks a stroke can't change get red stripes and
 
 ### Menu
 
-| Item                | Does                                                                                                                                                                                                                 |
-| ------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Home                | Goes to `/`. In the first version this opens a simple game list (see Q-1).                                                                                                                                           |
-| New map             | Starts a fresh map. The current one is already autosaved. When the game has more than one map type, a small dialog asks which: "Island" or a home layout ("Home, 1 room, 8 × 8"). In 1.0 only the island is offered. |
-| Load map…           | Opens the Library on the Maps tab.                                                                                                                                                                                   |
-| Save map            | Uploads the draft now (it also autosaves) and makes a named save point. Shows "Saved ✓".                                                                                                                             |
-| Save map as…        | Saves a copy with a new name.                                                                                                                                                                                        |
-| Share…              | Publishes a frozen snapshot behind a link, or updates it, or stops sharing it ([sharing](../server/sharing.md)).                                                                                                     |
-| View catalog packs… | Opens the Library on the Packs tab.                                                                                                                                                                                  |
-| Log in              | One button. Opens the login screen ([accounts](../server/accounts.md#log-in)). Logged in, it shows "Logged in as …" instead.                                                                                         |
-| Settings            | Opens Settings.                                                                                                                                                                                                      |
-| Guide               | Opens the Guide.                                                                                                                                                                                                     |
-| Report an issue     | Opens the issue form, to tell us about a bug ([bug reports](../logging/README.md#sending-a-bug-report)). Not the same as **Report** on a shared map, which flags someone's map.                                      |
+The round Menu button opens a panel in three parts.
 
-All items are for the current game only.
+| Part    | Holds                                                                                                                                                                                                                        |
+| ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| App row | Four round buttons: **Home** (goes to `/`), **Settings**, **Guide**, **Report an issue** (the issue form, [bug reports](../logging/README.md#sending-a-bug-report); not the same as **Report map** on someone's shared map). |
+| Account | Logged in: who you are, **Library** (Maps · Packs) and **Log out**. Logged out: **Log in** with "Log in to save, share and keep your Library", and **Library**.                                                              |
+| Map     | The map's name, then three tiles: **New** (a fresh map; the current one is already saved), **Save As** (a named copy; changes save by themselves), **Share** ([sharing](../server/sharing.md#share-a-map-step-by-step)).     |
+
+There is no Save button: maps save as you work. When a game has more than one map type, **New** asks
+which ("Island" or a home layout). In 1.0 only the island is offered. All items are for the current
+game only.
 
 ### Settings window (tabs)
 
-| Tab           | Options                                                                                                                                                                                                                  |
-| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| General       | Theme (light, dark, game default) · Layout (Auto, Desktop, Phone portrait, Phone landscape) · Language (English for now)                                                                                                 |
-| Accessibility | Text size · Dyslexia-friendly font (Atkinson Hyperlegible / OpenDyslexic) · High contrast · Reduce motion · Highlight colours · Pill duration · Tooltip delay                                                            |
-| Controls      | Key map editor · Mouse and touch speed · Invert zoom · Drag dead zone                                                                                                                                                    |
-| Planner       | Auto-open actions menu (off by default) · Show FPS · Show coordinates · Autosave on/off (on by default)                                                                                                                  |
-| Graphics      | Quality: low / medium / high · Shadows · Planet curvature                                                                                                                                                                |
-| Account       | Logged in as … (or a **Log in** button) · Devices · MCP (connected AI apps, how to connect) · Download my data · Log out (logged-in users only) · Delete my account / Delete my data ([accounts](../server/accounts.md)) |
-| Privacy       | What gets logged (shown in plain words) · Clear this browser's cache                                                                                                                                                     |
-| Debugging     | **View logs** · Download log · Detailed logs on/off                                                                                                                                                                      |
-| About         | Glade version, licences                                                                                                                                                                                                  |
+Tabs down the left. Changes apply at once.
+
+| Tab         | Options                                                                                                                                                    |
+| ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Account     | Who you're signed in as (or **Log in**) · **Download my data** · **Delete my account** (type your username to confirm) ([accounts](../server/accounts.md)) |
+| Appearance  | Theme: Light, Dark, Match system · **Interface size** (70 % to 130 %) · Show FPS counter · Show coordinates · Peek new problems · Reduce motion            |
+| Keybindings | Every shortcut, by group. Click one, then press the new key; `Esc` cancels. **Reset to defaults**.                                                         |
+| Debugging   | The log viewer · **Attach logs when I report an issue** · Download log                                                                                     |
+| About       | Version and build · links: GitHub, licence, privacy policy, report an issue, Ko-fi                                                                         |
+
+Options the docs need that the design doesn't show yet are an open question in the
+[roadmap](../roadmap.md#open-questions) (Q-30): dyslexia-friendly font, high contrast, colour-blind highlight colours, tooltip delay,
+layout (Auto, Desktop, Phone), mouse and touch speed, invert zoom, graphics quality and shadows.
 
 ### Guide
 
 - Pages written in plain words with pictures. One page per tool and per rule.
-- Pills, tooltips and Settings link straight to the right page.
+- Problems, tooltips and Settings link straight to the right page.
 - Searchable.
 - A first-time tutorial overlay is planned for later ([roadmap, Later](../roadmap.md#later)).
 

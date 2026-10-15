@@ -49,7 +49,7 @@ export function loadMapFile(text: string, deps: LoadDeps): Result<LoadedMap, Gla
 | Log events           | dotted, lower case               | `planner.action.committed`                  |
 | Error codes          | `GLD-AREA-NNN`                   | `GLD-CHECK-002`                             |
 | Tests                | `<file>.test.ts`, sentence names | `it("plans one move op per selected item")` |
-| Stories              | `<Component>.stories.tsx`        | `ViolationPill.stories.tsx`                 |
+| Stories              | `<Component>.stories.tsx`        | `ProblemsChip.stories.tsx`                  |
 
 ## Lint rules that enforce this
 

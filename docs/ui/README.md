@@ -45,7 +45,7 @@ tokens, never raw colours, so every game gets its own look with the same control
 | `frame`              | `#d6cdaa`             | `#2c2826`             | Card borders                                |
 | `lip`                | `rgba(61,54,50,.16)`  | `#3e3833`             | Card bottom edge                            |
 | `pop` / `pop-line`   | `#efe6c8` / `#d6cdaa` | `#2d2a27` / `#45403b` | Popups and menus                            |
-| `alert`              | `#a8372a`             | `#ff9a85`             | Violation pills                             |
+| `alert`              | `#a8372a`             | `#ff9a85`             | Problems: alert discs and text              |
 | `cocoa` / `on-cocoa` | `#3d3632` / `#f5f0d1` | same                  | Dark buttons and pills                      |
 | `cream` / `sun`      | `#efe9d4` / `#f9e260` | same                  | Buttons floating on the map; selected state |
 
@@ -80,7 +80,7 @@ How cursors behave: [the planner screen](../planner/screen.md#tools).
 | What                                                     | Package          |
 | -------------------------------------------------------- | ---------------- |
 | Tokens, controls (buttons, sliders, menus), shared icons | `@glade/ui`      |
-| The planner's screens (side panel, rail, pills)          | `@glade/planner` |
+| The planner's screens (side panel, rail, problems chip)  | `@glade/planner` |
 | The builder's screens                                    | `@glade/builder` |
 | One game's theme, icons and words                        | `@glade/<id>-ui` |
 

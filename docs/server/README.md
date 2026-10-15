@@ -27,18 +27,17 @@ Glade's API is under `/api/v1`. Better Auth's routes are under `/api/auth`. Bodi
 | `POST`   | `/drafts`           | Session                       | New draft (blank or a copy). Returns `id`, `revision: 1`.                                                                                         |
 | `GET`    | `/drafts/:id`       | —                             | Owner: the draft's file and `revision`. Anyone else: `{ shareId }` if the draft is shared, otherwise `404` ([draft URLs](sharing.md#draft-urls)). |
 | `PUT`    | `/drafts/:id`       | Owner, `If-Match: <revision>` | Overwrite. `409` if another device saved first; the app then reloads the latest ([two devices](accounts.md#two-devices-editing-the-same-map)).    |
-| `DELETE` | `/drafts/:id`       | Owner                         | Delete the draft. `?stop_sharing=1` also stops its share.                                                                                         |
+| `DELETE` | `/drafts/:id`       | Owner                         | Delete the draft. `?make_private=1` also makes its share private.                                                                                 |
 | `POST`   | `/drafts/:id/share` | Owner                         | Freeze the draft as a new snapshot. Makes the share on first use.                                                                                 |
 
 **Shares** (frozen snapshots behind a link)
 
-| Method   | Path                   | Needs   | Does                                                           |
-| -------- | ---------------------- | ------- | -------------------------------------------------------------- |
-| `GET`    | `/shares/:id`          | —       | The latest snapshot (or `?v=3`) and the pack versions it uses. |
-| `GET`    | `/shares/:id/versions` | —       | List versions (number, date, size).                            |
-| `POST`   | `/shares/:id/copy`     | Session | Make a copy: a new draft for me from a snapshot (`?v=3`).      |
-| `DELETE` | `/shares/:id`          | Owner   | Stop sharing. Copies and pack versions in use stay.            |
-| `POST`   | `/shares/:id/resume`   | Owner   | Share again, within 30 days of stopping.                       |
+| Method  | Path                   | Needs   | Does                                                                                                                                |
+| ------- | ---------------------- | ------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| `GET`   | `/shares/:id`          | —       | The latest snapshot (or `?v=3`) and the pack versions it uses.                                                                      |
+| `GET`   | `/shares/:id/versions` | —       | List versions (number, date, size).                                                                                                 |
+| `POST`  | `/shares/:id/copy`     | Session | Make a copy: a new draft for me from a snapshot (`?v=3`).                                                                           |
+| `PATCH` | `/shares/:id`          | Owner   | `{ "public": false }` makes it private; `true` brings back the same version on the same link. Copies and pack versions in use stay. |
 
 **Packs** use the same routes. A pack share's snapshots are the pack's versions, and `GET /shares/:id/v/:version` gets one version.
 
@@ -89,7 +88,7 @@ Glade's API is under `/api/v1`. Better Auth's routes are under `/api/auth`. Bodi
 
 - **Drafts** live in their row, gzipped (a full island is about 150 KB, about 20 KB gzipped). A save overwrites `content` and adds 1 to `revision`. There is no history and no file to clean up.
 - **Snapshots, logs and report maps** live on disk, named by their SHA-256 hash: `/data/blobs/ab/cd/abcd…`. The same file is only stored once. Example: Ben shares an unchanged copy of Ana's map. Two `snapshots` rows, one file.
-- **Clean-up** (nightly): a file is deleted when no row points at it any more. A map snapshot's file stays for 30 days after **Stop sharing**, so **Share again** works. Drafts are never cleaned up this way. A pack version stays while any draft or snapshot lists it in `pack_refs`.
+- **Clean-up** (nightly): a file is deleted when no row points at it any more. A private share keeps its snapshots, so making it public again brings back the same version. Drafts are never cleaned up this way. A pack version stays while any draft or snapshot lists it in `pack_refs`.
 - SQLite runs in WAL mode. One file: `/data/glade.db`.
 - Migrations are numbered SQL files. They only **add** things (new tables, new columns), so an older app version still works after a rollback ([CI and deploy](../engineering/ci-and-deploy.md#rollback-by-hand)). Better Auth's tables come from its own generated SQL, kept as Glade migrations.
 

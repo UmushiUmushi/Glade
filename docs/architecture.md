@@ -76,26 +76,27 @@ a shared package only if a second game uses the same model.
 > are built from: shared packages that never name a game, and `packages/games/<id>/`, one folder
 > per game.
 
-| Part         | Package               | Holds                                                                                           |
-| ------------ | --------------------- | ----------------------------------------------------------------------------------------------- |
-| **Shared**   | `@glade/core`         | Maps, grids, layers, kinds and catalogs, rule checks, map files. Never changes a map.           |
-|              | `@glade/render`       | The look as data: colours, times of day, seasons, 2D drawing, 3D geometry, item models.         |
-|              | `@glade/three`        | `MapScene`: draws a map in 3D with three.js. No UI.                                             |
-|              | `@glade/edit`         | Changes maps: ops on a draft, patches, transactions, undo, and shared ops (objects, terrain).   |
-|              | `@glade/planner`      | The planner: the action pipeline, tools, selection, and its screens.                            |
-|              | `@glade/builder`      | The item builder: smart parts, layout rules, compiling to a model, and its screens.             |
-|              | `@glade/viewport`     | Shows a map: 2D canvas, `MapScene` host, cameras, input, highlights, picking.                   |
-|              | `@glade/ui`           | Design tokens and controls: buttons, toggles, sliders, menus, dialogs, shared icons.            |
-|              | `@glade/logging`      | The event registry, logger, redaction and the `.gladelog` format.                               |
-|              | `@glade/errors`       | `Result`, the error shape and the error code registry.                                          |
-|              | `@glade/formats`      | Map, pack and clipboard files and their migrations; API shapes for web and server.              |
-|              | `@glade/testkit`      | The contract every game passes, and render goldens. Tests only.                                 |
-| **Per game** | `@glade/<id>-profile` | What the game is: maps, grids, rules, kinds, item fields, settings (like the step limit), look. |
-|              | `@glade/<id>-catalog` | The base items (with their models), categories, and builder templates.                          |
-|              | `@glade/<id>-edit`    | Edits only this game has (for example how bridges span gaps). Often small.                      |
-|              | `@glade/<id>-ui`      | How the game looks in Glade: theme, fonts, icons, modes, layers, rule text, guide pages.        |
-| **Apps**     | `@glade/web`          | The browser app: routes, the game registry, storage, the worker, the API client.                |
-|              | `@glade/server`       | The API: shared maps and packs, upload checks, bug reports.                                     |
+| Part         | Package               | Holds                                                                                                                                                                |
+| ------------ | --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Shared**   | `@glade/core`         | Maps, grids, layers, kinds and catalogs, rule checks, map files. Never changes a map.                                                                                |
+|              | `@glade/render`       | The look as data: colours, times of day, seasons, 2D drawing, 3D geometry, item models.                                                                              |
+|              | `@glade/three`        | `MapScene`: draws a map in 3D with three.js. No UI.                                                                                                                  |
+|              | `@glade/edit`         | Changes maps: ops on a draft, patches, transactions, undo, and shared ops (objects, terrain).                                                                        |
+|              | `@glade/planner`      | The planner: the action pipeline, tools, selection, and its screens.                                                                                                 |
+|              | `@glade/builder`      | The item builder, the same for every game: recipes, basic and drawn shapes, layout, compiling to a model, checks, undo. Its screens are at `@glade/builder/screens`. |
+|              | `@glade/viewport`     | Shows a map: 2D canvas, `MapScene` host, cameras, input, highlights, picking.                                                                                        |
+|              | `@glade/ui`           | Design tokens and controls: buttons, toggles, sliders, menus, dialogs, shared icons.                                                                                 |
+|              | `@glade/logging`      | The event registry, logger, redaction and the `.gladelog` format.                                                                                                    |
+|              | `@glade/errors`       | `Result`, the error shape and the error code registry.                                                                                                               |
+|              | `@glade/formats`      | Map, pack and clipboard files and their migrations; API shapes for web and server.                                                                                   |
+|              | `@glade/testkit`      | The contract every game passes, and render goldens. Tests only.                                                                                                      |
+| **Per game** | `@glade/<id>-profile` | What the game is: maps, grids, rules, kinds, item fields, settings (like the step limit), look.                                                                      |
+|              | `@glade/<id>-catalog` | The base items (with their models) and categories.                                                                                                                   |
+|              | `@glade/<id>-edit`    | Edits only this game has (for example how bridges span gaps). Often small.                                                                                           |
+|              | `@glade/<id>-ui`      | How the game looks in Glade: theme, fonts, icons, modes, layers, rule text, guide pages.                                                                             |
+|              | `@glade/<id>-builder` | The game's side of the builder: templates, smart parts, materials, look, and how a recipe becomes one of its catalog entries.                                        |
+| **Apps**     | `@glade/web`          | The browser app: routes, the game registry, storage, the worker, the API client.                                                                                     |
+|              | `@glade/server`       | The API: shared maps and packs, upload checks, bug reports.                                                                                                          |
 
 Today the shared profile packages (`core`, `render`, `three`, `testkit`) and Petit Planet's profile
 exist. The other packages are made when their code arrives, in the order of the
@@ -103,16 +104,18 @@ exist. The other packages are made when their code arrives, in the order of the
 
 ### Where does it go?
 
-| Ask yourself                                                        | Home                              |
-| ------------------------------------------------------------------- | --------------------------------- |
-| Is it a fact about the game (grids, kinds, what's allowed, limits)? | `packages/games/<id>/profile`     |
-| Is it an item, a category or a builder template?                    | `packages/games/<id>/catalog`     |
-| Does it change a map, and could other games use it too?             | `packages/edit`                   |
-| Does it change a map, and only this game has it?                    | `packages/games/<id>/edit`        |
-| Is it about input, tools or the planner's screens?                  | `packages/planner`                |
-| Is it how the game looks in Glade (theme, icons, words on screen)?  | `packages/games/<id>/ui`          |
-| Is it a control every screen uses (a button, a slider)?             | `packages/ui`                     |
-| Is it about saving, sharing or the server?                          | `apps/server`, `packages/formats` |
+| Ask yourself                                                          | Home                              |
+| --------------------------------------------------------------------- | --------------------------------- |
+| Is it a fact about the game (grids, kinds, what's allowed, limits)?   | `packages/games/<id>/profile`     |
+| Is it an item or a category?                                          | `packages/games/<id>/catalog`     |
+| Is it a builder template, smart part, material or the builder's look? | `packages/games/<id>/builder`     |
+| Is it about recipes, shapes, compiling or the builder's screens?      | `packages/builder`                |
+| Does it change a map, and could other games use it too?               | `packages/edit`                   |
+| Does it change a map, and only this game has it?                      | `packages/games/<id>/edit`        |
+| Is it about input, tools or the planner's screens?                    | `packages/planner`                |
+| Is it how the game looks in Glade (theme, icons, words on screen)?    | `packages/games/<id>/ui`          |
+| Is it a control every screen uses (a button, a slider)?               | `packages/ui`                     |
+| Is it about saving, sharing or the server?                            | `apps/server`, `packages/formats` |
 
 Something moves from a game into a shared package when a second game needs it.
 
@@ -154,7 +157,7 @@ flowchart LR
 
 | Part                   | Runs where                 | Job                                                                                     |
 | ---------------------- | -------------------------- | --------------------------------------------------------------------------------------- |
-| Screens                | Browser, main thread       | Panels, menus, toolbox, pills.                                                          |
+| Screens                | Browser, main thread       | Panels, menus, toolbox, problems.                                                       |
 | Action pipeline        | Browser, main thread       | Turns every user action into checked edits ([planner internals](planner/internals.md)). |
 | Editor worker          | Browser, background thread | Holds the real map. Runs the ops and undo, and asks the profile's rules what is wrong.  |
 | Viewport               | Browser, main thread + GPU | Draws the map: 2D with the map's `plan.draw`, 3D with `MapScene`. Adds highlights.      |
@@ -195,7 +198,7 @@ sequenceDiagram
     W-->>P: committed + patch
     P->>S: setDoc(new map), flash changed area
     P->>L: event planner.action.committed
-    Note over U,S: If rejected: chair snaps back,<br/>a pill explains why
+    Note over U,S: If rejected: chair snaps back,<br/>the problems chip explains why
 ```
 
 ### Tech stack
@@ -253,7 +256,7 @@ glade/
 │  │     ├─ objects/              place, move, rotate, copy, delete
 │  │     └─ paths/                paint, erase, fill, corners
 │  ├─ planner/                    pipeline, tools, selection, input, store, screens
-│  ├─ builder/                    smart parts engine and builder screens
+│  ├─ builder/                    the builder: recipe, shapes, compile, checks; screens
 │  ├─ viewport/                   2D host, MapScene host, cameras, overlays, picking
 │  ├─ ui/                         design tokens, controls, shared icons
 │  ├─ logging/  errors/  formats/
@@ -265,6 +268,7 @@ glade/
 │        ├─ catalog/              @glade/petit-planet-catalog
 │        ├─ edit/                 @glade/petit-planet-edit: terrain, bridges
 │        ├─ ui/                   @glade/petit-planet-ui
+│        ├─ builder/              @glade/petit-planet-builder: templates, smart parts, materials
 │        └─ references/           reference screenshots: local only, ignored by git
 ├─ tests/                         repo guards: import boundaries, references stay local
 ├─ e2e/                           Playwright tests
@@ -295,17 +299,18 @@ app.
 Imports go one way: apps use packages; per-game packages use shared packages; nothing imports an
 app. ESLint and `tests/boundaries.test.ts` check these.
 
-| Code in                          | May import                                                         | Must never import                                              |
-| -------------------------------- | ------------------------------------------------------------------ | -------------------------------------------------------------- |
-| Shared packages (`packages/*`)   | Other shared packages                                              | Any game, any app                                              |
-| A game's `profile`               | `core`, `render`                                                   | Its game's `catalog`, `edit` or `ui`; any app                  |
-| A game's `catalog`               | Its `profile`, `core`, `render`                                    | Its `edit` or `ui`; other games; any app                       |
-| A game's `edit`                  | Its `profile`, `core`, `edit`                                      | Its `ui`; other games; any app                                 |
-| A game's `ui`                    | Its `profile`, `ui` (tokens and icons)                             | React; other games; any app                                    |
-| `apps/web` (except the registry) | Shared packages                                                    | Games (they arrive through the registry)                       |
-| `apps/web/src/app/games.ts`      | Every game's packages                                              | —                                                              |
-| `apps/server`                    | `core`, `formats`, `logging`, `errors`, game profiles and catalogs | `three`, `viewport`, `planner`, `builder`, any game's `ui`     |
-| Anything                         | A package by **name** (its public API)                             | A file inside another package by path; `samples` outside tests |
+| Code in                          | May import                                                            | Must never import                                              |
+| -------------------------------- | --------------------------------------------------------------------- | -------------------------------------------------------------- |
+| Shared packages (`packages/*`)   | Other shared packages                                                 | Any game, any app                                              |
+| A game's `profile`               | `core`, `render`                                                      | Its game's `catalog`, `edit`, `ui` or `builder`; any app       |
+| A game's `catalog`               | Its `profile`, `core`, `render`                                       | Its `edit` or `ui`; other games; any app                       |
+| A game's `edit`                  | Its `profile`, `core`, `edit`                                         | Its `ui`; other games; any app                                 |
+| A game's `ui`                    | Its `profile`, `ui` (tokens and icons)                                | React; other games; any app                                    |
+| A game's `builder`               | `builder` (not its screens), its `profile` and `ui`, `core`, `render` | React; its `catalog` or `edit`; other games; any app           |
+| `apps/web` (except the registry) | Shared packages                                                       | Games (they arrive through the registry)                       |
+| `apps/web/src/app/games.ts`      | Every game's packages                                                 | —                                                              |
+| `apps/server`                    | `core`, `formats`, `logging`, `errors`, game profiles and catalogs    | `three`, `viewport`, `planner`, `builder`, any game's `ui`     |
+| Anything                         | A package by **name** (its public API)                                | A file inside another package by path; `samples` outside tests |
 
 Shared packages are also checked for game words: a test fails if shared code says "cliff" or
 "furniture". A game's profile ships no items, and its `samples/` (made-up items and maps) are for
@@ -317,8 +322,8 @@ to read a game's maps, rules or look.
 ## What each game gives Glade
 
 > **In short:** The planner and the builder are game-free. Each game gives them its **profile**,
-> its **catalog**, its **edits** and its **UI**. Adding a game means writing those four packages,
-> not changing shared code.
+> its **catalog**, its **edits**, its **UI** and its **builder** side. Adding a game means writing
+> those packages, not changing shared code.
 
 The registry joins them up:
 
@@ -328,8 +333,11 @@ import { petitPlanet } from "@glade/petit-planet-profile";
 import { catalog } from "@glade/petit-planet-catalog";
 import { edits } from "@glade/petit-planet-edit";
 import { ui } from "@glade/petit-planet-ui";
+import { builder } from "@glade/petit-planet-builder";
 
 export const games: GladeGame[] = [{ profile: petitPlanet, catalog, edits, ui }];
+// The builder gets the game's builder side, with its title, theme and catalog items added.
+const builders = { [petitPlanet.id]: { ...builder, title: ui.title, theme: ui.theme /* … */ } };
 ```
 
 Each shared package defines the part it reads:
@@ -433,7 +441,7 @@ game and any set of views.
 | **Cursor control** | Camera (move the view) or Pointer (choose and move things).                                                                                                                                                                                                             |
 | **Select tool**    | Lasso, Rectangle, Circle or Magic.                                                                                                                                                                                                                                      |
 | **Select mode**    | Set (replace), Add, or Subtract.                                                                                                                                                                                                                                        |
-| **Pill**           | A small message that slides in from the top. Used for violations.                                                                                                                                                                                                       |
+| **Problems chip**  | The small chip at the top right of the viewport that counts problems and notes, peeks at new ones, and opens the problems tray.                                                                                                                                         |
 | **Actions menu**   | The small menu next to a selection (the "more" menu).                                                                                                                                                                                                                   |
 | **Toolbox**        | The drawer under the viewport (or the bottom sheet on phones).                                                                                                                                                                                                          |
 | **Rail**           | The thin, collapsed version of the side panel.                                                                                                                                                                                                                          |

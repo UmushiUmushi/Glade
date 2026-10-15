@@ -118,7 +118,7 @@ shares every row and entity that did not change. The old object stays as it was.
 1. The UI notices (error event, or no reply in 5 s).
 2. It starts a new worker and loads the **mirror** into it (the mirror always equals the last
    committed map).
-3. Undo history is lost for that session. A pill says so. Nothing in the map is lost.
+3. Undo history is lost for that session. A note in the problems chip says so. Nothing in the map is lost.
 4. A `GLD-WORKER-001` error is logged.
 
 ## Live checks while dragging

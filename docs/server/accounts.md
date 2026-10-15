@@ -45,7 +45,7 @@ sequenceDiagram
 device, means a new empty account. Nobody can get the old one back, not even the site owner. That is
 why Glade nudges people to log in.
 
-| When                        | Nudge (a pill, never a blocking dialog)              |
+| When                        | Nudge (a note, never a blocking dialog)              |
 | --------------------------- | ---------------------------------------------------- |
 | After the first share       | "Log in so you don't lose this map."                 |
 | When the 3rd map is made    | "Log in to keep your maps on all your devices."      |
@@ -137,7 +137,7 @@ reloads it.
 3. If a save still arrives late (another device saved first), the server answers `409`. Glade
    loads the newest version and drops this device's unsaved edits: usually the last few seconds of
    work.
-4. A pill says so: "This map changed on another device. Loaded the latest version." Undo history is
+4. A note says so: "This map changed on another device. Loaded the latest version." Undo history is
    cleared, because it belongs to the old version.
 
 **Example:** you edit on your laptop, then on your phone, and leave the laptop tab open. Back on the
@@ -145,19 +145,22 @@ laptop, the tab notices the phone's newer revision and reloads before your first
 
 ## Your data
 
-**Settings → Account → Download my data** downloads a zip: your drafts, your shares and their
-versions, your packs, and your account details (dates, and your Google email if logged in). Privacy
+**Settings → Account → Download my data** makes a zip: your drafts, your shares and their versions,
+your packs, and your account details (dates, and your Google email if logged in). Logged in, Glade
+says "Getting it ready. We'll email [your email] when it's done." Anonymous users have no email, so
+their zip downloads in the browser. Privacy
 law gives people a right to a copy of their data, and this button is that copy.
 
 ## Deleting an account
 
-**Settings → Account → Delete my account** (anonymous users see **Delete my data**).
+**Settings → Account → Delete my account** (anonymous users see **Delete my data**). It asks you to
+type your username to confirm; a wrong name says "That doesn't match your username."
 
 | Thing                                            | What happens                                                                |
 | ------------------------------------------------ | --------------------------------------------------------------------------- |
 | User, sessions, Google link                      | Deleted at once.                                                            |
 | Drafts                                           | Deleted at once.                                                            |
-| Shared maps                                      | No longer shared. Their links say "This map was removed by its author."     |
+| Shared maps                                      | No longer shared. Their links show the private map page.                    |
 | Shared packs that nobody else uses               | No longer shared.                                                           |
 | Shared pack versions used by other people's maps | Kept, with no owner, so those maps don't break ([packs](sharing.md#packs)). |
 | Copies other people made of your maps            | Untouched. They belong to those people.                                     |

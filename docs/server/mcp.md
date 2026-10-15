@@ -218,15 +218,15 @@ with effects outside the map, and they stay with you, in the tab.
 A call goes through the [action pipeline](../planner/internals.md#the-action-pipeline) like a click,
 with all five steps.
 
-| Step         | For a call from an app                                                                                |
-| ------------ | ----------------------------------------------------------------------------------------------------- |
-| 1. Capture   | The socket message becomes an `AppCall` event (app name, call id, tool, arguments).                   |
-| 2. Interpret | `AppCall` becomes an intent: `AppEdit { ops }` for `transaction`, or a read intent for the others.    |
-| 3. Plan      | Checks each op is in the map type's op table. Label: `Claude: place 14 items`.                        |
-| 4. Check     | The worker runs the transaction and the rules, as always.                                             |
-| 5. Present   | Draws the change, flashes the changed area, shows a pill, autosaves, logs, and sends the result back. |
+| Step         | For a call from an app                                                                               |
+| ------------ | ---------------------------------------------------------------------------------------------------- |
+| 1. Capture   | The socket message becomes an `AppCall` event (app name, call id, tool, arguments).                  |
+| 2. Interpret | `AppCall` becomes an intent: `AppEdit { ops }` for `transaction`, or a read intent for the others.   |
+| 3. Plan      | Checks each op is in the map type's op table. Label: `Claude: place 14 items`.                       |
+| 4. Check     | The worker runs the transaction and the rules, as always.                                            |
+| 5. Present   | Draws the change, flashes the changed area, adds a note, autosaves, logs, and sends the result back. |
 
-The pill says who did it and offers undo: **"Claude placed 14 items · Undo"**. While a call runs, the
+The note says who did it and offers undo: **"Claude placed 14 items · Undo"**. While a call runs, the
 viewport shows a small **Claude is working** badge with the app's name.
 
 Calls and your own actions share the pipeline, so they run **one at a time**. Example: you are

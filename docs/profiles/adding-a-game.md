@@ -1,8 +1,8 @@
 # Adding a game
 
-A game is a folder under `packages/games/<id>/` with up to four packages. The **profile** comes
-first: it says what the game is, and it is all the contract tests need. The **catalog**, **edit**
-and **ui** packages make the game usable in Glade ([what each game gives Glade](../architecture.md#what-each-game-gives-glade)).
+A game is a folder under `packages/games/<id>/` with up to five packages. The **profile** comes
+first: it says what the game is, and it is all the contract tests need. The **catalog**, **edit**,
+**ui** and **builder** packages make the game usable in Glade ([what each game gives Glade](../architecture.md#what-each-game-gives-glade)).
 
 This guide walks through the profile, using the fixture game
 (`packages/games/_fixture/profile/src/index.ts`: a 3 x 3 `board` seen in plan and in 3D, and a
@@ -183,14 +183,16 @@ and `style.defaults` is the style used when the file is missing.
 ## 9. Bring it into Glade
 
 1. **Catalog** (`@glade/<id>-catalog`): base items with their models (original work, built from
-   the model format), categories, and builder templates. Every entry passes `entryProblems`.
+   the model format) and categories. Every entry passes `entryProblems`.
 2. **Edit** (`@glade/<id>-edit`): the ops each map uses. Use the shared ops in `@glade/edit` and
    add only what no other game has.
 3. **UI** (`@glade/<id>-ui`): theme, icons and fonts, and for each map you support: modes, layers,
    environment, rule text and screen reader text. Data only, no React.
-4. Add the game to `apps/web/src/app/games.ts`.
-5. Run the game contract tests until they are green.
-6. Add stories for its mode toolbars and an end-to-end journey.
+4. **Builder** (`@glade/<id>-builder`): templates, smart parts, materials, the builder's look, and
+   how a recipe becomes a catalog entry. Data and plain functions on `@glade/builder`, no React.
+5. Add the game to `apps/web/src/app/games.ts`.
+6. Run the game contract tests until they are green.
+7. Add stories for its mode toolbars and an end-to-end journey.
 
 Removing a game is the reverse: delete its folder and its entries in
 `packages/testkit/src/games.ts` and `apps/web/src/app/games.ts`. The shared packages and the

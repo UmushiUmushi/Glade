@@ -7,6 +7,22 @@
 > shelves, a draped cloth) that fills in its own detail by fixed rules, with no AI. The result is a
 > normal model, saved in a **pack**.
 
+## What is shared and what is the game's
+
+The builder is one engine for every game. Each game lays its own things over it.
+
+| Shared (`@glade/builder`)                             | The game's (`@glade/<id>-builder`)                                    |
+| ----------------------------------------------------- | --------------------------------------------------------------------- |
+| The recipe, the part tree and the layout of each part | Templates: what an item can be in the game, and their fields          |
+| Basic shapes, Spin and Push, catalog items as parts   | Smart parts (legs, cushion, case, roof…) and which shapes it offers   |
+| Compiling to a model, the part limit, the checklist   | Its checks of the finished entry                                      |
+| Undo, the steps, the screens, the 3D view             | Materials and colours, the backdrop and footprint colours             |
+| Footprint handles, steppers, marks as a list          | Its grid: footprint steps, block height, the unit's words ("tiles")   |
+| A preview hook for templates with no model            | How a recipe becomes a catalog entry (a path's preview, water decor…) |
+
+Example: Petit Planet's **Water decor** switch is a field on its Item template. The shared Save
+step shows every template field; it doesn't know what water is.
+
 ## Where it opens
 
 | Way in                                              | What happens                                                              |
@@ -38,12 +54,12 @@ Every item starts empty. Deleting every part gives you an empty item again, so t
 ### Templates (Petit Planet)
 
 A template is a game **kind** or a **trait**. It sets the footprint limits, what the item must have,
-and what the preview shows. Templates live in the game's catalog package
-(`@glade/petit-planet-catalog`).
+and what the preview shows. Templates live in the game's builder package
+(`@glade/petit-planet-builder`).
 
 | Template           | Kind + fields                               | Footprint                         | Must have / special                                                                                              |
 | ------------------ | ------------------------------------------- | --------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
-| **Item**           | `item`                                      | 0.5 × 0.5 to 4 × 4 tiles          | Option: **sits on water** (`onWater`, for boats). Option: mark a **surface**.                                    |
+| **Item**           | `item`                                      | 0.5 × 0.5 to 4 × 4 tiles          | Option: mark a **surface**.                                                                                      |
 | **Fence / hedge**  | `item` + `connects`                         | Always 1 × 1 tile; body 0.5 to 1  | Connection preview                                                                                               |
 | **Building**       | `building` (a sort of `item`)               | 2 × 2 to 6 × 6 tiles              | **A door is required** ([markings](#markings-surface-and-door)). Things you can enter: houses, shops, galleries. |
 | **Tree**           | `tree` (a sort of `plant`)                  | Whole tiles                       | Tree spacing (L6) shown as a ring                                                                                |
@@ -62,7 +78,17 @@ Wallpaper and flooring (homes, after 1.0) are 2D sheets: colours and a pattern, 
 
 ### The footprint
 
-Drag a box on the grid in the 3D view. It snaps to the template's grid and stays inside its limits.
+Drag the footprint's corners on the grid in the 3D view. It snaps to the template's grid and stays
+inside its limits, and a readout under it says its size ("1.5 × 2 tiles").
+
+The width and depth steppers are one row of floating cream pills **in the 3D view**, never in the
+template panel: bottom left of the view on the page, just above the sheet in the window and on a
+phone. Any on/off options a template has sit in the same row as small pills. A fixed footprint
+(Path, Tree) shows its size but no handles or steppers.
+
+**Path** has no model, so it skips Build. On the page, its panel shows base colour, edge colour,
+pattern and "Plants allowed". In the window and on a phone these are compact pills: tap for the next
+colour or pattern.
 Example: a Crop snaps to 1 × 1 or 2 × 2 tiles and nothing else.
 
 ### Switching templates
@@ -72,7 +98,7 @@ only what the new template needs.
 
 | From → to                    | What happens                                                                                     |
 | ---------------------------- | ------------------------------------------------------------------------------------------------ |
-| Item → Placeable             | Works if the footprint fits 1 × 1. A marked surface is dropped (nothing stacks); a pill says so. |
+| Item → Placeable             | Works if the footprint fits 1 × 1. A marked surface is dropped (nothing stacks); a hint says so. |
 | Item → Building              | Works. Build is not done until you mark a door.                                                  |
 | Building → Item              | Works. The door marking is dropped; the door part stays as a plain part.                         |
 | Item → Fence / hedge         | Works if the footprint is 1 × 1.                                                                 |
@@ -96,7 +122,7 @@ or **Cancel**.
 | Handles            | On the selected part, in the 3D view. Pull them to shape it.                                                                  |
 | Part panel         | Bottom left, when a part is selected: its settings, Repeat, Paint, Mark, Duplicate, Delete.                                   |
 | Problems           | Live check result and part count ("14 of 256 parts"). Click a problem to select its part.                                     |
-| Connection preview | Fences only: the item linked across, down and diagonally                                                                      |
+| Connection preview | Fences only: three small 3D previews, linked straight, in an L, and diagonally (posed so it reads as diagonal)                |
 
 ### Four moves
 
@@ -107,7 +133,10 @@ or **Cancel**.
 | **Repeat** | Mirror it, or copy it in a row or a circle    | Repeat a sail 4 times in a circle                          |
 | **Paint**  | Pick a material, a colour and maybe a pattern | Fabric, blue and white stripes                             |
 
-**Dropping:** a part lands on the face under the cursor, sized to fit it, facing out. On a curved
+**Dropping:** while a part is dragged in, a see-through ghost shows where it will land and the face
+it lands on lights up. It lands on the face under the cursor, sized to fit it, facing out. Where the
+cursor is between parts, Glade picks in this order: a seat, then a surface, then any box, then the
+floor. On a curved
 face (a tower, a dome) it stays flat and is sunk into the face so its edges touch it
 ([curved faces](#curved-faces)). A dropped part becomes a child of the part it lands on: move the
 parent and the child comes along.
@@ -262,16 +291,19 @@ Each saved item has:
 
 ## Save
 
-| Field       | Required             | Example                         |
-| ----------- | -------------------- | ------------------------------- |
-| Name        | Yes                  | Beach lounger                   |
-| Pack        | Yes (pick or create) | My furniture                    |
-| Category    | Yes                  | Seating                         |
-| Tags        | No                   | striped, outdoor                |
-| Description | No                   | A folding lounger with a pillow |
+| Field       | Required               | Example                                                          |
+| ----------- | ---------------------- | ---------------------------------------------------------------- |
+| Name        | Yes                    | Beach lounger                                                    |
+| Pack        | Yes (pick or create)   | My furniture                                                     |
+| Category    | Yes                    | Basic Furniture (the game's categories, as one row of chips)     |
+| Water decor | A switch, always shown | On for a boat: "Can be placed on water, like ponds and the sea." |
+| Tags        | No                     | striped, outdoor                                                 |
+| Description | No                     | A folding lounger with a pillow                                  |
 
 Kind, fields and markings come from Define and Build. Saving puts the item in its pack, and it
-appears in the planner's toolbox under its category.
+appears in the planner's toolbox under its category. Water decor items get the wavy water badge in
+the planner and can be filtered. Beside the form: a preview of the item, its size and part count, and
+**Save to <pack>**, locked until Build is done (a building needs its door).
 
 ## Test items
 
@@ -363,15 +395,15 @@ enough that its edges touch the curve, so nothing floats ([curved faces](#curved
 
 ## The builder window (inside the planner)
 
-| Action         | Result                                                                    |
-| -------------- | ------------------------------------------------------------------------- |
-| Opens          | Small window (420 × 540) at the bottom right of the viewport.             |
-| Drag title bar | Moves the window.                                                         |
-| Drag corner    | Resizes it.                                                               |
-| Minimise       | Becomes a small chip at the bottom right. Click to restore.               |
-| Maximise       | Fills the viewport area. Click again to restore.                          |
-| Close          | If not saved: "Save changes to Lounge chair?" Save / Don't save / Cancel. |
-| Keyboard       | `F6` moves focus between the planner and the builder.                     |
+| Action         | Result                                                                                                           |
+| -------------- | ---------------------------------------------------------------------------------------------------------------- |
+| Opens          | Small window (420 × 540) at the top right of the planner (96 px in from the right and top).                      |
+| Drag title bar | Moves the window.                                                                                                |
+| Drag corner    | Resizes it.                                                                                                      |
+| Minimise       | Becomes a small chip in the bottom-right corner (24 px in): the item icon, name, unsaved dot, restore and close. |
+| Maximise       | Fills the planner. Click again to restore.                                                                       |
+| Close          | If not saved: "Save changes to Lounge chair?" Save / Don't save / Cancel.                                        |
+| Keyboard       | `F6` moves focus between the planner and the builder.                                                            |
 
 ## Builder keys
 

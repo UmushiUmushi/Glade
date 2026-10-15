@@ -12,12 +12,12 @@
 | Contrast                 | Text 4.5 : 1, controls 3 : 1. Tested per theme.                                                                                                                                    | 1.4.3, 1.4.11          |
 | Dragging has another way | Click-to-place, keyboard move (`Space` + arrows), menu actions.                                                                                                                    | 2.5.7                  |
 | Target size              | Buttons at least 32 px on desktop, 44 px on touch.                                                                                                                                 | 2.5.8                  |
-| Timing                   | Pill timers pause on hover/focus, length in Settings, or "until closed".                                                                                                           | 2.2.1                  |
+| Timing                   | Problems wait in the tray; the chip's peek holds while hovered; the tray never closes by itself.                                                                                   | 2.2.1                  |
 | Motion                   | "Reduce motion" turns off flashes, slides and camera easing. Follows the system setting.                                                                                           | 2.3.3                  |
 | Screen readers           | Live region describes hover, selection, results and violations. Each game's `ui` package has its own `describe` text per map. The profile's `map.ui.hover` gives the cell readout. | 4.1.3                  |
-| Text size                | Up to 200% without losing anything.                                                                                                                                                | 1.4.4                  |
+| Text size                | Settings → Interface size (70–130 %), and browser zoom up to 200 % without losing anything.                                                                                        | 1.4.4                  |
 | Reading                  | Plain words, short sentences. Dyslexia-friendly font option.                                                                                                                       | 3.1.5 (AAA, aimed for) |
-| Help                     | Guide page links from pills, tooltips and Settings.                                                                                                                                | 3.3.5                  |
+| Help                     | Guide page links from problems, tooltips and Settings.                                                                                                                             | 3.3.5                  |
 
 **What screen readers hear (examples)**
 
