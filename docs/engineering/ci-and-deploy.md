@@ -5,7 +5,8 @@
 ## CI on every push
 
 Today CI runs lint, typecheck and the tests (`.github/workflows/ci.yml`). The other jobs below are
-added as the apps they check arrive.
+added as the apps they check arrive. Docker, deploy, rollback, backups and monitoring arrive in
+[release prep](../roadmap.md#phase-8-release-prep-polish-and-audit-m--10), before 1.0.
 
 ```mermaid
 flowchart LR

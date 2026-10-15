@@ -14,7 +14,7 @@ flowchart TB
     P3 --> P5["Phase 5<br/>Terrain"]
     P2 --> P6["Phase 6<br/>Library + sharing"]
     P2 --> P7["Phase 7<br/>Builder MVP"]
-    P4 & P5 & P6 & P7 --> P8["Phase 8<br/>Polish + audit → 1.0"]
+    P4 & P5 & P6 & P7 --> P8["Phase 8<br/>Release prep + polish → 1.0"]
     P8 --> P9["Phase 9<br/>Research features"]
     P8 --> P10["Phase 10<br/>Homes"]
 ```
@@ -38,12 +38,13 @@ Sizes: **S** = about 1 week, **M** = 2–3 weeks, **L** = 4–6 weeks (one perso
 | `packages/ui`: design tokens, Button, IconButton, Toggle, Toolbar, Tooltip, Menu, Slider, Dialog in Storybook         |
 | `packages/edit`: draft, patch, transaction, history, with the recording draft ([editing](edit/README.md)). Game-free. |
 | CI jobs that apply so far ([CI](engineering/ci-and-deploy.md))                                                        |
-| Docker image (hello page + `/health`), compose file, deploy and rollback workflows                                    |
+| App skeletons: `apps/web` and `apps/server` (with `/health`)                                                          |
 | Fixtures: a real-size island map and catalog                                                                          |
 | ESLint import rules for the catalog, edit and ui packages, as they are added                                          |
 
-**Exit:** CI green. A deploy works. A **rollback drill** works. Storybook builds. Editor tests
-pass, including "op then undo = start".
+**Exit:** CI green. Storybook builds. Editor tests pass, including "op then undo = start".
+
+Docker, deploy and rollback wait for [release prep](#phase-8-release-prep-polish-and-audit-m--10).
 
 ## Phase 1: Viewport and the shell (M)
 
@@ -143,10 +144,19 @@ private leaves copies working. A report round trip works.
 **Exit:** the seven test items ([builder](builder/README.md#test-items)) pass as e2e tests, each in
 no more steps than its recipe. Every compiled recipe passes `entryProblems` (property test).
 
-## Phase 8: Polish and audit (M) → 1.0
+## Phase 8: Release prep, polish and audit (M) → 1.0
 
-Real phone testing, manual VoiceOver and NVDA pass, guide content, performance pass, release
-checklist, first public release.
+**Release prep** comes first. Until then, CI runs the tests on every push, and nothing is deployed.
+
+| Deliverables                                                                                            |
+| ------------------------------------------------------------------------------------------------------- |
+| Docker image (the web app and the server), compose file ([CI and deploy](engineering/ci-and-deploy.md)) |
+| CI jobs: build, Docker smoke test, bundle size, licence and audit                                       |
+| Deploy with automatic rollback, and a **rollback drill**                                                |
+| Backups and monitoring                                                                                  |
+
+**Then polish and audit:** real phone testing, manual VoiceOver and NVDA pass, guide content,
+performance pass, release checklist, first public release.
 
 ## Phase 9: Research features (L, ongoing)
 
