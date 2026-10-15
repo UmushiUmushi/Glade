@@ -277,6 +277,7 @@ export function homeScene(layout: HomeLayout): Render3D {
       }[i.wall];
       const [X, Z] = at(corner[0], corner[1]);
       inst.model(
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- walls holds every side (built from SIDES above)
         walls.get(i.wall)!,
         model,
         placement(X, (rect.y / 2) * heightScale, Z, FACING[i.wall], W, D),
@@ -286,6 +287,7 @@ export function homeScene(layout: HomeLayout): Render3D {
       ...instanceSpecs("items", floor, (f) => OBJECT_MATERIAL[f]),
       ...instanceSpecs("ceiling", ceiling, (f) => OBJECT_MATERIAL[f]),
       ...SIDES.flatMap((side) =>
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- walls holds every side (built from SIDES above)
         instanceSpecs("wallItems", walls.get(side)!, (f) =>
           surfaceName(OBJECT_MATERIAL[f], r.id, side),
         ).map((spec) => ({ ...spec, outline: false })),

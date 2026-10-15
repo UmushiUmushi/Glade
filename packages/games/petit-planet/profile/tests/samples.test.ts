@@ -1,3 +1,5 @@
+// The profile's samples (test-only): the demo island, the sample catalogs and models are valid.
+
 import { bind, loadMap, serializeMap, validate, type Doc } from "@glade/core";
 import { describe, expect, it } from "vitest";
 import { entryProblems, petitPlanet, planet } from "../src";

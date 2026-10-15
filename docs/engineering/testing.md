@@ -29,11 +29,22 @@ a push. Until `bench/` exists, mark such a test with `it.runIf(process.env.GLADE
 
 ## Coverage targets
 
+`pnpm test:coverage` runs every test and checks these, per package, so a well-tested package can't
+hide a poorly tested one. CI runs it on every push. The report is in `coverage/index.html`.
+
 | Code                                                                                                       | Lines covered |
 | ---------------------------------------------------------------------------------------------------------- | ------------- |
 | `packages/edit`, `packages/logging`, `packages/errors`, the builder's parts engine, the planner's pipeline | ≥ 90%         |
 | Each game's `edit` package, and selection rules                                                            | ≥ 90%         |
 | Everything else                                                                                            | ≥ 80%         |
+
+`@glade/three` is left out: it draws with WebGL, which Node can't run, so the render goldens check
+it in Chrome instead. The thresholds live in `vitest.config.ts`. A package that needs 90% is added
+to its list when the package is made (the planner's pipeline in Phase 2, the builder's parts engine
+in Phase 7).
+
+**Property tests** use fast-check and are named `*.prop.test.ts`. Example:
+`packages/core/tests/space.prop.test.ts`.
 
 ## Test data
 

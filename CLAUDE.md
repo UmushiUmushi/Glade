@@ -8,7 +8,7 @@ docs/profiles/adding-a-game.md. All docs: docs/README.md.
 
 - pnpm workspace: `apps/*` (web, server), `packages/*` (shared, game-free) and
   `packages/games/<id>/*` (one folder per game: `profile`, later `catalog`, `edit`, `ui`).
-  `pnpm test`, `pnpm typecheck`, `pnpm lint`, `pnpm format`.
+  `pnpm test`, `pnpm test:coverage` (what CI runs), `pnpm typecheck`, `pnpm lint`, `pnpm format`.
 - Render goldens: `GLADE_RENDER=1 pnpm test packages/testkit/render` (needs Chrome).
 - Speed tests are opt-in: `GLADE_PERF=1 pnpm test`. CI skips them.
   `UPDATE_GOLDENS=1` rewrites them, on purpose only.

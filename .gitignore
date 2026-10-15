@@ -12,3 +12,6 @@ packages/games/*/references/
 
 # Render golden mismatches, written for inspection.
 packages/testkit/render/data/*.actual.png
+
+# Coverage reports (pnpm test:coverage).
+coverage

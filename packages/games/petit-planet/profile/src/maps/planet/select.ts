@@ -30,6 +30,7 @@ export function floodRegion(
   const stack: Point[] = [seed];
   const out: Cell[] = [];
   while (stack.length) {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- the loop runs while the stack is not empty
     const [x, y] = stack.pop()!;
     out.push({ grid, x, y });
     for (const [nx, ny] of [

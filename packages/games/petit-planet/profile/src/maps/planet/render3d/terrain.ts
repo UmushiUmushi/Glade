@@ -240,6 +240,7 @@ export function sampler(
     skirt: (profile.beach.level - 1) * hs,
     isLand: (tx, ty) => isLandTerrain(profile, tx, ty),
     isWater: (tx, ty) => !!cell(tx, ty)?.water && isLandTerrain(profile, tx, ty),
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- only asked for water blocks, which are on the map
     surface: (tx, ty) => (cell(tx, ty)!.h - g.inset) * hs,
     solid(tx, ty) {
       const c = cell(tx, ty);
@@ -406,7 +407,8 @@ export function terrainShapes(map: MapDoc, profile: Profile, g: GeomLook, spec: 
   const valueNear = (tx: number, ty: number, dir: XZ): TerrainCell | undefined => {
     const own = grid[ty]?.[tx];
     const c = own && atCorner(tx, ty, dir);
-    return isOdd(c ?? null, tx, ty) ? c!.surround : own;
+    const odd = c ?? null;
+    return isOdd(odd, tx, ty) ? odd.surround : own;
   };
   const solidOf = (tx: number, ty: number, v: TerrainCell | undefined): number | null => {
     if (!v) return null;
@@ -469,13 +471,16 @@ export function terrainShapes(map: MapDoc, profile: Profile, g: GeomLook, spec: 
         level: land ? mine.h : profile.beach.level,
         grass: land && !mine.water,
         lowOnMap: !!theirs,
+        /* eslint-disable @typescript-eslint/no-non-null-assertion -- onLand implies theirs */
         lowWater: onLand && theirs!.water,
         lowGrass: onLand && !theirs!.water,
         lowSurface: onLand ? (theirs!.h - g.inset) * hs : 0,
+        /* eslint-enable @typescript-eslint/no-non-null-assertion -- end of the lines above */
         u,
         region,
       });
     };
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- this block is on the map
     const top = s.solid(tx, ty)!;
     const tag = `${tx},${ty}`;
     // A side's end vertices are this block's corners: untouched blocks keep whole sides.
@@ -523,11 +528,13 @@ export function terrainShapes(map: MapDoc, profile: Profile, g: GeomLook, spec: 
       for (const [d0, d1, [mine, other], dir] of cuts) {
         const m = mine ?? own;
         const region = dir && m !== own ? `${tag}:${dir.join(",")}` : tag;
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- m is a cell of this block, which is on the map
         wall(at(d0), at(d1), m, solidOf(tx, ty, m)!, nx, ny, other, d0, region);
       }
     });
     // Along each shaped corner's curve, between the block's main region and its corner region.
     for (const c of cornersOf(tx, ty)) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- both are cells of this block, which is on the map
       const [m, r] = [solidOf(tx, ty, own)!, solidOf(tx, ty, c.surround)!];
       if (Math.abs(m - r) < 1e-6) continue;
       const { V, pts } = curveOf(c);
@@ -597,6 +604,7 @@ export function terrainShapes(map: MapDoc, profile: Profile, g: GeomLook, spec: 
     const n = grid[ty + side.dy]?.[tx + side.dx];
     if (!n || n.h >= grid[ty][tx].h) return null;
     const [nx, ny] = [tx + side.dx, ty + side.dy];
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- the neighbour n exists, so it is on the map
     const landing = s.isWater(nx, ny) ? s.surface(nx, ny) : s.solid(nx, ny)!;
     return landing < s.surface(tx, ty) - 1e-6 ? landing : null;
   };
@@ -872,6 +880,7 @@ export function buildTerrainChunk(
 
   for (let ty = ty0; ty <= ty1; ty++) {
     for (let tx = tx0; tx <= tx1; tx++) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- the chunk's blocks are on the map
       const top = s.solid(tx, ty)!;
       const land = s.isLand(tx, ty);
       const level = land ? terrainGrid(map)[ty][tx].h : profile.beach.level;
@@ -881,6 +890,7 @@ export function buildTerrainChunk(
       const shaped = land ? sh.regions(tx, ty) : null;
       if (shaped) {
         for (const { pts, value } of shaped) {
+          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- value is a cell of this block, which is on the map
           const y = sh.solidOf(tx, ty, value)!;
           const grass = !value.water;
           (grass ? lawn : b).polygon(
@@ -1481,6 +1491,7 @@ export function buildCushionChunk(
   for (let ty = ty0; ty <= ty1; ty++) {
     for (let tx = tx0; tx <= tx1; tx++) {
       if (!sh.s.isLand(tx, ty) || (sh.s.isWater(tx, ty) && !sh.cornersOf(tx, ty).length)) continue;
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- the chunk's blocks are on the map
       const own = sh.s.solid(tx, ty)!;
       const shaped = sh.cornersOf(tx, ty).length > 0;
       const [x0, x1, z0, z1] = sh.s.footprint(tx, ty);

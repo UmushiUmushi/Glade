@@ -51,11 +51,24 @@ export function loadMapFile(text: string, deps: LoadDeps): Result<LoadedMap, Gla
 | Tests                | `<file>.test.ts`, sentence names | `it("plans one move op per selected item")` |
 | Stories              | `<Component>.stories.tsx`        | `ProblemsChip.stories.tsx`                  |
 
-## Lint rules that enforce this
+## What enforces this
 
-- `no-restricted-imports`: the [import rules](../architecture.md#import-rules).
-- `no-empty` (including empty `catch`).
-- `@typescript-eslint/no-explicit-any`, `no-floating-promises`.
-- `import/no-default-export`.
-- `max-lines-per-function: 60` (warning).
-- A custom rule: only files in `pipeline/present/` and `platform/` may call stores' setters.
+| Rule                                             | Checked by                                                                                |
+| ------------------------------------------------ | ----------------------------------------------------------------------------------------- |
+| Import rules                                     | ESLint `no-restricted-imports`, and `tests/boundaries.test.ts`                            |
+| 3: results, not throws                           | ESLint `no-floating-promises` and `no-misused-promises`; review for the rest              |
+| 9: named exports only                            | ESLint (`no-restricted-syntax` on `export default`). Tool config files are the exception. |
+| 10: strict types                                 | `tsc` strict; ESLint `no-explicit-any`; `no-non-null-assertion` in library code           |
+| 11: file header comment                          | `tests/file-headers.test.ts`                                                              |
+| 12: short functions                              | ESLint `max-lines-per-function: 60` in library code (a warning)                           |
+| Empty blocks, including empty `catch`            | ESLint `no-empty`                                                                         |
+| Store setters only in `present/` and `platform/` | A custom ESLint rule, added with the planner (Phase 2)                                    |
+
+**Disabling a rule.** Every `eslint-disable` comment says why, after `--`:
+
+```ts
+// eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- the loop runs while the stack is not empty
+const [x, y] = stack.pop()!;
+```
+
+A disable comment without a reason fails lint, and so does one that no longer disables anything.

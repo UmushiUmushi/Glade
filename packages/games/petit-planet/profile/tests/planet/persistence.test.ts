@@ -1,3 +1,5 @@
+// The island's file format: run-length terrain rows, and save then load giving back the same map.
+
 import { petitPlanet } from "../../src";
 import { describe, expect, it } from "vitest";
 import { deserializeMap, MapFormatError, serializeMap } from "@glade/core";

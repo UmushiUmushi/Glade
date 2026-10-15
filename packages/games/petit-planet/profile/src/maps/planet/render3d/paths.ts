@@ -80,6 +80,7 @@ export function buildPathChunk(
       const regions = pathCellRegions(map, profile, X, Y);
       if (!regions) continue;
       const type = pathAt(map, X, Y);
+      if (!type) continue; // never: regions exist only where a path is
       const top = (x: number, y: number) =>
         Math.max(s.ground(x, y), s.ground(x + 1, y), s.ground(x, y + 1), s.ground(x + 1, y + 1));
       const ground = top(X, Y);
@@ -177,7 +178,7 @@ export function buildPathChunk(
           ],
           [0, 1, 0],
           {
-            ...lookOf(type!),
+            ...lookOf(type),
             open: [grassy(0, -1), grassy(1, 0), grassy(0, 1), grassy(-1, 0)],
             corner,
           },
@@ -195,7 +196,7 @@ export function buildPathChunk(
                   [X + 1, Y + 1],
                   [X, Y + 1],
                 ] as Pt[],
-                type: type!,
+                type,
               },
             ]
           : regions;

@@ -128,8 +128,10 @@ function textureOf({ texture: t }: TextureValue): Texture {
     if ("url" in t) {
       const done = loader.loadAsync(t.url).then(
         (img) => {
+          /* eslint-disable @typescript-eslint/no-non-null-assertion -- set just below, before the load ends */
           tex!.image = img.image;
           tex!.needsUpdate = true;
+          /* eslint-enable @typescript-eslint/no-non-null-assertion -- end of the lines above */
         },
         (e) => console.warn(`texture ${t.key}: ${e}`),
       );
@@ -138,6 +140,7 @@ function textureOf({ texture: t }: TextureValue): Texture {
       // Mid grey until it loads (a detail map's neutral value), not black.
       const grey = document.createElement("canvas");
       grey.width = grey.height = 1;
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- a new canvas always gives a 2D context
       const g = grey.getContext("2d")!;
       g.fillStyle = "#808080";
       g.fillRect(0, 0, 1, 1);

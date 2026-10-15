@@ -14,9 +14,11 @@
     "test:watch": "vitest",
     "lint": "eslint . && prettier --check .",
     "format": "prettier --write .",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test:coverage": "vitest run --coverage"
   },
   "devDependencies": {
+    "@eslint-community/eslint-plugin-eslint-comments": "^4.8.1",
     "@eslint/js": "^10.0.1",
     "@glade/core": "workspace:*",
     "@glade/fixture-profile": "workspace:*",
@@ -26,14 +28,16 @@
     "@glade/three": "workspace:*",
     "@types/node": "^26.6.3",
     "@types/three": "^0.186.0",
+    "@vitest/coverage-v8": "^5.0.5",
     "eslint": "^10.11.0",
     "eslint-config-prettier": "^10.1.8",
+    "fast-check": "^4.10.2",
     "prettier": "^3.9.9",
     "three": "^0.186.1",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.70.1",
     "vite": "^8.3.1",
-    "vitest": "^5.0.2"
+    "vitest": "^5.0.5"
   },
   "pnpm": {
     "onlyBuiltDependencies": [

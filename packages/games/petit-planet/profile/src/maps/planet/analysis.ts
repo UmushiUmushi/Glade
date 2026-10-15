@@ -33,6 +33,7 @@ export function edgeRun(
   dx: number,
   dy: number,
 ): { back: number; fwd: number; ex: number; ey: number } {
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- callers pass a block on the map
   const h = terrainAt(map, tx, ty)!.h;
   const landing = terrainAt(map, tx + dx, ty + dy)?.h ?? h - 1;
   const [ex, ey] = [dy === 0 ? 0 : 1, dx === 0 ? 0 : 1];

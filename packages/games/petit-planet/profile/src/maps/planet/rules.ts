@@ -479,6 +479,7 @@ function checkIncline(map: MapDoc, ctx: RuleContext, item: Item): Violation[] {
       },
     ];
   }
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- low has exactly one level here (more returned above)
   const h = [...low][0]!;
   const wrong = top.filter((b) => !b.t || b.t.water || b.t.h !== h + rise);
   if (wrong.length) {

@@ -1,3 +1,5 @@
+// The item model format: what a model may hold, how it is measured, and how problems are reported.
+
 import { describe, expect, it } from "vitest";
 import { z } from "zod";
 import { applyPoint, det3 } from "../src/matrix";

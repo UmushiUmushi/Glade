@@ -1,4 +1,8 @@
+// ESLint for the whole repo: the import rules from docs/architecture.md and the code style from
+// docs/engineering/code-style.md. Prettier owns formatting; tests/ guards what lint cannot see.
+
 import js from "@eslint/js";
+import comments from "@eslint-community/eslint-plugin-eslint-comments/configs";
 import prettier from "eslint-config-prettier";
 import tseslint from "typescript-eslint";
 
@@ -42,18 +46,80 @@ const profileOnly = {
   ],
 };
 
+// Code style (docs/engineering/code-style.md), one block per rule.
+
+/** Rule 3 and the lint list: a promise is awaited or handled, never dropped. */
+const promises = {
+  "@typescript-eslint/no-floating-promises": "error",
+  "@typescript-eslint/no-misused-promises": "error",
+};
+
+/** Rule 9: named exports only, so search and rename work. Tool config files are the exception. */
+const namedExports = {
+  "no-restricted-syntax": [
+    "error",
+    {
+      selector: "ExportDefaultDeclaration",
+      message: "Use a named export (docs/engineering/code-style.md, rule 9).",
+    },
+  ],
+};
+
+/** Rule 10: no `!` unless a disable comment says why (`-- reason`). Tests may assert freely. */
+const nonNull = {
+  "@typescript-eslint/no-non-null-assertion": "error",
+};
+
+/** Rule 12: short functions. A warning, since the fix is to split by step, not by size. */
+const shortFunctions = {
+  "max-lines-per-function": [
+    "warn",
+    { max: 60, skipBlankLines: true, skipComments: true, IIFEs: true },
+  ],
+};
+
+/** Every disable comment says why (`-- reason`). Stale ones fail through linterOptions below. */
+const disableComments = {
+  "@eslint-community/eslint-comments/require-description": ["error", { ignore: [] }],
+};
+
+const SOURCE = ["{apps,packages}/**/src/**/*.{ts,tsx}"];
+const TESTS = ["**/*.test.{ts,tsx}", "**/tests/**", "**/samples/**", "packages/testkit/**"];
+const CONFIGS = ["*.config.{js,ts}", "**/*.config.{js,ts}", "**/.storybook/**"];
+
 export default tseslint.config(
-  { ignores: ["**/node_modules", "**/dist", "packages/games/*/references"] },
+  { ignores: ["**/node_modules", "**/dist", "**/coverage", "packages/games/*/references"] },
   js.configs.recommended,
   ...tseslint.configs.recommended,
+  comments.recommended,
   prettier,
   {
+    linterOptions: { reportUnusedDisableDirectives: "error" },
+    languageOptions: {
+      parserOptions: { projectService: true, tsconfigRootDir: import.meta.dirname },
+    },
     rules: {
       "@typescript-eslint/no-unused-vars": [
         "error",
         { argsIgnorePattern: "^_", ignoreRestSiblings: true },
       ],
+      ...promises,
+      ...namedExports,
+      ...disableComments,
     },
+  },
+  {
+    files: ["**/*.js"],
+    ...tseslint.configs.disableTypeChecked,
+  },
+  {
+    files: CONFIGS,
+    rules: { "no-restricted-syntax": "off" },
+  },
+  {
+    files: SOURCE,
+    ignores: TESTS,
+    rules: { ...nonNull, ...shortFunctions },
   },
   {
     files: ["packages/**/*.ts"],

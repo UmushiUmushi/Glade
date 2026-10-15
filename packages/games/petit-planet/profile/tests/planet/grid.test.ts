@@ -1,3 +1,6 @@
+// The island's grids: their sizes, bounds checks, and conversions between tiles, half tiles and
+// blocks.
+
 import { describe, expect, it } from "vitest";
 import {
   areaOfMajor,

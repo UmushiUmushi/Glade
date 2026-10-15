@@ -83,7 +83,7 @@ export interface EntityLayerSpec extends LayerSpecBase {
 export type LayerSpec = GridLayerSpec<never> | EntityLayerSpec;
 
 /** Layers in order; the order is the file order and the order of change counts. */
-export type LayerSchema = Record<string, GridLayerSpec<any> | EntityLayerSpec>; // eslint-disable-line @typescript-eslint/no-explicit-any
+export type LayerSchema = Record<string, GridLayerSpec<any> | EntityLayerSpec>; // eslint-disable-line @typescript-eslint/no-explicit-any -- each layer's own cell type
 
 export class DocFormatError extends Error {}
 

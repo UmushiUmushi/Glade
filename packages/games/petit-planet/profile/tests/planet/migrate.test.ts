@@ -1,3 +1,5 @@
+// Old island files fitted to the current profile: new size, beach ring, and what is dropped.
+
 import { describe, expect, it } from "vitest";
 import { fitToProfile } from "../../src/maps/planet/migrate";
 import type { MapDoc } from "../../src/maps/planet/model";

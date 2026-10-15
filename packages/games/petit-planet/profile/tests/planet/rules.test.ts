@@ -1,3 +1,5 @@
+// The island's rulebook as a whole, then one group of tests per rule.
+
 import { describe, expect, it } from "vitest";
 import { setCornerAt, type MapDoc } from "../../src/maps/planet/model";
 import type { Params } from "../../src/maps/planet/profile";

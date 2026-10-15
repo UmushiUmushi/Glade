@@ -115,6 +115,7 @@ export function poseCamera(
 
 /** Render a request and return the PNG as base64 (no data: prefix). */
 export function capture(host: CaptureHost, req: RenderRequest): string {
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- included in RENDER_SIZES, so set
   const size = RENDER_SIZES.includes(req.size ?? 0) ? req.size! : 512;
   const { renderer, scene, sky, figure } = host.stage;
   const look = host.lookFor(req.preset, req.season, req.time);
@@ -220,6 +221,7 @@ function toPngBase64(pixels: Uint8Array, w: number, h: number): string {
   const canvas = document.createElement("canvas");
   canvas.width = w;
   canvas.height = h;
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- a new canvas always gives a 2D context
   const ctx = canvas.getContext("2d")!;
   const img = ctx.createImageData(w, h);
   const row = w * 4;

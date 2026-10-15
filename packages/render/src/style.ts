@@ -265,6 +265,7 @@ export function resolveLook<S, C>(
 ): Look<S, C> {
   const name = pick(presetNames(style), preset, style.defaultPreset);
   const seasonName = pick(seasonNames(style), season, style.defaultSeason);
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- a season name exists only when the style has seasons
   const patch = seasonName ? style.seasons![seasonName] : undefined;
   const shared = mergeStyle(style.shared, patch?.shared);
   const p = mergeStyle(style.presets[name], patch?.presets?.[name]);
@@ -281,8 +282,9 @@ export function resolveLook<S, C>(
 /** Presets that have an hour, earliest first: the time slider's snap points. */
 export function presetHours(style: Style<unknown, unknown>): { name: string; hour: number }[] {
   return Object.entries(style.presets)
-    .filter(([, p]) => typeof p.hour === "number")
-    .map(([name, p]) => ({ name, hour: ((p.hour! % 24) + 24) % 24 }))
+    .flatMap(([name, p]) =>
+      typeof p.hour === "number" ? [{ name, hour: ((p.hour % 24) + 24) % 24 }] : [],
+    )
     .sort((a, b) => a.hour - b.hour);
 }
 
@@ -413,6 +415,7 @@ const NAME_KEYS = new Set(["shape"]);
 
 /** Every string value with its path; in a preset every string is a color, but for NAME_KEYS. */
 function collectColors(v: Json, path: string): [string, string][] {
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- split always gives at least one part
   if (typeof v === "string") return NAME_KEYS.has(path.split(".").pop()!) ? [] : [[path, v]];
   if (Array.isArray(v)) return v.flatMap((x, i) => collectColors(x, `${path}[${i}]`));
   if (isObject(v)) return Object.entries(v).flatMap(([k, x]) => collectColors(x, `${path}.${k}`));

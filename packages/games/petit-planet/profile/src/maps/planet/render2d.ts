@@ -199,11 +199,11 @@ export function drawScene(
   // Paths, with cut and rounded corners, in their catalog colors
   if (layers.paths) {
     const pathColor = (type: string) => pathEntry(s.catalog, type)?.color ?? "#999";
-    for (const { X, Y } of pathCells(map)) {
+    for (const { X, Y, type } of pathCells(map)) {
       if (2 * X + 1 < vis.x0 || 2 * X > vis.x1 || 2 * Y + 1 < vis.y0 || 2 * Y > vis.y1) continue;
       const regions = pathCellRegions(map, profile, X, Y);
       if (regions === "square") {
-        ctx.fillStyle = pathColor(pathAt(map, X, Y)!);
+        ctx.fillStyle = pathColor(type);
         ctx.fillRect(2 * X + 0.08, 2 * Y + 0.08, 1.84, 1.84);
         continue;
       }
@@ -319,6 +319,7 @@ function terrainBitmap(map: MapDoc, profile: Profile, spec: GridSpec, layers: La
       img.data[o + 3] = 255;
     }
   }
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- a new canvas always gives a 2D context
   canvas.getContext("2d")!.putImageData(img, 0, 0);
   cache = { map, key, canvas };
   return canvas;

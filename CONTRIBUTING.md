@@ -14,12 +14,13 @@ cd Glade
 pnpm install
 ```
 
-| Command          | Does                                    |
-| ---------------- | --------------------------------------- |
-| `pnpm test`      | All unit, contract and repo-guard tests |
-| `pnpm typecheck` | TypeScript check                        |
-| `pnpm lint`      | ESLint and Prettier check               |
-| `pnpm format`    | Formats everything with Prettier        |
+| Command              | Does                                               |
+| -------------------- | -------------------------------------------------- |
+| `pnpm test`          | All unit, contract and repo-guard tests            |
+| `pnpm test:coverage` | The same, plus the coverage targets (what CI runs) |
+| `pnpm typecheck`     | TypeScript check                                   |
+| `pnpm lint`          | ESLint and Prettier check                          |
+| `pnpm format`        | Formats everything with Prettier                   |
 
 `GLADE_RENDER=1 pnpm test packages/testkit/render` runs the render goldens (needs Chrome).
 `GLADE_PERF=1 pnpm test` also runs the speed tests, which CI skips. More

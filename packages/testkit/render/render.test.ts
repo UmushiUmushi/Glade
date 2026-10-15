@@ -7,7 +7,7 @@
 import { spawn, type ChildProcess } from "node:child_process";
 import { existsSync } from "node:fs";
 import { mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
-import type { IncomingMessage } from "node:http";
+import type { IncomingMessage, ServerResponse } from "node:http";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { createServer, type Plugin, type ViteDevServer } from "vite";
@@ -46,23 +46,27 @@ function captureRoute(dir: string): Plugin {
   return {
     name: "capture",
     configureServer(server) {
-      server.middlewares.use(async (req, res, next) => {
+      server.middlewares.use((req, res, next) => {
         if (req.url !== "/api/capture" || req.method !== "POST") return next();
-        const { name, png, error } = JSON.parse(await readBody(req)) as {
-          name: string;
-          png?: string;
-          error?: string;
-        };
-        if (/^[\w.-]+$/.test(name)) {
-          await (png
-            ? writeFile(resolve(dir, `${name}.png`), Buffer.from(png, "base64"))
-            : writeFile(resolve(dir, `${name}.error`), error ?? "no image", "utf8"));
-        }
-        res.statusCode = 204;
-        res.end();
+        saveCapture(dir, req, res).catch(next);
       });
     },
   };
+}
+
+async function saveCapture(dir: string, req: IncomingMessage, res: ServerResponse): Promise<void> {
+  const { name, png, error } = JSON.parse(await readBody(req)) as {
+    name: string;
+    png?: string;
+    error?: string;
+  };
+  if (/^[\w.-]+$/.test(name)) {
+    await (png
+      ? writeFile(resolve(dir, `${name}.png`), Buffer.from(png, "base64"))
+      : writeFile(resolve(dir, `${name}.error`), error ?? "no image", "utf8"));
+  }
+  res.statusCode = 204;
+  res.end();
 }
 
 async function stop(p: ChildProcess | undefined): Promise<void> {

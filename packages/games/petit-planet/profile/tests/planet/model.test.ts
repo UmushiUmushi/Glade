@@ -1,3 +1,5 @@
+// A new island map and the profile's geometry: grid sizes, the beach ring, what can be edited.
+
 import { describe, expect, it } from "vitest";
 import { itemRect, plantRect } from "../../src/maps/planet/model";
 import {

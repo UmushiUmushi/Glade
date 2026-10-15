@@ -294,6 +294,7 @@ export class MapScene {
     const mat = this.mats.get(spec.material);
     const count = spec.colors.length;
     if (!count || !mat || (!spec.primitive && !spec.geometry)) return;
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- the guard above makes sure there is a primitive or a geometry
     const mesh = new InstancedMesh(this.shapeOf(spec)!, mat, count);
     if (spec.geometry) this.ownedKeys.set(mesh, spec.geometry.key);
     const m4 = new Matrix4();
@@ -341,6 +342,7 @@ export class MapScene {
     // Materials first: chunks name them, and a document may bring new ones (a room's wallpaper).
     const programs = this.applyMaterials(look, this.options.flat);
     const all = !this.built || programs;
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- not all means built is set
     const ids = all ? r3.chunks(doc, map) : r3.chunksTouched(this.built!, doc, map);
     if (all) for (const id of [...this.chunks.keys()]) this.dropChunk(id);
     for (const id of ids) this.buildChunk(id);

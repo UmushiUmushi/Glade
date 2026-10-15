@@ -1,3 +1,5 @@
+// Selection helpers on the island's grids: flood fill and bounding rectangles.
+
 import { describe, expect, it } from "vitest";
 import type { Cell, GridSpec } from "../../src/maps/planet/space";
 import { boundingRect, floodRegion } from "../../src/maps/planet/select";
