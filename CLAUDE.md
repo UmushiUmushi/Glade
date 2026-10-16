@@ -11,6 +11,8 @@ docs/profiles/adding-a-game.md. All docs: docs/README.md.
   `pnpm test`, `pnpm test:coverage` (what CI runs), `pnpm typecheck`, `pnpm lint`, `pnpm format`.
 - Render goldens: `GLADE_RENDER=1 pnpm test packages/testkit/render` (needs Chrome).
 - Speed tests are opt-in: `GLADE_PERF=1 pnpm test`. CI skips them.
+- Storybook: `pnpm storybook`. Story tests run in Chromium as part of `pnpm test` (project `stories`);
+  install it once with `pnpm exec playwright install chromium`.
   `UPDATE_GOLDENS=1` rewrites them, on purpose only.
 - Packages are TypeScript source with no build step; `exports` points at `src/index.ts`. Import
   other packages by name, never by a path into them.

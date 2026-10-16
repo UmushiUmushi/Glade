@@ -1,0 +1,51 @@
+/* Stepper (stepper.tsx). From the design's footprint steppers: a floating pill 36 px tall with the
+   chunky shadow; inside, 28 px round buttons in the pressed float colour and the value between. */
+
+.glade-stepper {
+  height: 36px;
+  box-sizing: border-box;
+  border-radius: 999px;
+  padding: 0 4px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--float);
+  color: var(--on-float);
+  box-shadow: var(--shadow-chunk);
+  font-size: 14px;
+  line-height: 18px;
+  font-weight: var(--weight-strong);
+  white-space: nowrap;
+}
+
+.glade-stepper-button {
+  width: 28px;
+  height: 28px;
+  flex: none;
+  border: none;
+  border-radius: 999px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  background: var(--float-press);
+  color: var(--on-float);
+}
+
+.glade-stepper-button > svg {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 3.2;
+  stroke-linecap: round;
+}
+
+.glade-stepper-button[data-disabled] {
+  cursor: default;
+  opacity: 0.4;
+}
+
+.glade-stepper-value {
+  min-width: 24px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}

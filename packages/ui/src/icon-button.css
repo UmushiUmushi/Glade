@@ -1,0 +1,55 @@
+/* IconButton (icon-button.tsx). From the design: round, 44 or 36 px. float: the cream map button
+   with the chunky shadow, turning to the selected colour when pressed. strong: the dark round
+   button. plain: paper, no shadow. */
+
+.glade-icon-button {
+  width: 44px;
+  height: 44px;
+  flex: none;
+  border: none;
+  border-radius: 999px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+
+.glade-icon-button[data-size="36"] {
+  width: 36px;
+  height: 36px;
+}
+
+.glade-icon-button[data-variant="float"] {
+  background: var(--float);
+  color: var(--on-float);
+  box-shadow: var(--shadow-chunk);
+}
+
+.glade-icon-button[data-variant="strong"] {
+  background: var(--strong);
+  color: var(--on-strong);
+}
+
+.glade-icon-button[data-variant="plain"] {
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.glade-icon-button[data-variant="plain"][data-hovered] {
+  background: var(--inset);
+}
+
+.glade-icon-button[data-selected] {
+  background: var(--selected);
+  color: var(--on-selected);
+}
+
+.glade-icon-button[data-pressed] {
+  transform: translateY(2px);
+  box-shadow: none;
+}
+
+.glade-icon-button[data-disabled] {
+  cursor: default;
+  opacity: 0.5;
+}

@@ -4,6 +4,7 @@
 import js from "@eslint/js";
 import comments from "@eslint-community/eslint-plugin-eslint-comments/configs";
 import prettier from "eslint-config-prettier";
+import reactHooks from "eslint-plugin-react-hooks";
 import tseslint from "typescript-eslint";
 
 // Imports go one way (docs/architecture.md): apps use packages, games build on the shared
@@ -85,13 +86,23 @@ const disableComments = {
 
 const SOURCE = ["{apps,packages}/**/src/**/*.{ts,tsx}"];
 const TESTS = ["**/*.test.{ts,tsx}", "**/tests/**", "**/samples/**", "packages/testkit/**"];
-const CONFIGS = ["*.config.{js,ts}", "**/*.config.{js,ts}", "**/.storybook/**"];
+/** Files whose tools need a default export: config files, and stories (their meta). */
+const CONFIGS = ["*.config.{js,ts}", "**/*.config.{js,ts}", ".storybook/**", "**/*.stories.tsx"];
 
 export default tseslint.config(
-  { ignores: ["**/node_modules", "**/dist", "**/coverage", "packages/games/*/references"] },
+  {
+    ignores: [
+      "**/node_modules",
+      "**/dist",
+      "**/coverage",
+      "storybook-static",
+      "packages/games/*/references",
+    ],
+  },
   js.configs.recommended,
   ...tseslint.configs.recommended,
   comments.recommended,
+  reactHooks.configs.flat["recommended-latest"],
   prettier,
   {
     linterOptions: { reportUnusedDisableDirectives: "error" },

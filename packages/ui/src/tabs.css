@@ -1,0 +1,46 @@
+/* Tabs (tabs.tsx). From the design: tabs 40 px tall with round ends, 6 px apart, in the inset
+   colour; the chosen one in the selected colour with the chunky shadow. The row scrolls sideways
+   and fades over its last 40 px. */
+
+.glade-tab-list {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding: 2px 28px 6px 2px;
+  -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 40px), transparent);
+  mask-image: linear-gradient(90deg, #000 calc(100% - 40px), transparent);
+}
+
+.glade-tab {
+  height: 40px;
+  flex: none;
+  border-radius: 999px;
+  padding: 0 16px;
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  font-family: var(--font-ui);
+  font-size: 16px;
+  line-height: 20px;
+  font-weight: var(--weight-ui);
+  color: var(--ink);
+  background: var(--inset);
+  outline: none;
+  white-space: nowrap;
+}
+
+.glade-tab[data-selected] {
+  color: var(--on-selected);
+  background: var(--selected);
+  box-shadow: var(--shadow-chunk);
+}
+
+.glade-tab[data-focus-visible] {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.glade-tab-panel {
+  outline: none;
+}

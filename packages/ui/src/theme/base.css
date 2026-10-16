@@ -1,0 +1,50 @@
+/* The theme root's base: text in the theme's UI font and ink, a focus ring that always shows, and
+   no moving extras when the system or the user asks for less motion. */
+
+.glade-root {
+  font-family: var(--font-ui);
+  font-weight: var(--weight-ui);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+}
+
+.glade-root[data-mode="light"] {
+  color-scheme: light;
+}
+
+.glade-root[data-mode="dark"] {
+  color-scheme: dark;
+}
+
+.glade-root :focus-visible,
+.glade-root [data-focus-visible] {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.glade-root[data-reduce-motion] *,
+.glade-root[data-reduce-motion] *::before,
+.glade-root[data-reduce-motion] *::after {
+  transition: none !important;
+  animation: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .glade-root *,
+  .glade-root *::before,
+  .glade-root *::after {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+.glade-icon {
+  display: inline-block;
+  flex: none;
+  line-height: 0;
+}
+
+.glade-icon > svg {
+  width: 100%;
+  height: 100%;
+}

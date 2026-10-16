@@ -23,6 +23,11 @@
 | Container            | Docker + curl                                              | Image boots, `/health` is OK, app page loads                                                                                                                                                                                                                                   | CI job                            | Every push                                     |
 | Manual               | Checklist                                                  | VoiceOver, NVDA, real phones, real GPU                                                                                                                                                                                                                                         | The release checklist (Phase 8)   | Before each release                            |
 
+**Story tests run in a browser.** `pnpm test` runs two Vitest projects: `unit` (Node) and
+`stories` (every Storybook story in headless Chromium, with its play steps and an axe check that
+fails the test). Install Chromium once with `pnpm exec playwright install chromium`.
+`pnpm vitest run --project unit` skips the browser.
+
 **Speed tests are opt-in.** Shared CI machines vary too much in speed to judge a time budget, so
 a test that times code runs only with `GLADE_PERF=1` (`GLADE_PERF=1 pnpm test`), and never blocks
 a push. Until `bench/` exists, mark such a test with `it.runIf(process.env.GLADE_PERF === "1")`.

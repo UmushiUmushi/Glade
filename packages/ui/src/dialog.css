@@ -1,0 +1,63 @@
+/* Dialog (dialog.tsx). From the design: the backdrop dims the screen; the card is the popup colour
+   with a 2 px edge, 28 px corners, 20 px padding and 14 px between parts; the title is the title
+   font at 24 px. */
+
+.glade-dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  background: var(--scrim);
+  display: grid;
+  place-items: center;
+}
+
+.glade-dialog-modal {
+  max-width: calc(100% - 32px);
+  max-height: calc(100% - 32px);
+  overflow-y: auto;
+  box-sizing: border-box;
+  background: var(--pop);
+  border: var(--border-pop) solid var(--pop-line);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-float);
+  color: var(--ink);
+}
+
+.glade-dialog {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  outline: none;
+}
+
+.glade-dialog-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.glade-dialog-titles {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.glade-dialog-title {
+  margin: 0;
+  font-family: var(--font-title);
+  font-size: 24px;
+  line-height: 28px;
+  font-weight: var(--weight-title);
+  color: var(--ink-title);
+}
+
+.glade-dialog-subtitle {
+  font-size: 14px;
+  line-height: 18px;
+  color: var(--ink-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

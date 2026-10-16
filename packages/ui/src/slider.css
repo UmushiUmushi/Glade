@@ -1,0 +1,24 @@
+/* Slider (slider.tsx). From the design: the browser's range input in the text colour, with small
+   stop labels spread under it. */
+
+.glade-slider {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.glade-slider > input {
+  width: 100%;
+  margin: 0;
+  accent-color: var(--ink);
+  cursor: pointer;
+}
+
+.glade-slider-stops {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: var(--weight-ui);
+  color: var(--ink-muted);
+}

@@ -3,6 +3,9 @@
 
 import { existsSync, readdirSync } from "node:fs";
 import { join } from "node:path";
+import { storybookTest } from "@storybook/addon-vitest/vitest-plugin";
+import react from "@vitejs/plugin-react";
+import { playwright } from "@vitest/browser-playwright";
 import { defineConfig } from "vitest/config";
 
 /** Lines covered, per package. Core logic needs more; everything else needs 80%. */
@@ -40,14 +43,45 @@ function thresholds(): Record<string, { lines: number }> {
   return out;
 }
 
-export default defineConfig({
+/** Story tests run in a real browser (Chromium, headless): every story renders, its play steps
+ * pass, and axe finds no accessibility problems. */
+const storyTests = {
+  extends: true,
+  plugins: [storybookTest({ configDir: ".storybook" })],
   test: {
+    name: "stories",
+    browser: {
+      enabled: true,
+      headless: true,
+      provider: playwright(),
+      instances: [{ browser: "chromium" as const }],
+    },
+    setupFiles: [".storybook/vitest.setup.ts"],
+  },
+};
+
+/** Some correctness tests do heavy work (a whole island's 3D textures). CI machines, running both
+ * projects at once with coverage on, can take a few times longer than a laptop. */
+const UNIT_TIMEOUT_MS = 20_000;
+
+const unitTests = {
+  extends: true,
+  test: {
+    name: "unit",
+    testTimeout: UNIT_TIMEOUT_MS,
     include: ["tests/**/*.test.ts", "{apps,packages}/**/*.test.{ts,tsx}"],
     exclude: ["**/node_modules/**", "packages/games/*/references/**"],
+  },
+};
+
+export default defineConfig({
+  plugins: [react()],
+  test: {
+    projects: [unitTests, storyTests],
     coverage: {
       provider: "v8",
       include: ["{apps,packages}/**/src/**"],
-      exclude: [...BROWSER_ONLY.map((d) => `${d}/**`), "**/*.d.ts"],
+      exclude: [...BROWSER_ONLY.map((d) => `${d}/**`), "**/*.d.ts", "**/*.stories.tsx", "**/*.css"],
       reporter: ["text-summary", "html"],
       thresholds: thresholds(),
     },

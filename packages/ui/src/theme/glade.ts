@@ -1,0 +1,78 @@
+// Glade's own plain theme: no game's look. Used where no game is picked yet (the home page) and as
+// Storybook's default. Calm greys, one blue for "selected", the system's own fonts.
+
+import type { Theme, ThemeColors } from "./tokens";
+
+const light: ThemeColors = {
+  ground: "#eef0f3",
+  paper: "#ffffff",
+  inset: "#f2f4f7",
+  line: "#d3d8df",
+  frame: "#d3d8df",
+  lip: "rgba(31,35,40,0.10)",
+  pop: "#ffffff",
+  popLine: "#d3d8df",
+  ink: "#1f2328",
+  inkTitle: "#1f2328",
+  inkMuted: "#59636e",
+  alert: "#b42318",
+  selected: "#cfe3ff",
+  onSelected: "#0b3a7a",
+  strong: "#1f2328",
+  onStrong: "#ffffff",
+  float: "#ffffff",
+  onFloat: "#1f2328",
+  floatPress: "#e8ebef",
+  danger: "#b42318",
+  onDanger: "#ffffff",
+  focus: "#1f6feb",
+  scrim: "rgba(15,20,25,0.38)",
+};
+
+const dark: ThemeColors = {
+  ground: "#0d1117",
+  paper: "#161b22",
+  inset: "#21262d",
+  line: "#30363d",
+  frame: "#30363d",
+  lip: "#010409",
+  pop: "#1c2128",
+  popLine: "#3d444d",
+  ink: "#e6edf3",
+  inkTitle: "#f0f6fc",
+  inkMuted: "#9198a1",
+  alert: "#ff8a80",
+  selected: "#1f4b8f",
+  onSelected: "#e6f0ff",
+  strong: "#e6edf3",
+  onStrong: "#0d1117",
+  float: "#21262d",
+  onFloat: "#e6edf3",
+  floatPress: "#30363d",
+  danger: "#d1352b",
+  onDanger: "#ffffff",
+  focus: "#58a6ff",
+  scrim: "rgba(0,0,0,0.5)",
+};
+
+export const gladeTheme: Theme = {
+  id: "glade",
+  name: "Glade",
+  light,
+  dark,
+  shape: {
+    radiusCard: "16px",
+    radiusPop: "12px",
+    radiusBox: "6px",
+    borderCard: "1px",
+    borderPop: "1px",
+    gap: "12px",
+    shadowChunk: "0 1px 2px rgba(31,35,40,0.18)",
+    shadowFloat: "0 8px 24px rgba(15,20,25,0.20)",
+    fontTitle: "system-ui, -apple-system, 'Segoe UI', sans-serif",
+    fontUi: "system-ui, -apple-system, 'Segoe UI', sans-serif",
+    weightTitle: "700",
+    weightUi: "600",
+    weightStrong: "700",
+  },
+};

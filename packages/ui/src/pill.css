@@ -1,0 +1,38 @@
+/* Pill and Chip (pill.tsx). From the design: the info pill is the dark fill, 13 px, padding 5 × 12,
+   numbers in even widths. The chip is 28 px tall on paper; on, the selected colour with the
+   chunky shadow. */
+
+.glade-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: var(--strong);
+  color: var(--on-strong);
+  font-size: 13px;
+  line-height: 18px;
+  font-weight: var(--weight-ui);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.glade-chip {
+  height: 28px;
+  border: none;
+  border-radius: 999px;
+  padding: 0 10px;
+  cursor: pointer;
+  font-family: var(--font-ui);
+  font-size: 13px;
+  line-height: 16px;
+  font-weight: var(--weight-ui);
+  color: var(--ink);
+  background: var(--paper);
+}
+
+.glade-chip[data-selected] {
+  color: var(--on-selected);
+  background: var(--selected);
+  box-shadow: var(--shadow-chunk);
+}

@@ -5,3 +5,5 @@ packages/games/*/references
 packages/games/*/profile/tests/**/golden/*.json
 # Saved maps keep the map file format's own layout (one grid row, cell or entity per line).
 packages/games/*/profile/samples/maps/
+coverage
+storybook-static

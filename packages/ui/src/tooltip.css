@@ -1,0 +1,27 @@
+/* Tooltip (tooltip.tsx): the design's dark info pill, 13 px, with the key in a lighter well. */
+
+.glade-tooltip {
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: var(--strong);
+  color: var(--on-strong);
+  font-family: var(--font-ui);
+  font-size: 13px;
+  line-height: 18px;
+  font-weight: var(--weight-ui);
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: var(--shadow-float);
+}
+
+.glade-tooltip-key {
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: var(--weight-strong);
+  padding: 0 6px;
+  border-radius: 6px;
+  outline: 1.5px solid currentColor;
+  opacity: 0.85;
+}

@@ -15,3 +15,6 @@ packages/testkit/render/data/*.actual.png
 
 # Coverage reports (pnpm test:coverage).
 coverage
+
+# Storybook builds.
+storybook-static

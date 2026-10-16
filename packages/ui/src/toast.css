@@ -1,0 +1,33 @@
+/* Toast (toast.tsx). From the design: a dark pill 48 px tall with the float shadow, 15 px text,
+   and a 36 px action button in the selected colour. The screen decides where it sits. */
+
+.glade-toast {
+  height: 48px;
+  box-sizing: border-box;
+  padding: 0 6px 0 20px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--strong);
+  color: var(--on-strong);
+  box-shadow: var(--shadow-float);
+  font-size: 15px;
+  line-height: 20px;
+  font-weight: var(--weight-ui);
+  white-space: nowrap;
+}
+
+.glade-toast-action {
+  height: 36px;
+  border: none;
+  border-radius: 999px;
+  padding: 0 16px;
+  cursor: pointer;
+  background: var(--selected);
+  color: var(--on-selected);
+  font-family: var(--font-ui);
+  font-size: 15px;
+  line-height: 20px;
+  font-weight: var(--weight-strong);
+}

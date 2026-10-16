@@ -1,0 +1,68 @@
+/* Button (button.tsx). From the design: 44 px tall, fully round ends, the UI font at 16 px, the
+   chunky drop shadow on filled buttons. */
+
+.glade-button {
+  height: 44px;
+  border: none;
+  border-radius: 999px;
+  padding: 0 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  font-family: var(--font-ui);
+  font-size: 16px;
+  line-height: 20px;
+  font-weight: var(--weight-ui);
+  white-space: nowrap;
+}
+
+.glade-button[data-size="sm"] {
+  height: 36px;
+  padding: 0 16px;
+  font-size: 15px;
+  font-weight: var(--weight-strong);
+}
+
+.glade-button[data-variant="primary"] {
+  background: var(--selected);
+  color: var(--on-selected);
+  box-shadow: var(--shadow-chunk);
+}
+
+.glade-button[data-variant="secondary"] {
+  padding: 0 18px;
+  background: var(--float);
+  color: var(--on-float);
+  box-shadow: var(--shadow-chunk);
+}
+
+.glade-button[data-variant="strong"] {
+  background: var(--strong);
+  color: var(--on-strong);
+}
+
+.glade-button[data-variant="danger"] {
+  background: var(--danger);
+  color: var(--on-danger);
+}
+
+.glade-button[data-variant="quiet"] {
+  background: transparent;
+  color: var(--ink);
+}
+
+.glade-button[data-variant="quiet"][data-hovered] {
+  background: var(--inset);
+}
+
+.glade-button[data-pressed] {
+  transform: translateY(2px);
+  box-shadow: none;
+}
+
+.glade-button[data-disabled] {
+  cursor: default;
+  opacity: 0.5;
+}

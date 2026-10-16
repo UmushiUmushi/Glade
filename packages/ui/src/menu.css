@@ -1,0 +1,60 @@
+/* Menu (menu.tsx). From the design: the popup colour with a 2 px edge, 24 px corners, the float
+   shadow, 8 px padding; rows 44 px tall with fully round ends; dotted lines between groups. */
+
+.glade-menu-popup {
+  box-sizing: border-box;
+  padding: 8px;
+  background: var(--pop);
+  border: var(--border-pop) solid var(--pop-line);
+  border-radius: var(--radius-pop);
+  box-shadow: var(--shadow-float);
+  font-family: var(--font-ui);
+}
+
+.glade-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  outline: none;
+}
+
+.glade-menu-item {
+  height: 44px;
+  flex: none;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 14px;
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 20px;
+  font-weight: var(--weight-ui);
+  color: var(--ink);
+  outline: none;
+}
+
+.glade-menu-item-text {
+  flex: 1;
+}
+
+.glade-menu-item[data-focused],
+.glade-menu-item[data-hovered] {
+  background: var(--inset);
+}
+
+.glade-menu-item[data-focus-visible] {
+  outline: 3px solid var(--focus);
+  outline-offset: -3px;
+}
+
+.glade-menu-item[data-disabled] {
+  cursor: default;
+  color: var(--ink-muted);
+}
+
+.glade-menu-separator {
+  border: none;
+  border-top: 2px dotted var(--pop-line);
+  margin: 6px 4px;
+}

@@ -18,13 +18,14 @@ pnpm install
 | -------------------- | -------------------------------------------------- |
 | `pnpm test`          | All unit, contract and repo-guard tests            |
 | `pnpm test:coverage` | The same, plus the coverage targets (what CI runs) |
+| `pnpm storybook`     | Every component, alone, in each theme              |
 | `pnpm typecheck`     | TypeScript check                                   |
 | `pnpm lint`          | ESLint and Prettier check                          |
 | `pnpm format`        | Formats everything with Prettier                   |
 
 `GLADE_RENDER=1 pnpm test packages/testkit/render` runs the render goldens (needs Chrome).
-`GLADE_PERF=1 pnpm test` also runs the speed tests, which CI skips. More
-commands (`pnpm dev`, `pnpm storybook`, `pnpm e2e`) arrive with the apps; see the
+`GLADE_PERF=1 pnpm test` also runs the speed tests, which CI skips. Story tests need
+Chromium once: `pnpm exec playwright install chromium`. More commands (`pnpm dev`, `pnpm e2e`) arrive with the apps; see the
 [roadmap](docs/roadmap.md).
 
 ## Before you push
