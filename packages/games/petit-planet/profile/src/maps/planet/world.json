@@ -26,6 +26,7 @@
   "landmarks": [
     {
       "id": "town-center",
+      "name": "Town center",
       "grid": "major",
       "x": 78,
       "y": 71,

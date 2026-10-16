@@ -1,8 +1,9 @@
-// The planet from straight above (its plan view) on a 2D canvas: terrain, waterfalls, cliff lines,
+// The planet from straight above (its plan view) on a 2D canvas, in the planner's cosy style
+// (plan-style.ts): the sea, terrain with a face below each raised edge, ponds and waterfalls,
 // paths, landmarks, plants and items; and what every view of it shares (its UI: layer toggles,
 // grids, hover text, click selection). The host draws the grid lines, violations, flashes,
-// selection, ruler and hover on top. Internally everything is drawn in minor cells (half a world tile), so the host's world
-// transform is scaled by 1/2 here.
+// selection, ruler and hover on top. Internally everything is drawn in minor cells (half a world
+// tile), so the host's world transform is scaled by 1/2 here.
 
 import type { MapUI, PlanView, RenderableMap } from "@glade/render";
 import type { Entity, Selection } from "@glade/core";
@@ -40,6 +41,7 @@ import {
 import { catalogEntry, pathEntry, type Catalog } from "../../catalog";
 import { profileOf } from "./data";
 import { appModel, drawItem2D, itemSize } from "../../items";
+import { EDGE_LINE, faceDepth, levelColor, outlineWidth, PLAN, POND_RIM } from "../../plan-style";
 import { onSurfaceBox, onSurfaces } from "../../surfaces";
 import { armBacks, fenceArms, type Arm } from "./fences";
 import { floodRegion } from "./select";
@@ -63,21 +65,6 @@ export interface Scene {
   modelOf(thing: Entity): Model | undefined;
 }
 
-const SAND = "#eadcb4";
-const LEVELS = [
-  "#6f9c58", // 0 (dug)
-  "#88b566",
-  "#9ac170",
-  "#abcb7b",
-  "#bbd586",
-  "#c9de92",
-  "#d6e69f",
-  "#e2edad",
-  "#ecf4bd", // 8
-];
-const WATER = "#5aa0d8";
-const FALL = "#2f6ea8";
-/** Visible world rect (minor cells) for a canvas of cssW x cssH under a view. */
 /** Visible minor cells for a canvas of cssW x cssH under a minor-cell view. */
 export function visibleMinor(
   spec: GridSpec,
@@ -112,6 +99,8 @@ export function drawScene(
   // never show anti-aliased seams.
   ctx.imageSmoothingEnabled = false;
   ctx.drawImage(terrainBitmap(map, profile, spec, layers), 0, 0);
+  const blocks = { t0x, t0y, t1x, t1y };
+  if (layers.water && 2 / px >= 6) drawPondRims(ctx, map, spec, blocks);
   // Waterfall streaks
   if (layers.water) {
     ctx.strokeStyle = "rgba(255,255,255,0.8)";
@@ -130,37 +119,7 @@ export function drawScene(
       }
     }
   }
-  // Cliff lines between terrain cells of different height. Half an edge beside a cut or rounded
-  // corner is left out; the corner draws its own line along the curve.
-  if (layers.heights) {
-    const grid = terrainGrid(map);
-    const shaped = (X: number, Y: number) =>
-      !!cornerAt(map, "terrainCorners", X, Y) &&
-      resolveTerrainCorner(map, profile, X, Y).status === "shaped";
-    for (let ty = t0y; ty <= t1y; ty++) {
-      for (let tx = t0x; tx <= t1x; tx++) {
-        const h = grid[ty][tx].h;
-        const r = tRect(tx, ty);
-        const right = grid[ty][tx + 1];
-        const down = grid[ty + 1]?.[tx];
-        const w = Math.max(px, 0.2);
-        if (right && right.h !== h) {
-          ctx.fillStyle = `rgba(35,45,25,${Math.min(0.85, 0.3 + 0.18 * Math.abs(right.h - h))})`;
-          const [top, bottom] = [shaped(tx, ty - 1), shaped(tx, ty)];
-          const y0 = top ? r.y + r.h / 2 : r.y;
-          const y1 = bottom ? r.y + r.h / 2 : r.y + r.h;
-          if (y1 > y0) ctx.fillRect(r.x + r.w - px, y0, w, y1 - y0);
-        }
-        if (down && down.h !== h) {
-          ctx.fillStyle = `rgba(35,45,25,${Math.min(0.85, 0.3 + 0.18 * Math.abs(down.h - h))})`;
-          const [left, rightEnd] = [shaped(tx - 1, ty), shaped(tx, ty)];
-          const x0 = left ? r.x + r.w / 2 : r.x;
-          const x1 = rightEnd ? r.x + r.w / 2 : r.x + r.w;
-          if (x1 > x0) ctx.fillRect(x0, r.y + r.h - px, x1 - x0, w);
-        }
-      }
-    }
-  }
+  if (layers.heights) drawRaisedEdges(ctx, map, profile, spec, blocks, px);
 
   // Cut and rounded water and cliff corners: the corner region in the color it takes, and a
   // cliff line along the curve.
@@ -180,16 +139,16 @@ export function drawScene(
       const pts = cornerRegion(V, c.dir, c.leg, c.shape);
       ctx.fillStyle =
         layers.water && c.surround.water
-          ? WATER
+          ? PLAN.pond
           : layers.heights
-            ? LEVELS[Math.max(0, Math.min(8, c.surround.h))]
-            : "#cfe0b8";
+            ? levelColor(c.surround.h)
+            : PLAN.grass;
       polygon(ctx, pts);
       ctx.fill();
       if (layers.heights && c.kind === "cliff") {
         const curve = cornerCurve(V, c.dir, c.leg, c.shape);
-        ctx.strokeStyle = `rgba(35,45,25,${Math.min(0.85, 0.3 + 0.18 * Math.abs(c.own.h - c.surround.h))})`;
-        ctx.lineWidth = Math.max(px, 0.2);
+        ctx.strokeStyle = PLAN.face;
+        ctx.lineWidth = Math.max(px, faceDepth(Math.abs(c.own.h - c.surround.h)) / 2);
         polygon(ctx, curve, false);
         ctx.stroke();
       }
@@ -198,13 +157,13 @@ export function drawScene(
 
   // Paths, with cut and rounded corners, in their catalog colors
   if (layers.paths) {
-    const pathColor = (type: string) => pathEntry(s.catalog, type)?.color ?? "#999";
+    const pathColor = (type: string) => pathEntry(s.catalog, type)?.color ?? PLAN.cream;
     for (const { X, Y, type } of pathCells(map)) {
       if (2 * X + 1 < vis.x0 || 2 * X > vis.x1 || 2 * Y + 1 < vis.y0 || 2 * Y > vis.y1) continue;
       const regions = pathCellRegions(map, profile, X, Y);
       if (regions === "square") {
         ctx.fillStyle = pathColor(type);
-        ctx.fillRect(2 * X + 0.08, 2 * Y + 0.08, 1.84, 1.84);
+        ctx.fillRect(2 * X, 2 * Y, 2, 2);
         continue;
       }
       for (const { pts, type } of regions ?? []) {
@@ -215,25 +174,19 @@ export function drawScene(
     }
   }
 
-  // Landmarks
+  // Landmarks: a pale plaza with a dashed edge and its name on an ink tag, like the design's
+  // area labels.
   if (layers.landmarks) {
     for (const lm of profile.landmarks) {
       const r = toMinorRect(spec, { grid: "major", x: lm.x, y: lm.y, w: lm.w, h: lm.h });
-      hatch(ctx, r, px);
+      drawLandmark(ctx, r, lm.name ?? lm.id, px, scale);
       if (lm.lockTerrain) {
         const t = toMinorRect(spec, landmarkTerrainRect(lm));
         ctx.setLineDash([4 * px, 3 * px]);
-        ctx.strokeStyle = "rgba(90,60,120,0.6)";
+        ctx.strokeStyle = "rgba(61,54,50,0.35)";
         ctx.lineWidth = px;
         ctx.strokeRect(t.x, t.y, t.w, t.h);
         ctx.setLineDash([]);
-      }
-      if (r.w * scale >= 60) {
-        ctx.fillStyle = "rgba(60,40,90,0.85)";
-        ctx.font = `${12 * px}px system-ui, sans-serif`;
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.fillText(lm.id, r.x + r.w / 2, r.y + r.h / 2);
       }
     }
   }
@@ -273,6 +226,78 @@ export function drawScene(
   }
 }
 
+/** The terrain blocks on screen, inclusive. */
+interface Blocks {
+  t0x: number;
+  t0y: number;
+  t1x: number;
+  t1y: number;
+}
+
+/** Ponds: a soft inner rim on each block, as the design draws water tiles. */
+function drawPondRims(ctx: CanvasRenderingContext2D, map: MapDoc, spec: GridSpec, b: Blocks) {
+  const grid = terrainGrid(map);
+  const half = POND_RIM.width / 2;
+  ctx.strokeStyle = POND_RIM.color;
+  ctx.lineWidth = POND_RIM.width;
+  ctx.beginPath();
+  for (let ty = b.t0y; ty <= b.t1y; ty++) {
+    for (let tx = b.t0x; tx <= b.t1x; tx++) {
+      if (!grid[ty][tx].water) continue;
+      const r = toMinorRect(spec, { grid: "terrain", x: tx, y: ty, w: 1, h: 1 });
+      ctx.rect(r.x + half, r.y + half, r.w - 2 * half, r.h - 2 * half);
+    }
+  }
+  ctx.stroke();
+}
+
+/**
+ * Raised edges. Ground higher than the ground south of it shows its face, a darker band along its
+ * south edge, deeper for a bigger drop (seen as from a little south, like the design). Other edges
+ * between heights get a thin line. Half an edge beside a cut or rounded corner is left out; the
+ * corner draws its own edge along the curve.
+ */
+function drawRaisedEdges(
+  ctx: CanvasRenderingContext2D,
+  map: MapDoc,
+  profile: Profile,
+  spec: GridSpec,
+  b: Blocks,
+  px: number,
+) {
+  const grid = terrainGrid(map);
+  const shaped = (X: number, Y: number) =>
+    !!cornerAt(map, "terrainCorners", X, Y) &&
+    resolveTerrainCorner(map, profile, X, Y).status === "shaped";
+  const line = Math.max(px, 0.12);
+  for (let ty = b.t0y; ty <= b.t1y; ty++) {
+    for (let tx = b.t0x; tx <= b.t1x; tx++) {
+      const cell = grid[ty][tx];
+      const r = toMinorRect(spec, { grid: "terrain", x: tx, y: ty, w: 1, h: 1 });
+      const right = grid[ty][tx + 1];
+      const down = grid[ty + 1]?.[tx];
+      if (right && right.h !== cell.h) {
+        const y0 = shaped(tx, ty - 1) ? r.y + r.h / 2 : r.y;
+        const y1 = shaped(tx, ty) ? r.y + r.h / 2 : r.y + r.h;
+        ctx.fillStyle = EDGE_LINE;
+        if (y1 > y0) ctx.fillRect(r.x + r.w - line / 2, y0, line, y1 - y0);
+      }
+      if (!down || down.h === cell.h) continue;
+      const x0 = shaped(tx - 1, ty) ? r.x + r.w / 2 : r.x;
+      const x1 = shaped(tx, ty) ? r.x + r.w / 2 : r.x + r.w;
+      if (x1 <= x0) continue;
+      if (down.h < cell.h && !cell.water) {
+        const depth = faceDepth(cell.h - down.h);
+        ctx.fillStyle = PLAN.face;
+        ctx.fillRect(x0, r.y + r.h - depth, x1 - x0, depth);
+      } else {
+        ctx.fillStyle = EDGE_LINE;
+        ctx.fillRect(x0, r.y + r.h - line / 2, x1 - x0, line);
+      }
+    }
+  }
+}
+
 let cache: { map: MapDoc; key: string; canvas: HTMLCanvasElement } | null = null;
 
 function terrainBitmap(map: MapDoc, profile: Profile, spec: GridSpec, layers: Layers) {
@@ -287,11 +312,16 @@ function terrainBitmap(map: MapDoc, profile: Profile, spec: GridSpec, layers: La
   const grid = terrainGrid(map);
   const rgb = (hex: string) => [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16));
   const colors = {
-    sand: rgb(SAND),
-    flat: rgb("#cfe0b8"),
-    water: rgb(WATER),
-    fall: rgb(FALL),
-    levels: LEVELS.map(rgb),
+    sand: rgb(PLAN.sand),
+    flat: rgb(PLAN.grass),
+    water: rgb(PLAN.pond),
+    fall: rgb(PLAN.fall),
+    levels: new Map<number, number[]>(),
+  };
+  const level = (h: number) => {
+    let c = colors.levels.get(h);
+    if (!c) colors.levels.set(h, (c = rgb(levelColor(h))));
+    return c;
   };
   for (let my = 0; my < h; my++) {
     const ty = Math.floor((my + 1) / 2);
@@ -310,7 +340,7 @@ function terrainBitmap(map: MapDoc, profile: Profile, spec: GridSpec, layers: La
           : !land
             ? colors.sand
             : layers.heights
-              ? colors.levels[Math.max(0, Math.min(8, c.h))]
+              ? level(c.h)
               : colors.flat;
       const o = (my * w + mx) * 4;
       img.data[o] = col[0];
@@ -329,22 +359,36 @@ function inVis(r: Rect, vis: { x0: number; y0: number; x1: number; y1: number })
   return r.x <= vis.x1 && r.y <= vis.y1 && r.x + r.w >= vis.x0 && r.y + r.h >= vis.y0;
 }
 
-function hatch(ctx: CanvasRenderingContext2D, r: Rect, px: number) {
-  ctx.save();
+/** A landmark's plaza and name tag (minor units; `px` is one screen pixel). */
+function drawLandmark(
+  ctx: CanvasRenderingContext2D,
+  r: Rect,
+  name: string,
+  px: number,
+  scale: number,
+) {
+  ctx.fillStyle = "rgba(252,249,232,0.55)";
   ctx.beginPath();
-  ctx.rect(r.x, r.y, r.w, r.h);
-  ctx.clip();
-  ctx.fillStyle = "rgba(120,90,160,0.12)";
-  ctx.fillRect(r.x, r.y, r.w, r.h);
-  ctx.strokeStyle = "rgba(90,60,120,0.35)";
-  ctx.lineWidth = px;
-  ctx.beginPath();
-  for (let d = -r.h; d < r.w; d += 3) {
-    ctx.moveTo(r.x + d, r.y + r.h);
-    ctx.lineTo(r.x + d + r.h, r.y);
-  }
+  ctx.roundRect(r.x, r.y, r.w, r.h, 1.5);
+  ctx.fill();
+  ctx.setLineDash([6 * px, 4 * px]);
+  ctx.strokeStyle = "rgba(61,54,50,0.55)";
+  ctx.lineWidth = Math.max(px, outlineWidth(px));
   ctx.stroke();
-  ctx.restore();
+  ctx.setLineDash([]);
+  if (r.w * scale < 60) return;
+  ctx.font = `900 ${12 * px}px Nunito, ui-rounded, system-ui, sans-serif`;
+  const [padX, h] = [10 * px, 22 * px];
+  const w = ctx.measureText(name).width + 2 * padX;
+  const [x, y] = [r.x + 8 * px, r.y - h / 2];
+  ctx.fillStyle = PLAN.ink;
+  ctx.beginPath();
+  ctx.roundRect(x, y, w, h, h / 2);
+  ctx.fill();
+  ctx.fillStyle = PLAN.sun;
+  ctx.textAlign = "left";
+  ctx.textBaseline = "middle";
+  ctx.fillText(name, x + padX, y + h / 2);
 }
 
 /** A linking piece's rail (its first part spanning the tile, fences.ts) and whether it has posts. */
@@ -392,7 +436,7 @@ function drawLinked(
     ctx.fill();
   }
   if (!look.posts) return;
-  ctx.fillStyle = "#5a3e24";
+  ctx.fillStyle = PLAN.ink;
   for (const [dx, dy] of arms) ctx.fillRect(cx + dx - 0.15, cy + dy - 0.15, 0.3, 0.3);
 }
 
@@ -513,6 +557,9 @@ export const plan: PlanView = {
       y1: Math.min(spec.majorH * 2 - 1, Math.ceil((visible.y + visible.h) * 2)),
     };
     const map = doc as MapDoc;
+    // The sea round the island, as far as the screen shows.
+    ctx.fillStyle = PLAN.sea;
+    ctx.fillRect(visible.x, visible.y, visible.w, visible.h);
     ctx.save();
     ctx.scale(0.5, 0.5);
     drawScene(

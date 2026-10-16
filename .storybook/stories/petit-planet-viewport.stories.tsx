@@ -65,15 +65,31 @@ export const Island2D: Story = {
   },
 };
 
+/** The last viewport a story made, for its play steps. */
+const shown: { viewport: Viewport | null } = { viewport: null };
+
+/**
+ * Up close in 2D, south of the town center, where houses, furniture and plants show as stickers.
+ * The play step moves the camera (the plan has no mouse zoom yet). `zoom` is screen pixels a tile.
+ */
+export const Island2DCloseUp: Story = {
+  name: "Island 2D close-up",
+  args: { view: "2d", onViewport: (vp) => (shown.viewport = vp) },
+  play: async ({ canvasElement }) => {
+    await framesReported(canvasElement);
+    const vp = shown.viewport;
+    await expect(vp?.planCamera()).toBeTruthy();
+    vp?.setPlanCamera({ cx: 88, cy: 104, pxPerUnit: 24 });
+    await planDrawn(canvasElement);
+  },
+};
+
 export const IslandEveningWinter: Story = {
   args: { hour: 19, season: "winter", camera: "top" },
   tags: ["!test"],
 };
 
 export const IslandWalk: Story = { args: { camera: "walk", hour: 16 }, tags: ["!test"] };
-
-/** The last viewport a story made, for its play steps. */
-const shown: { viewport: Viewport | null } = { viewport: null };
 
 /** The small demo island in 3D: the scene starts and draws (the test browser draws slowly). */
 export const DemoIsland: Story = {

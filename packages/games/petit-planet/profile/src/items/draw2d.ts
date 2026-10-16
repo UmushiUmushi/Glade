@@ -1,8 +1,10 @@
 // The item formula, in 2D: how one catalog entry looks from above, with no map around it. Drawn in
-// minor units (a tile is 2), the units every map of the game draws in.
+// minor units (a tile is 2), the units every map of the game draws in, in the planner's cosy
+// style (plan-style.ts): each thing is a sticker, with one ink outline round it and a drop shadow.
 
 import { silhouettes, type Model, type Turn } from "@glade/render";
 import { baseOf, catalogEntry, isA, type BaseKind, type Catalog } from "../catalog";
+import { lighten, outlineWidth, PLAN, SHADOW } from "../plan-style";
 import { frontSide } from "./model";
 
 /** A rect in minor units. */
@@ -14,11 +16,10 @@ interface Box {
 }
 
 /**
- * The catalog entry named `type` seen from above, filling the rect `r` at rotation `rot`: a plant's
- * symbol for its shape; an item's model as silhouettes (or `model` in its place), or a symbol for
- * its shape when it has none; an incline's steps; and a building's front, as a door bar and an
- * arrow (in 3D it is a door). `as` is the base kind to draw a type the catalog lacks as. `px` is
- * one screen pixel.
+ * The catalog entry named `type` seen from above, filling the rect `r` at rotation `rot`: its
+ * model as a sticker (or `model` in its place), or a symbol for its shape when it has none; an
+ * incline's steps; and a building's door on its front. `as` is the base kind to draw a type the
+ * catalog lacks as. `px` is one screen pixel.
  */
 export function drawItem2D(
   ctx: CanvasRenderingContext2D,
@@ -31,40 +32,95 @@ export function drawItem2D(
 ): void {
   const e = catalogEntry(catalog, type);
   const base = baseOf(catalog, type) ?? opts.as;
-  if (base === "plant") return drawPlant(ctx, e?.shape ?? "blob", r);
   const own = opts.model ?? e?.model;
+  if (base === "plant") {
+    if (own && e) drawModel(ctx, own, e.footprint, r, 0, px, true);
+    else drawPlant(ctx, e?.shape ?? "blob", r, px);
+    return;
+  }
   if (base === "incline") drawShape(ctx, "incline", r, rot, px);
-  else if (own && e) drawModel(ctx, own, e.footprint, r, rot, px);
+  else if (own && e) drawModel(ctx, own, e.footprint, r, rot, px, false);
   else drawShape(ctx, base === "bridge" ? "bridge" : (e?.shape ?? "block"), r, rot, px);
-  if (isA(catalog, type, "building")) drawFront(ctx, r, rot, px);
+  if (isA(catalog, type, "building")) drawDoor(ctx, r, rot);
 }
 
-function drawPlant(ctx: CanvasRenderingContext2D, shape: string, r: Box) {
+/**
+ * Draws round and square shapes as stickers: the first shape drawn gets the shadow and the ink
+ * outline, the ones after sit on it as detail.
+ */
+function sticker(ctx: CanvasRenderingContext2D, px: number) {
+  let first = true;
+  const line = outlineWidth(px);
+  const draw = (trace: (dy: number) => void, color: string) => {
+    if (first) {
+      ctx.fillStyle = SHADOW.color;
+      trace(SHADOW.dy);
+      ctx.fill();
+      ctx.strokeStyle = PLAN.ink;
+      ctx.lineWidth = 2 * line;
+      trace(0);
+      ctx.stroke();
+      first = false;
+    }
+    ctx.fillStyle = color;
+    trace(0);
+    ctx.fill();
+  };
+  return {
+    circle(x: number, y: number, rad: number, color: string) {
+      draw((dy) => {
+        ctx.beginPath();
+        ctx.arc(x, y + dy, rad, 0, Math.PI * 2);
+      }, color);
+    },
+    rect(x: number, y: number, w: number, h: number, color: string) {
+      draw((dy) => {
+        ctx.beginPath();
+        ctx.roundRect(x, y + dy, w, h, Math.min(w, h) * 0.2);
+      }, color);
+    },
+    ellipse(x: number, y: number, rx: number, ry: number, color: string) {
+      draw((dy) => {
+        ctx.beginPath();
+        ctx.ellipse(x, y + dy, rx, ry, 0, 0, Math.PI * 2);
+      }, color);
+    },
+  };
+}
+
+/** A plant with no model, by its shape: a tree, a flower bed, a crop row or a bush. */
+function drawPlant(ctx: CanvasRenderingContext2D, shape: string, r: Box, px: number) {
   const cx = r.x + r.w / 2;
   const cy = r.y + r.h / 2;
   switch (shape) {
-    case "trunk-cone":
-      circle(ctx, cx, cy, 0.9, "#2f6b35");
-      circle(ctx, cx - 0.2, cy - 0.2, 0.45, "#3f8646");
-      circle(ctx, cx, cy, 0.18, "#6b4a2b");
+    case "trunk-cone": {
+      const st = sticker(ctx, px);
+      st.circle(cx, cy, 0.85, "#5f7d2a");
+      st.circle(cx - 0.3, cy - 0.3, 0.3, "#a4c148");
       return;
+    }
     case "dots":
       for (const [dx, dy, col] of [
-        [-0.45, -0.35, "#f06292"],
-        [0.4, -0.3, "#ffd54f"],
-        [-0.1, 0.4, "#ba68c8"],
-        [0.45, 0.45, "#f06292"],
+        [-0.45, -0.35, "#e39aac"],
+        [0.4, -0.3, PLAN.sun],
+        [-0.1, 0.4, "#c9a7e8"],
+        [0.45, 0.45, "#e39aac"],
       ] as const) {
-        circle(ctx, cx + dx, cy + dy, 0.28, col);
+        const st = sticker(ctx, px);
+        st.circle(cx + dx, cy + dy, 0.3, col);
+        st.circle(cx + dx, cy + dy, 0.1, col === PLAN.sun ? "#e39aac" : PLAN.sun);
       }
       return;
     case "row":
-      ctx.fillStyle = "#4e8a2c";
-      for (let i = 0; i < 3; i++) ctx.fillRect(r.x + 0.25 + i * 0.55, r.y + 0.35, 0.35, 1.3);
+      for (let i = 0; i < 3; i++) {
+        sticker(ctx, px).rect(r.x + 0.25 + i * 0.55, r.y + 0.35, 0.35, 1.3, "#7fa83a");
+      }
       return;
-    default:
-      circle(ctx, cx, cy, 0.75, "#4f8f3f");
-      circle(ctx, cx + 0.25, cy - 0.2, 0.35, "#63a652");
+    default: {
+      const st = sticker(ctx, px);
+      st.circle(cx, cy, 0.75, "#7f9f3a");
+      st.circle(cx - 0.25, cy - 0.25, 0.28, lighten("#7f9f3a", 0.35));
+    }
   }
 }
 
@@ -72,9 +128,15 @@ function drawShape(ctx: CanvasRenderingContext2D, shape: string, r: Box, rot: nu
   const cx = r.x + r.w / 2;
   const cy = r.y + r.h / 2;
   const m = Math.min(r.w, r.h) / 2;
-  const inset = (d: number, color: string) => {
-    ctx.fillStyle = color;
-    ctx.fillRect(r.x + d, r.y + d, r.w - 2 * d, r.h - 2 * d);
+  const st = sticker(ctx, px);
+  const inset = (d: number, color: string) =>
+    st.rect(r.x + d, r.y + d, r.w - 2 * d, r.h - 2 * d, color);
+  const lines = (color: string, draw: () => void) => {
+    ctx.strokeStyle = color;
+    ctx.lineWidth = px;
+    ctx.beginPath();
+    draw();
+    ctx.stroke();
   };
   switch (shape) {
     case "incline": {
@@ -86,15 +148,15 @@ function drawShape(ctx: CanvasRenderingContext2D, shape: string, r: Box, rot: nu
       const d = len / 4;
       for (let k = 0; k < 4; k++) {
         const off = highFirst ? k * d : len - (k + 1) * d;
-        const shade = 214 - k * 24;
-        ctx.fillStyle = `rgb(${shade},${shade - 14},${shade - 34})`;
+        const shade = 230 - k * 18;
+        ctx.fillStyle = `rgb(${shade},${shade - 8},${shade - 30})`;
         if (alongY) ctx.fillRect(r.x, r.y + off, r.w, d);
         else ctx.fillRect(r.x + off, r.y, d, r.h);
       }
       const dir = { 0: [0, -1], 90: [1, 0], 180: [0, 1], 270: [-1, 0] }[rot as 0 | 90 | 180 | 270];
       const tip = [cx + dir[0] * (r.w / 2) * 0.7, cy + dir[1] * (r.h / 2) * 0.7];
       const side = m * 0.45;
-      ctx.fillStyle = "rgba(60,45,30,0.7)";
+      ctx.fillStyle = PLAN.ink;
       ctx.beginPath();
       ctx.moveTo(tip[0], tip[1]);
       ctx.lineTo(
@@ -110,145 +172,223 @@ function drawShape(ctx: CanvasRenderingContext2D, shape: string, r: Box, rot: nu
       return;
     }
     case "bridge": {
-      inset(0, "#9b7048");
-      ctx.strokeStyle = "rgba(60,40,20,0.6)";
-      ctx.lineWidth = px;
-      ctx.beginPath();
+      inset(0, "#c99a62");
       const alongY = rot === 0 || rot === 180;
-      for (let k = 0.5; k < (alongY ? r.h : r.w); k += 0.5) {
-        if (alongY) {
-          ctx.moveTo(r.x, r.y + k);
-          ctx.lineTo(r.x + r.w, r.y + k);
-        } else {
-          ctx.moveTo(r.x + k, r.y);
-          ctx.lineTo(r.x + k, r.y + r.h);
+      lines("rgba(61,54,50,0.45)", () => {
+        for (let k = 0.5; k < (alongY ? r.h : r.w); k += 0.5) {
+          if (alongY) {
+            ctx.moveTo(r.x, r.y + k);
+            ctx.lineTo(r.x + r.w, r.y + k);
+          } else {
+            ctx.moveTo(r.x + k, r.y);
+            ctx.lineTo(r.x + k, r.y + r.h);
+          }
         }
-      }
-      ctx.stroke();
+      });
       return;
     }
     case "lamp":
     case "tall-lamp":
-      circle(ctx, cx, cy, m * 0.45, "#4a4a4a");
-      circle(ctx, cx, cy, m * (shape === "lamp" ? 0.25 : 0.32), "#ffd54f");
+      st.circle(cx, cy, m * 0.45, PLAN.ink);
+      st.circle(cx, cy, m * (shape === "lamp" ? 0.25 : 0.32), PLAN.sun);
       return;
     case "lump":
-      circle(ctx, cx, cy, m * 0.8, "#8d8d8d");
-      circle(ctx, cx - m * 0.2, cy - m * 0.25, m * 0.35, "#a9a9a9");
+      st.circle(cx, cy, m * 0.8, "#b9b4a6");
+      st.circle(cx - m * 0.2, cy - m * 0.25, m * 0.3, lighten("#b9b4a6", 0.4));
       return;
     case "ring":
-      circle(ctx, cx, cy, m * 0.9, "#7a7a7a");
-      circle(ctx, cx, cy, m * 0.6, "#ff8a3d");
-      circle(ctx, cx, cy, m * 0.28, "#ffd54f");
+      st.circle(cx, cy, m * 0.9, "#b9b4a6");
+      st.circle(cx, cy, m * 0.6, "#efa05a");
+      st.circle(cx, cy, m * 0.28, PLAN.sun);
       return;
     case "brazier":
-      circle(ctx, cx, cy, m * 0.7, "#3d3d3d");
-      circle(ctx, cx, cy, m * 0.45, "#ff7a2d");
+      st.circle(cx, cy, m * 0.7, "#6e6245");
+      st.circle(cx, cy, m * 0.45, "#efa05a");
       return;
     case "pyramid":
-      inset(0.1, "#e98a3f");
-      ctx.strokeStyle = "#a85b22";
-      ctx.lineWidth = 2 * px;
-      ctx.beginPath();
-      ctx.moveTo(r.x + 0.1, r.y + 0.1);
-      ctx.lineTo(r.x + r.w - 0.1, r.y + r.h - 0.1);
-      ctx.moveTo(r.x + r.w - 0.1, r.y + 0.1);
-      ctx.lineTo(r.x + 0.1, r.y + r.h - 0.1);
-      ctx.stroke();
+      inset(0.1, "#efa05a");
+      lines("rgba(61,54,50,0.45)", () => {
+        ctx.moveTo(r.x + 0.1, r.y + 0.1);
+        ctx.lineTo(r.x + r.w - 0.1, r.y + r.h - 0.1);
+        ctx.moveTo(r.x + r.w - 0.1, r.y + 0.1);
+        ctx.lineTo(r.x + 0.1, r.y + r.h - 0.1);
+      });
       return;
     case "rail":
-      ctx.fillStyle = "#7a5a3a";
-      if (r.w >= r.h) ctx.fillRect(r.x, cy - 0.15, r.w, 0.3);
-      else ctx.fillRect(cx - 0.15, r.y, 0.3, r.h);
+      if (r.w >= r.h) st.rect(r.x, cy - 0.15, r.w, 0.3, "#b98f52");
+      else st.rect(cx - 0.15, r.y, 0.3, r.h, "#b98f52");
       return;
     case "hedge":
-      inset(0.08, "#3f7d3a");
-      inset(0.35, "#4f9147");
+      inset(0.08, "#5f7d2a");
+      inset(0.35, "#7f9f3a");
       return;
     case "topiary":
-      circle(ctx, cx, cy, m * 0.8, "#3f7d3a");
-      circle(ctx, cx - m * 0.2, cy - m * 0.2, m * 0.35, "#5aa24f");
+      st.circle(cx, cy, m * 0.8, "#5f7d2a");
+      st.circle(cx - m * 0.25, cy - m * 0.25, m * 0.3, "#a4c148");
       return;
     case "pot":
-      circle(ctx, cx, cy, m * 0.55, "#b5653a");
-      circle(ctx, cx, cy, m * 0.4, "#4f9147");
+      st.circle(cx, cy, m * 0.55, "#c98a5a");
+      st.circle(cx, cy, m * 0.4, "#7f9f3a");
       return;
     case "fountain":
-      circle(ctx, cx, cy, m * 0.95, "#bdbdbd");
-      circle(ctx, cx, cy, m * 0.75, "#5aa0d8");
-      circle(ctx, cx, cy, m * 0.25, "#e8f4fc");
+      st.circle(cx, cy, m * 0.95, PLAN.cream);
+      st.circle(cx, cy, m * 0.75, PLAN.pond);
+      st.circle(cx, cy, m * 0.25, PLAN.paper);
       return;
     case "tank":
-      inset(0.12, "#9fd3e6");
-      ctx.strokeStyle = "#4b8fa8";
-      ctx.lineWidth = 2 * px;
-      ctx.strokeRect(r.x + 0.12, r.y + 0.12, r.w - 0.24, r.h - 0.24);
+      inset(0.12, "#bfe8f7");
       return;
     case "umbrella":
-      circle(ctx, cx, cy, m * 0.95, "#e45b5b");
-      circle(ctx, cx, cy, m * 0.55, "#f5f0e6");
-      circle(ctx, cx, cy, m * 0.15, "#7a5a3a");
+      st.circle(cx, cy, m * 0.95, "#e39aac");
+      st.circle(cx, cy, m * 0.55, PLAN.paper);
+      st.circle(cx, cy, m * 0.15, "#b98f52");
       return;
     case "sofa":
     case "lounge":
     case "bed":
     case "pillow":
-      inset(0.1, shape === "bed" ? "#e9e2d0" : "#c77c9a");
-      inset(0.4, shape === "bed" ? "#8fb3d9" : "#d998b3");
+      inset(0.1, shape === "bed" ? PLAN.cream : "#e39aac");
+      st.rect(r.x + 0.4, r.y + 0.4, r.w - 0.8, r.h - 0.8, shape === "bed" ? "#89b5b2" : "#f3c3cf");
       return;
     case "tub":
-      inset(0.1, "#f2f2f2");
-      inset(0.35, "#bfe0f5");
+      inset(0.1, PLAN.paper);
+      st.rect(r.x + 0.35, r.y + 0.35, r.w - 0.7, r.h - 0.7, "#bfe8f7");
       return;
     case "stall":
-      inset(0.1, "#8a633f");
-      ctx.fillStyle = "#e45b5b";
+      inset(0.1, "#b98f52");
+      ctx.fillStyle = "#e39aac";
       for (let k = 0; k < r.w - 0.2; k += 0.5) {
         if (Math.round(k * 2) % 2 === 0)
           ctx.fillRect(r.x + 0.1 + k, r.y + 0.1, 0.5, (r.h - 0.2) / 2);
       }
       return;
     case "boat":
-      ctx.fillStyle = "#9b6a3c";
-      ctx.beginPath();
-      ctx.ellipse(cx, cy, r.w / 2 - 0.1, r.h / 2 - 0.1, 0, 0, Math.PI * 2);
-      ctx.fill();
+      st.ellipse(cx, cy, r.w / 2 - 0.1, r.h / 2 - 0.1, "#debe79");
       return;
     case "bin":
     case "stool":
-      circle(ctx, cx, cy, m * 0.6, shape === "bin" ? "#6f7a73" : "#8a633f");
+      st.circle(cx, cy, m * 0.6, shape === "bin" ? "#89b5b2" : "#b98f52");
       return;
     case "decor":
     case "food":
-      circle(ctx, cx, cy, m * 0.4, shape === "food" ? "#f2a33a" : "#c792ea");
+      st.circle(cx, cy, m * 0.4, shape === "food" ? "#efc05a" : "#c9a7e8");
       return;
     case "sign":
-      ctx.fillStyle = "#8a633f";
-      ctx.fillRect(r.x + 0.2, cy - 0.25, r.w - 0.4, 0.5);
+      st.rect(r.x + 0.2, cy - 0.25, r.w - 0.4, 0.5, "#b98f52");
       return;
     case "shelf":
-      inset(0.1, "#8a633f");
-      ctx.strokeStyle = "#5a3e24";
-      ctx.lineWidth = px;
-      ctx.beginPath();
-      for (let k = 0.5; k < r.w - 0.1; k += 0.5) {
-        ctx.moveTo(r.x + k, r.y + 0.1);
-        ctx.lineTo(r.x + k, r.y + r.h - 0.1);
-      }
-      ctx.stroke();
+      inset(0.1, "#b98f52");
+      lines("rgba(61,54,50,0.45)", () => {
+        for (let k = 0.5; k < r.w - 0.1; k += 0.5) {
+          ctx.moveTo(r.x + k, r.y + 0.1);
+          ctx.lineTo(r.x + k, r.y + r.h - 0.1);
+        }
+      });
       return;
     default:
-      // bench, chair, table, box and anything new: a wooden block.
-      inset(0.1, "#8a633f");
-      ctx.strokeStyle = "#5a3e24";
-      ctx.lineWidth = px;
-      ctx.strokeRect(r.x + 0.1, r.y + 0.1, r.w - 0.2, r.h - 0.2);
+      // bench, chair, table, box and anything new: a cream block, as the design draws furniture.
+      inset(0.1, PLAN.cream);
   }
 }
 
+/** One part from above, ready to trace: an ellipse, or rings of points going clockwise. */
+interface Shape {
+  color: string;
+  glass: boolean;
+  mesh: boolean;
+  ellipse: { cx: number; cy: number; rx: number; ry: number } | null;
+  /** Flat x, y lists in minor units from the footprint's corner. */
+  rings: number[][];
+}
+
+/** A model at one size and rotation, ready to draw, and its plant's light spot. */
+interface Prepared {
+  shapes: Shape[];
+  spot: { x: number; y: number; r: number; color: string } | null;
+}
+
+/** Prepared models, kept as long as the model lives: working out silhouettes is the slow part. */
+const preparedModels = new WeakMap<Model, Map<string, Prepared>>();
+
+/** Clockwise on screen, as ellipses go, so one nonzero fill of many outlines is their union. */
+function clockwise(pts: number[]): number[] {
+  let area = 0;
+  for (let i = 0; i < pts.length; i += 2) {
+    const j = (i + 2) % pts.length;
+    area += pts[i] * pts[j + 1] - pts[j] * pts[i + 1];
+  }
+  if (area >= 0) return pts;
+  const out: number[] = [];
+  for (let i = pts.length - 2; i >= 0; i -= 2) out.push(pts[i], pts[i + 1]);
+  return out;
+}
+
+function prepare(model: Model, footprint: { w: number; h: number }, rot: number): Prepared {
+  const key = `${footprint.w},${footprint.h},${rot}`;
+  let byKey = preparedModels.get(model);
+  const known = byKey?.get(key);
+  if (known) return known;
+  const shapes = silhouettes(model, footprint.w / 2, footprint.h / 2, rot as Turn).map(
+    ({ leaf, outline: o }): Shape => {
+      const base = { color: leaf.part.color, glass: leaf.part.finish === "glass" };
+      if (o.kind === "ellipse") {
+        const ellipse = { cx: 2 * o.cx, cy: 2 * o.cz, rx: 2 * o.rx, ry: 2 * o.rz };
+        return { ...base, mesh: false, ellipse, rings: [] };
+      }
+      if (o.kind === "polygon") {
+        return {
+          ...base,
+          mesh: false,
+          ellipse: null,
+          rings: [clockwise(o.points.flat().map((v) => 2 * v))],
+        };
+      }
+      const rings: number[][] = [];
+      for (let i = 0; i < o.points.length; i += 6) {
+        rings.push(clockwise(o.points.slice(i, i + 6).map((v) => 2 * v)));
+      }
+      return { ...base, mesh: true, ellipse: null, rings };
+    },
+  );
+  const top = shapes.at(-1)?.ellipse;
+  const spot = top
+    ? {
+        x: top.cx - top.rx * 0.35,
+        y: top.cy - top.ry * 0.35,
+        r: Math.min(top.rx, top.ry) * 0.32,
+        color: lighten(shapes[shapes.length - 1].color, 0.35),
+      }
+    : null;
+  const out = { shapes, spot };
+  if (!byKey) preparedModels.set(model, (byKey = new Map()));
+  byKey.set(key, out);
+  return out;
+}
+
+/** Adds a shape to the current path, shifted by (ox, oy) minor units. */
+function trace(ctx: CanvasRenderingContext2D, sh: Shape, ox: number, oy: number) {
+  const e = sh.ellipse;
+  if (e) {
+    ctx.moveTo(ox + e.cx + e.rx, oy + e.cy);
+    ctx.ellipse(ox + e.cx, oy + e.cy, e.rx, e.ry, 0, 0, Math.PI * 2);
+    ctx.closePath();
+    return;
+  }
+  for (const ring of sh.rings) {
+    ctx.moveTo(ox + ring[0], oy + ring[1]);
+    for (let i = 2; i < ring.length; i += 2) ctx.lineTo(ox + ring[i], oy + ring[i + 1]);
+    ctx.closePath();
+  }
+}
+
+/** Below this many screen pixels across, a sticker is drawn flat: no shadow, outline or spot. */
+export const STICKER_MIN_PX = 8;
+
 /**
- * A model seen from above: parts drawn lowest top first, so taller parts cover shorter ones. Glass
- * parts are see-through.
+ * A model seen from above, as a sticker: its shadow, one ink outline round all its parts, then
+ * the parts lowest top first, so taller parts cover shorter ones, with a faint line where they
+ * meet. Glass parts are see-through and get no outline. A plant (`shine`) gets a light spot on
+ * its top, as the design's trees do. Too small to see those, it is just its parts.
  */
 function drawModel(
   ctx: CanvasRenderingContext2D,
@@ -257,135 +397,85 @@ function drawModel(
   r: Box,
   rot: number,
   px: number,
+  shine: boolean,
 ) {
-  const [w, d] = [footprint.w / 2, footprint.h / 2];
-  for (const { leaf, outline: o } of silhouettes(model, w, d, rot as Turn)) {
-    ctx.fillStyle = leaf.part.color;
-    ctx.strokeStyle = "rgba(0,0,0,0.35)";
-    ctx.lineWidth = px;
-    ctx.globalAlpha = leaf.part.finish === "glass" ? 0.45 : 1;
+  const { shapes, spot } = prepare(model, footprint, rot);
+  const full = Math.min(r.w, r.h) / px >= STICKER_MIN_PX;
+  if (full) {
+    ctx.lineJoin = "round";
+    ctx.fillStyle = SHADOW.color;
     ctx.beginPath();
-    if (o.kind === "ellipse") {
-      ctx.ellipse(r.x + 2 * o.cx, r.y + 2 * o.cz, 2 * o.rx, 2 * o.rz, 0, 0, Math.PI * 2);
-    } else if (o.kind === "polygon") {
-      o.points.forEach(([x, z], i) =>
-        i ? ctx.lineTo(r.x + 2 * x, r.y + 2 * z) : ctx.moveTo(r.x + 2 * x, r.y + 2 * z),
-      );
-      ctx.closePath();
-    } else {
-      // Every triangle that faces up, wound alike, in one path: stroked first at twice the width,
-      // then filled, so only the outer edges (and the edges of holes) keep a line.
-      const q = o.points;
-      for (let i = 0; i < q.length; i += 6) {
-        ctx.moveTo(r.x + 2 * q[i], r.y + 2 * q[i + 1]);
-        ctx.lineTo(r.x + 2 * q[i + 2], r.y + 2 * q[i + 3]);
-        ctx.lineTo(r.x + 2 * q[i + 4], r.y + 2 * q[i + 5]);
-        ctx.closePath();
-      }
-      ctx.lineWidth = 2 * px;
-      ctx.lineJoin = "round";
+    for (const sh of shapes) trace(ctx, sh, r.x, r.y + SHADOW.dy);
+    ctx.fill();
+    // The ink: every solid outline stroked twice as wide as the line; the parts then cover its
+    // inner half, so only a line round the whole thing is left.
+    ctx.strokeStyle = PLAN.ink;
+    ctx.lineWidth = 2 * outlineWidth(px);
+    ctx.beginPath();
+    for (const sh of shapes) if (!sh.glass) trace(ctx, sh, r.x, r.y);
+    ctx.stroke();
+    ctx.lineWidth = px;
+  }
+  for (const sh of shapes) {
+    ctx.globalAlpha = sh.glass ? 0.45 : 1;
+    ctx.fillStyle = sh.color;
+    ctx.beginPath();
+    trace(ctx, sh, r.x, r.y);
+    if (full && sh.mesh) {
+      // Close the hairline seams between a mesh's triangles.
+      ctx.strokeStyle = sh.color;
       ctx.stroke();
-      ctx.fill();
-      ctx.lineJoin = "miter";
-      continue;
     }
     ctx.fill();
-    ctx.stroke();
+    if (full) {
+      ctx.strokeStyle = "rgba(61,54,50,0.3)";
+      ctx.stroke();
+    }
   }
   ctx.globalAlpha = 1;
+  ctx.lineJoin = "miter";
+  if (full && shine && spot) {
+    ctx.fillStyle = spot.color;
+    ctx.beginPath();
+    ctx.arc(r.x + spot.x, r.y + spot.y, spot.r, 0, Math.PI * 2);
+    ctx.fill();
+  }
 }
 
-/** A building's front: a yellow door bar along the front edge and an arrow pointing out. */
-function drawFront(ctx: CanvasRenderingContext2D, r: Box, rot: number, px: number) {
-  const m = frontMarker(r, rot);
-  ctx.strokeStyle = "#ffd54f";
-  ctx.lineWidth = Math.max(3 * px, 0.45);
-  ctx.lineCap = "round";
+/** A building's door: an ink arch on the middle of its front edge, as the design draws it. */
+function drawDoor(ctx: CanvasRenderingContext2D, r: Box, rot: number) {
+  const door = frontDoor(r, rot);
+  ctx.save();
+  ctx.translate(door.x, door.y);
+  ctx.rotate(door.angle);
+  ctx.fillStyle = PLAN.ink;
   ctx.beginPath();
-  ctx.moveTo(m.bar[0], m.bar[1]);
-  ctx.lineTo(m.bar[2], m.bar[3]);
-  ctx.stroke();
-  ctx.lineCap = "butt";
-  ctx.fillStyle = "#ffd54f";
-  ctx.strokeStyle = "rgba(0,0,0,0.6)";
-  ctx.lineWidth = Math.max(px, 0.08);
-  ctx.beginPath();
-  ctx.moveTo(...m.arrow[0]);
-  ctx.lineTo(...m.arrow[1]);
-  ctx.lineTo(...m.arrow[2]);
-  ctx.closePath();
+  ctx.roundRect(-door.w / 2, -door.h, door.w, door.h, [door.w / 2, door.w / 2, 0, 0]);
   ctx.fill();
-  ctx.stroke();
+  ctx.restore();
 }
 
 /**
- * Where to draw a building's front (minor units): a door bar along the middle of the front edge,
- * just inside it, and an arrow whose tip points out of the front. Same side as rule B1.
+ * Where a building's door goes (minor units): the middle of its front edge (the side rule B1
+ * checks), the turn that points the door's sill outward (0 for the south edge, clockwise in
+ * radians), and its size, a fifth of the building's short side, kept readable.
  */
-export function frontMarker(
+export function frontDoor(
   r: Box,
   rot: number,
-): { side: string; bar: [number, number, number, number]; arrow: [number, number][] } {
+): { side: string; x: number; y: number; angle: number; w: number; h: number } {
   const side = frontSide(rot);
+  const w = Math.min(1.2, Math.max(0.5, Math.min(r.w, r.h) * 0.2));
+  const h = w * 1.3;
   const [cx, cy] = [r.x + r.w / 2, r.y + r.h / 2];
-  const inset = 0.35;
-  const out = 1.1;
-  const half = 0.8;
   switch (side) {
-    case "north": {
-      const e = r.y;
-      return {
-        side,
-        bar: [cx - r.w * 0.3, e + inset, cx + r.w * 0.3, e + inset],
-        arrow: [
-          [cx - half, e],
-          [cx + half, e],
-          [cx, e - out],
-        ],
-      };
-    }
-    case "west": {
-      const e = r.x;
-      return {
-        side,
-        bar: [e + inset, cy - r.h * 0.3, e + inset, cy + r.h * 0.3],
-        arrow: [
-          [e, cy - half],
-          [e, cy + half],
-          [e - out, cy],
-        ],
-      };
-    }
-    case "east": {
-      const e = r.x + r.w;
-      return {
-        side,
-        bar: [e - inset, cy - r.h * 0.3, e - inset, cy + r.h * 0.3],
-        arrow: [
-          [e, cy - half],
-          [e, cy + half],
-          [e + out, cy],
-        ],
-      };
-    }
-    default: {
-      const e = r.y + r.h;
-      return {
-        side,
-        bar: [cx - r.w * 0.3, e - inset, cx + r.w * 0.3, e - inset],
-        arrow: [
-          [cx - half, e],
-          [cx + half, e],
-          [cx, e + out],
-        ],
-      };
-    }
+    case "north":
+      return { side, x: cx, y: r.y, angle: Math.PI, w, h };
+    case "east":
+      return { side, x: r.x + r.w, y: cy, angle: -Math.PI / 2, w, h };
+    case "west":
+      return { side, x: r.x, y: cy, angle: Math.PI / 2, w, h };
+    default:
+      return { side, x: cx, y: r.y + r.h, angle: 0, w, h };
   }
-}
-
-function circle(ctx: CanvasRenderingContext2D, x: number, y: number, rad: number, color: string) {
-  ctx.fillStyle = color;
-  ctx.beginPath();
-  ctx.arc(x, y, rad, 0, Math.PI * 2);
-  ctx.fill();
 }

@@ -9,6 +9,8 @@ import type { GridSpec, Rect } from "./space";
 
 export interface Landmark {
   id: string;
+  /** What the planner calls it: "Town center". */
+  name?: string;
   grid: "major";
   x: number;
   y: number;

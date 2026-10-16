@@ -124,7 +124,7 @@ a block is 0.825 tiles tall (`BLOCK_TILES`).
 `itemModel(catalog, type)` in 3D and `drawItem2D(ctx, catalog, type, ...)` from above. A few kinds
 read their model in a special way:
 
-- **Buildings** get a door on the front of their lowest wall (in 2D, a door bar and an arrow).
+- **Buildings** get a door on the front of their lowest wall (in 2D, an ink door on the middle of the front edge).
 - **Inclines** without a model are drawn as four steps.
 - **Entries without a model** are a plain block of their size, and a type the catalog lacks is a
   small grey stub.
@@ -339,6 +339,24 @@ path, corner, plant or item covers, so a change can be checked with `validate(ma
 two seasons (spring, winter), and the game's walk camera. The planet is seen in plan and in 3D:
 its UI and plan view are in `src/maps/planet/render2d.ts`, its 3D view in
 `src/maps/planet/render3d/`.
+
+**From above** the planet is drawn in the planner's cosy flat style. The colors, line widths and
+depths are in `src/plan-style.ts`, shared by both maps' plans and the item drawing:
+
+| What               | Looks like                                                                |
+| ------------------ | ------------------------------------------------------------------------- |
+| Sea                | Deep blue round the island, as far as the screen shows                    |
+| Ground             | Grass at the base level; meadow one level up; lighter toward the hilltops |
+| Raised edge        | A darker face along its south side, deeper for a bigger drop              |
+| Pond               | Sky blue, each block with a soft inner rim                                |
+| Path               | Its catalog color, full blocks                                            |
+| Thing with a model | A sticker: drop shadow, one ink outline round it, its parts on top        |
+| Plant with a model | The same, plus a light spot on its crown                                  |
+| Building           | Its sticker and an ink door on the middle of its front edge               |
+| Landmark           | A pale plaza with a dashed edge and its `name` on an ink tag              |
+
+Below `STICKER_MIN_PX` screen pixels across, a thing is drawn flat (no shadow, outline or spot),
+which keeps the whole island quick to draw.
 
 Model finishes take their look from the style too: each time of day's `colors.glow` is the light
 glowing parts give (black for none, white for full: faint by day, full at night), and
