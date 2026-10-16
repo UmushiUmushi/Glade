@@ -1,6 +1,6 @@
-// Step 2: the roads. A cobbled ring round the town center, a cobbled road south to the entrance,
-// and roads out to a few spots around the island, found by a path search that prefers going
-// straight. Roads stay on the low ground (level 1), on whole flat dry tiles (rule P2).
+// Step 2: the roads. A cobbled ring round the town center, and roads out to a few spots around
+// the island, found by a path search that prefers going straight. Roads stay on the low ground
+// (level 1), on whole flat dry tiles (rule P2).
 
 import {
   landmarkAtMajor,
@@ -173,15 +173,11 @@ function lay(
   });
 }
 
-/** Every road: the town ring, the road to the entrance, and roads out across the island. */
+/** Every road: the town ring, and roads out across the island. */
 export function layRoads(doc: MapDoc, profile: Profile, rng: Rng): RoadTile[] {
   const laid = new Map<string, RoadTile>();
   const ring = townRing(profile).filter((t) => roadable(doc, profile, t.X, t.Y));
   lay(doc, profile, ring, COBBLE, false, laid);
-  const entrance = profile.landmarks[1];
-  const gate = { X: entrance.x + 1, Y: profile.major.h - profile.beach.width - 1 };
-  const toGate = findWay(doc, profile, ring, gate);
-  if (toGate) lay(doc, profile, toGate, COBBLE, true, laid);
   destinations(doc, profile, rng, 8).forEach((spot, i) => {
     const starts = [...laid.values()];
     const way = findWay(doc, profile, starts, spot);

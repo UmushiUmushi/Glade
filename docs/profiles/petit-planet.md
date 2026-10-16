@@ -41,7 +41,7 @@ table. A contract test checks that every rule in each map type's rulebook has an
 | T1   | Height out of range            | Land can go from level 0 to level 8.                                                           | Keep it between 0 and 8.                                |
 | T2   | Island edge is fixed           | The beach and the ring of land next to it keep their height.                                   | Work further inside the island.                         |
 | T3   | Too steep                      | Land next to each other can differ by at most 3 levels.                                        | Add a step between them, or lower the high side.        |
-| T4   | Landmark ground is locked      | Ground under the town centre and the entrance can't change or hold water.                      | Move your edit away from the landmark.                  |
+| T4   | Landmark ground is locked      | Ground under the town centre can't change or hold water.                                       | Move your edit away from the landmark.                  |
 | T5   | Corner can't be shaped here    | A cliff or water corner can only be cut or rounded where the other three blocks are level.     | Square the corner, or level the blocks around it.       |
 | W1   | No water on the beach          | Water can't go on the beach or the locked ring of land.                                        | Move the water further inland.                          |
 | W2   | Waterfall needs a wider cliff  | A waterfall must sit inside a straight cliff face at least 3 blocks wide.                      | Widen the cliff face, or move the water.                |

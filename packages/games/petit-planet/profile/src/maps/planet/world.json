@@ -35,16 +35,6 @@
       "lockLevel": 1,
       "lockPlacement": true,
       "terrainLockExtent": "outside"
-    },
-    {
-      "id": "entrance",
-      "grid": "major",
-      "x": 30,
-      "y": 143,
-      "w": 3,
-      "h": 1,
-      "lockTerrain": true,
-      "lockPlacement": true
     }
   ]
 }

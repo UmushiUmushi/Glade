@@ -71,8 +71,10 @@ describe("profile geometry", () => {
     expect(profile.land.y).toEqual([b + 1, h - b - 1]);
     expect(profile.terrainEditable.x).toEqual([b + 2, w - b - 2]);
     expect(profile.terrainEditable.y).toEqual([b + 2, h - b - 2]);
-    const entrance = profile.landmarks.find((l) => l.id === "entrance")!;
-    expect(entrance.y).toBe(h - 1);
+  });
+
+  it("has one landmark, the town center: the island's border has no fixed entrance", () => {
+    expect(profile.landmarks.map((l) => l.id)).toEqual(["town-center"]);
   });
 
   it("town center is 20 x 27 and locks terrain 78..98 x 71..98 (outside extent)", () => {

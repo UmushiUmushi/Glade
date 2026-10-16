@@ -29,7 +29,7 @@ Coordinates start at the top-left, with x to the right and y down, from 0.
 | `terrain` | 161 x 145 | 1 block, centered on a tile corner | heights and water          |
 | `area`    | 10 x 9    | 16 x 16 tiles                      | naming parts of the island |
 
-Two landmarks are fixed: the town center and the entrance. Building rules keep them clear
+One landmark is fixed: the town center. Building rules keep it clear
 (`T4`, and placement checks in `P1`, `L2` and `I1`).
 
 ## What a map stores
