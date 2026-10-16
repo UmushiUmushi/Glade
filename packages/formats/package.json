@@ -1,0 +1,16 @@
+{
+  "name": "@glade/formats",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Map, pack and clipboard files, their migrations, and the API shapes web and server share",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@glade/core": "workspace:*",
+    "@glade/errors": "workspace:*",
+    "zod": "^4.6.7"
+  }
+}

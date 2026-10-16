@@ -91,7 +91,30 @@ Positions inside are relative to `origin`, so it can be pasted anywhere. `map` n
 
 ## Format versions
 
-1. Every file has `format`.
-2. `packages/formats/src/migrate/` holds one function per step: `v1 → v2`, `v2 → v3`, ...
-3. On load, Glade runs the steps in order, then the profile's own `migrate` on the inner map.
+1. Every file has `format`. Every kind of file is at format 1 today.
+2. `packages/formats/src/migrate/` holds one function per step: `v1 → v2`, `v2 → v3`, ... A file
+   kind's current format is its number of steps plus one, so adding a step is the whole change.
+3. On load, Glade runs the steps in order, then the profile's own `migrate` on the inner map. A file
+   from a newer Glade is refused (`GLD-FILE-003`), not guessed at.
 4. Each step has a test with a real old file.
+
+## Reading a file
+
+Each kind of file is read step by step, and any step can refuse it with an
+[error code](../error-codes.md):
+
+| Step | Map file (`readMapFile`)                        | Refused with                   |
+| ---- | ----------------------------------------------- | ------------------------------ |
+| 1    | Text to a JSON object                           | `GLD-FILE-001`                 |
+| 2    | A Glade map file, or a bare map file (wrapped)  | `GLD-FILE-001`                 |
+| 3    | Old format to the current one                   | `GLD-FILE-001`, `GLD-FILE-003` |
+| 4    | The envelope's fields                           | `GLD-FILE-001`                 |
+| 5    | This game's file (its id or a former id)        | `GLD-FILE-002`                 |
+| 6    | The profile loads (and migrates) the map inside | `GLD-FILE-001`                 |
+
+Pack files (`readPackFile`) and fragments (`readFragment`) follow the same steps. A pack also checks
+that every type and kind it adds starts with `pack:<its id>:`. `packProblems(pack, map)` then checks
+its entries against one of the game's maps, as the server's upload checks do.
+
+The API's bodies (Problem Details errors, `/health`, drafts and shares) are zod schemas in
+`packages/formats/src/api/`, shared by the web app and the server.

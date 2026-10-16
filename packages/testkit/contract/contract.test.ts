@@ -12,6 +12,7 @@ import {
   validate,
   type Entity,
 } from "@glade/core";
+import { readMapFile, writeMapFile } from "@glade/formats";
 import { resolveLook, styleProblems, type InstancesSpec, type MeshSpec } from "@glade/render";
 import { describe, expect, it } from "vitest";
 import { allMaps, bound, games } from "../src/games";
@@ -78,6 +79,13 @@ for (const { game, map, demo } of MAPS) {
       expect(deepEqual(decodeDoc(map.layers, map.space, encodeDoc(map.layers, doc)), doc)).toBe(
         true,
       );
+    });
+
+    it("its new doc and demo map round-trip through a Glade map file", () => {
+      for (const doc of [map.newDoc("contract", {}, NOW), demo()]) {
+        const read = readMapFile(writeMapFile(doc, map), game);
+        expect(read.ok && deepEqual(read.value.doc, doc)).toBe(true);
+      }
     });
 
     it("files saved under a former game id, or before maps had ids, load as this map", () => {

@@ -73,6 +73,18 @@ importers:
 
   packages/errors: {}
 
+  packages/formats:
+    dependencies:
+      '@glade/core':
+        specifier: workspace:*
+        version: link:../core
+      '@glade/errors':
+        specifier: workspace:*
+        version: link:../errors
+      zod:
+        specifier: ^4.6.7
+        version: 4.6.7
+
   packages/games/_fixture/profile:
     dependencies:
       '@glade/core':
@@ -127,6 +139,9 @@ importers:
       '@glade/fixture-profile':
         specifier: workspace:*
         version: link:../games/_fixture/profile
+      '@glade/formats':
+        specifier: workspace:*
+        version: link:../formats
       '@glade/petit-planet-profile':
         specifier: workspace:*
         version: link:../games/petit-planet/profile

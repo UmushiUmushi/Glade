@@ -8,6 +8,7 @@
   "dependencies": {
     "@glade/core": "workspace:*",
     "@glade/fixture-profile": "workspace:*",
+    "@glade/formats": "workspace:*",
     "@glade/petit-planet-profile": "workspace:*",
     "@glade/render": "workspace:*",
     "@glade/three": "workspace:*",
