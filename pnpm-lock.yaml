@@ -38,6 +38,9 @@ importers:
       '@glade/ui':
         specifier: workspace:*
         version: link:packages/ui
+      '@glade/viewport':
+        specifier: workspace:*
+        version: link:packages/viewport
       '@storybook/addon-a11y':
         specifier: ^10.6.2
         version: 10.6.2(storybook@10.6.2(@types/react@19.3.0)(prettier@3.9.9)(react@19.3.1))
@@ -314,6 +317,24 @@ importers:
       react-dom:
         specifier: ^19.3.1
         version: 19.3.1(react@19.3.1)
+
+  packages/viewport:
+    dependencies:
+      '@glade/core':
+        specifier: workspace:*
+        version: link:../core
+      '@glade/errors':
+        specifier: workspace:*
+        version: link:../errors
+      '@glade/render':
+        specifier: workspace:*
+        version: link:../render
+      '@glade/three':
+        specifier: workspace:*
+        version: link:../three
+      react:
+        specifier: ^19.3.1
+        version: 19.3.1
 
 packages:
 

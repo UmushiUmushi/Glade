@@ -28,6 +28,10 @@
 fails the test). Install Chromium once with `pnpm exec playwright install chromium`.
 `pnpm vitest run --project unit` skips the browser.
 
+**3D in story tests.** The test browser draws 3D in software, not on a GPU, so it is many times
+slower. Stories that draw a real-size map in 3D are tagged `!test`: they are in Storybook to look
+at, and their speed is measured with a real GPU instead. Story tests check 3D on small maps.
+
 **Speed tests are opt-in.** Shared CI machines vary too much in speed to judge a time budget, so
 a test that times code runs only with `GLADE_PERF=1` (`GLADE_PERF=1 pnpm test`), and never blocks
 a push. Until `bench/` exists, mark such a test with `it.runIf(process.env.GLADE_PERF === "1")`.

@@ -1,0 +1,20 @@
+{
+  "name": "@glade/viewport",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Shows a map: the 2D plan on a canvas and the 3D MapScene, cameras, the look for a time of day, and the frame loop",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@glade/core": "workspace:*",
+    "@glade/errors": "workspace:*",
+    "@glade/render": "workspace:*",
+    "@glade/three": "workspace:*"
+  },
+  "peerDependencies": {
+    "react": "^19.3.1"
+  }
+}

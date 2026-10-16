@@ -226,16 +226,18 @@ has tests.
 
 Apple M4, Node, a real-size island (375 items, 539 plants, 0 violations, 147 KB file):
 
-| Task                                           | Time    | Meaning                                                                |
-| ---------------------------------------------- | ------- | ---------------------------------------------------------------------- |
-| Load the map file                              | 5.1 ms  | 🟢 Instant.                                                            |
-| Check the whole map                            | 8.7 ms  | 🟢 Fine on load.                                                       |
-| Check only the area around one item (`region`) | 3.4 ms  | 🟢 Good for live drag checks.                                          |
-| Copy the whole map                             | 6.4 ms  | 🟡 Avoid on every change: the editor records changes instead.          |
-| Save to text                                   | 2.3 ms  | 🟢 Autosave is cheap.                                                  |
-| Move one item with a full copy and diff        | ~20 ms  | 🟡 Too slow for every frame; the recording draft aims for under 5 ms.  |
-| 3D: rebuild after moving one item              | 15.6 ms | 🟡 All items sit in one chunk (T-2).                                   |
-| 3D: build the whole island the first time      | 0.65 s  | 🟡 Once, on load. Phones may be 3–5 times slower; show a progress bar. |
+| Task                                                                                           | Time    | Meaning                                                                |
+| ---------------------------------------------------------------------------------------------- | ------- | ---------------------------------------------------------------------- |
+| Load the map file                                                                              | 5.1 ms  | 🟢 Instant.                                                            |
+| Check the whole map                                                                            | 8.7 ms  | 🟢 Fine on load.                                                       |
+| Check only the area around one item (`region`)                                                 | 3.4 ms  | 🟢 Good for live drag checks.                                          |
+| Copy the whole map                                                                             | 6.4 ms  | 🟡 Avoid on every change: the editor records changes instead.          |
+| Save to text                                                                                   | 2.3 ms  | 🟢 Autosave is cheap.                                                  |
+| Move one item with a full copy and diff                                                        | ~20 ms  | 🟡 Too slow for every frame; the recording draft aims for under 5 ms.  |
+| 3D: rebuild after moving one item                                                              | 15.6 ms | 🟡 All items sit in one chunk (T-2).                                   |
+| 3D: build the whole island the first time                                                      | 0.65 s  | 🟡 Once, on load. Phones may be 3–5 times slower; show a progress bar. |
+| In Chrome (Apple M4 GPU), the real-size fixture island (460 items, 730 plants): first 3D build | 0.36 s  | 🟢 Under the 1 s budget.                                               |
+| In Chrome (Apple M4 GPU), the same island in 3D, iso and walk                                  | 60 fps  | 🟢 Meets the desktop budget. Phones not measured yet.                  |
 
 ## Risks
 

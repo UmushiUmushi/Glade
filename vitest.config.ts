@@ -43,6 +43,9 @@ function thresholds(): Record<string, { lines: number }> {
   return out;
 }
 
+/** 3D in the test browser is drawn in software, so a story that starts a scene takes a while. */
+const STORY_TIMEOUT_MS = 90_000;
+
 /** Story tests run in a real browser (Chromium, headless): every story renders, its play steps
  * pass, and axe finds no accessibility problems. The addon applies .storybook/preview itself. */
 const storyTests = {
@@ -50,6 +53,7 @@ const storyTests = {
   plugins: [storybookTest({ configDir: ".storybook" })],
   test: {
     name: "stories",
+    testTimeout: STORY_TIMEOUT_MS,
     browser: {
       enabled: true,
       headless: true,
@@ -80,7 +84,13 @@ export default defineConfig({
     coverage: {
       provider: "v8",
       include: ["{apps,packages}/**/src/**"],
-      exclude: [...BROWSER_ONLY.map((d) => `${d}/**`), "**/*.d.ts", "**/*.stories.tsx", "**/*.css"],
+      exclude: [
+        ...BROWSER_ONLY.map((d) => `${d}/**`),
+        "**/*.d.ts",
+        "**/*.stories.tsx",
+        "**/*.css",
+        "**/*.json",
+      ],
       reporter: ["text-summary", "html"],
       thresholds: thresholds(),
     },

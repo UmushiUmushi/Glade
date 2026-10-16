@@ -117,6 +117,13 @@ flowchart LR
 | Screenshots              | `scene.capture({ rect, camera, size, time, season }, looks)` for library cards and bug reports (`looks` tells it how to draw another time of day)                            |
 
 - 3D code loads only when first needed (it is split into its own bundle).
+- The frame loop draws the 3D scene every frame, and the 2D plan only when something changed
+  (the map, layers, the camera, the size). It counts frames for the FPS readout either way.
+- If 3D can't start, or the GPU drops it (`webglcontextlost`), the viewport reports
+  `GLD-STAGE-001` and shows the plan.
+- `<MapViewport>` (`@glade/viewport`) is the React side: it fills its parent and passes the map,
+  document, view, camera, environment and layers on to the viewport. Storybook's
+  **Viewport → Maps** shows it with the real-size island.
 - **Item thumbnails** are drawn once in `thumbs.worker.ts` and cached in IndexedDB by the item's hash. Each uses the game's item formula (`itemModel(catalog, type)`, which adds what the game adds, like a door on a house) and `modelMesh` from `@glade/render`, drawn by a tiny three.js scene on an offscreen canvas.
 - The builder's **connection preview** is a second `MapScene` on a tiny map with a few fence pieces. The map formula links them.
 
