@@ -69,7 +69,7 @@ describe("games", () => {
   });
 });
 
-for (const { game, map, demo } of MAPS) {
+for (const { game, map, demo, samples } of MAPS) {
   describe(`contract: ${game.id}/${map.id}`, () => {
     it("space: bounds, grids, and the grids the contract names", () => {
       expect(map.space.bounds.w).toBeGreaterThan(0);
@@ -136,6 +136,12 @@ for (const { game, map, demo } of MAPS) {
         expect(v2).not.toContain('"map"');
         expect(deserializeMap(v2, game).map).toBe(map.id);
       }
+    });
+
+    it("its real-size sample, when it has one, has no problems", () => {
+      if (!samples?.large) return;
+      const large = samples.large;
+      expect(validate(large.map(), bound(map, { ...samples, items: large.items }))).toEqual([]);
     });
 
     it("rules run on an empty doc and on the demo map, both valid", () => {

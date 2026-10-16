@@ -1,7 +1,8 @@
 // The page the render goldens open in headless Chrome: one map's demo drawn by @glade/three's
 // MapScene with the map's default look, as a planner's 3D view starts. No UI. For each view in
 // ?capture=[{ name, request }, ...] it posts { name, png } (or { name, error }) to /api/capture.
-// ?map=<game>/<map> picks the map (the game's default map when left out).
+// ?map=<game>/<map> picks the map (the game's default map when left out); ?sample=large draws the
+// map's real-size sample instead of its demo.
 
 import { resolveLook, resolveLookAt, type RenderRequest } from "@glade/render";
 import { MapScene } from "@glade/three";
@@ -14,7 +15,8 @@ if (!entry) throw new Error(`unknown game "${gameId}"`);
 const def = entry.game.maps[mapId ?? entry.game.defaultMap];
 if (!def) throw new Error(`${gameId} has no map "${mapId}"`);
 const samples = entry.maps[def.id];
-const map = bound(def, samples);
+const large = query.get("sample") === "large" ? samples.large : undefined;
+const map = large ? bound(def, { ...samples, items: large.items }) : bound(def, samples);
 const style = map.style.defaults;
 
 const canvas = document.querySelector("canvas")!;
@@ -23,7 +25,7 @@ canvas.height = canvas.clientHeight;
 const scene = new MapScene(canvas);
 scene.stage.resize(canvas.width, canvas.height);
 scene.setMap(map);
-scene.setDoc(samples.demo(map));
+scene.setDoc(large ? large.map() : samples.demo(map));
 scene.setLayers(Object.fromEntries(map.ui.layerNames().map((l) => [l.id, l.default])));
 
 const live = resolveLook(style);

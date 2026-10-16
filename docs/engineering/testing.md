@@ -53,13 +53,18 @@ in Phase 7).
 
 ## Test data
 
-| Fixture                                                       | Use                                                                               |
-| ------------------------------------------------------------- | --------------------------------------------------------------------------------- |
-| A real-size island map and catalog (in `fixtures/`)           | Integration, perf and visual tests                                                |
-| The `_fixture` game                                           | Shared code tested with no real game. Its `sheet` map has only a 2D view.         |
-| The profile's samples (`@glade/petit-planet-profile/samples`) | Made-up items and sample maps, including homes. For tests only, never in the app. |
-| Small hand-made maps (one per rule)                           | Each problem and fix tip                                                          |
-| Old format files                                              | Each migration step                                                               |
+| Fixture                                                                                            | Use                                                                               |
+| -------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| A real-size island and its made-up catalog (`samples/maps/island.json`, made by `samples/island/`) | Integration, perf and visual tests; the test kit's `large` sample                 |
+| The `_fixture` game                                                                                | Shared code tested with no real game. Its `sheet` map has only a 2D view.         |
+| The profile's samples (`@glade/petit-planet-profile/samples`)                                      | Made-up items and sample maps, including homes. For tests only, never in the app. |
+| Small hand-made maps (one per rule)                                                                | Each problem and fix tip                                                          |
+| Old format files                                                                                   | Each migration step                                                               |
+
+The island is made by a seeded generator in Petit Planet's `samples/island/`: hills, ponds, roads,
+18 houses, gardens, a town square, about 460 items and 730 plants, with 0 problems under every rule.
+Its test checks the saved file still matches the generator; `UPDATE_GOLDENS=1 pnpm test island`
+rewrites it after the generator changes. The render page draws it with `?sample=large`.
 
 ## A test example
 

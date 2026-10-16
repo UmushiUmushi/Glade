@@ -16,6 +16,7 @@ import { petitPlanet, type Catalog } from "@glade/petit-planet-profile";
 import {
   demoCatalog,
   homeCatalog,
+  islandCatalog,
   maps,
   modelsCatalog,
   showroomMap,
@@ -34,6 +35,8 @@ export interface MapSamples {
   demo(map: Shown): Doc;
   /** The showroom: made-up items to show, and a map laying out a catalog. */
   showroom?: { items: CatalogItem[]; map: (map: Shown) => Doc };
+  /** A real-size map with its own made-up catalog, for speed, views and development. */
+  large?: { items: CatalogItem[]; map: () => Doc };
 }
 
 export interface GameSamples {
@@ -57,6 +60,7 @@ export const games: Record<string, GameSamples> = {
           items: modelsCatalog.entries,
           map: (map) => showroomMap(map.catalog as Catalog),
         },
+        large: { items: islandCatalog.entries, map: () => loadMap(maps.island, petitPlanet) },
       },
       interior_home_1_10: {
         items: homeCatalog.entries,

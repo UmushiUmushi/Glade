@@ -31,8 +31,8 @@ Sizes: **S** = about 1 week, **M** = 2–3 weeks, **L** = 4–6 weeks (one perso
 - From Phase 0: the code style enforced (lint, file headers, coverage per package, property tests);
   `@glade/errors`, `@glade/logging`, `@glade/formats`, `@glade/edit`; `@glade/ui` with Storybook and
   story tests in Chromium; `@glade/petit-planet-ui` (theme, fonts, icons); the skeletons of
-  `apps/web` and `apps/server` (`/api/v1/health`). Left in Phase 0: test fixtures (a real-size
-  island and catalog).
+  `apps/web` and `apps/server` (`/api/v1/health`); a real-size island and its made-up catalog,
+  made by a seeded generator. Phase 0 is done, apart from Docker and deploy (moved to Phase 8).
 
 ## Phase 0: Foundations (M)
 

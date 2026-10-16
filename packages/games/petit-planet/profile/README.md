@@ -346,7 +346,10 @@ glowing parts give (black for none, white for full: faint by day, full at night)
 
 The demo island is `samples/maps/demo.json`, with the made-up items in
 `samples/catalogs/demo.ts`; the render goldens (`packages/testkit/render`) draw it at each time of
-day. Contributors can keep reference screenshots of the game in `../references/` to compare
+day. A real-size island, `samples/maps/island.json`, is made by a seeded generator
+(`samples/island/generate.ts`) with its own made-up catalog of about 80 items in the drawer's 9
+categories (`samples/island/catalog.ts`); it has no problems under any rule. After changing the
+generator, `UPDATE_GOLDENS=1 pnpm test island` rewrites the file. Contributors can keep reference screenshots of the game in `../references/` to compare
 with. That folder is ignored by git.
 
 ## Open questions

@@ -44,7 +44,7 @@ function thresholds(): Record<string, { lines: number }> {
 }
 
 /** Story tests run in a real browser (Chromium, headless): every story renders, its play steps
- * pass, and axe finds no accessibility problems. */
+ * pass, and axe finds no accessibility problems. The addon applies .storybook/preview itself. */
 const storyTests = {
   extends: true,
   plugins: [storybookTest({ configDir: ".storybook" })],
@@ -56,7 +56,6 @@ const storyTests = {
       provider: playwright(),
       instances: [{ browser: "chromium" as const }],
     },
-    setupFiles: [".storybook/vitest.setup.ts"],
   },
 };
 
