@@ -48,7 +48,17 @@ export const plannerEvents = defineEvents({
 });
 ```
 
-In development, an unknown field **fails loudly**, so mistakes are caught before release.
+In development and in tests (the logger's **strict** mode), an unknown event, an unknown field or a
+value its schema refuses **fails loudly**, so mistakes are caught before release. In a release
+build the same mistakes are dropped and counted with a `log.dropped` event.
+
+**Content fields are refused when declared.** `defineEvents` throws if a field's name holds a word
+that means content, people or places: `mapName`, `userId`, `x`, `itemColor` and so on (the list is
+`FORBIDDEN_FIELD_WORDS` in `packages/logging/src/registry.ts`). So a field like that can't be added by
+accident; it has to be argued for in review.
+
+**Errors** are logged with `logger.error(gladeError)`: its code, step and detail, at its severity, and
+the cause's stack trace with URL queries (draft and share ids) and home folders taken out.
 
 ## What a log line looks like
 
@@ -89,6 +99,22 @@ flowchart LR
 ```
 
 Logs survive a crash because they are written to IndexedDB every 2 seconds and on page hide.
+
+## In the code
+
+| Part            | File in `packages/logging/src/` | Job                                                                        |
+| --------------- | ------------------------------- | -------------------------------------------------------------------------- |
+| Event registry  | `registry.ts`, `events/`        | `defineEvents`, and the events every app logs (`events/app.ts`)            |
+| Logger          | `logger.ts`                     | Checks events, builds lines, hands them to sinks                           |
+| Redaction       | `redact.ts`                     | Stack traces, browser family and version, screen size buckets              |
+| Memory ring     | `ring.ts`                       | The last 5,000 lines                                                       |
+| Browser storage | `idb-sink.ts`                   | IndexedDB, last 5 sessions, ≤ 2 MB each; saves every 2 s; `GLD-STORE-001`  |
+| The log file    | `gladelog.ts`                   | Write and read `.gladelog`                                                 |
+| Ids             | `ids.ts`                        | Session ids from an injected random source; action ids `a_0001`, `a_0002`… |
+
+The clock and random source are passed in, so tests and replays give the same lines every time.
+Wiring the logger to the page (saving when the page is hidden, the console in dev) belongs to the web
+app's `platform/` folder.
 
 ## The `.gladelog` file
 
