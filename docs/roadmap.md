@@ -28,6 +28,11 @@ Sizes: **S** = about 1 week, **M** = 2–3 weeks, **L** = 4–6 weeks (one perso
 - The shared profile packages: `@glade/core`, `@glade/render`, `@glade/three`, `@glade/testkit`.
 - Petit Planet's profile: the island and two home layouts, every rule with a test, the look, and
   render goldens.
+- From Phase 0: the code style enforced (lint, file headers, coverage per package, property tests);
+  `@glade/errors`, `@glade/logging`, `@glade/formats`, `@glade/edit`; `@glade/ui` with Storybook and
+  story tests in Chromium; `@glade/petit-planet-ui` (theme, fonts, icons); the skeletons of
+  `apps/web` and `apps/server` (`/api/v1/health`). Left in Phase 0: test fixtures (a real-size
+  island and catalog).
 
 ## Phase 0: Foundations (M)
 

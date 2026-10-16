@@ -14,18 +14,20 @@ cd Glade
 pnpm install
 ```
 
-| Command              | Does                                               |
-| -------------------- | -------------------------------------------------- |
-| `pnpm test`          | All unit, contract and repo-guard tests            |
-| `pnpm test:coverage` | The same, plus the coverage targets (what CI runs) |
-| `pnpm storybook`     | Every component, alone, in each theme              |
-| `pnpm typecheck`     | TypeScript check                                   |
-| `pnpm lint`          | ESLint and Prettier check                          |
-| `pnpm format`        | Formats everything with Prettier                   |
+| Command              | Does                                                                                |
+| -------------------- | ----------------------------------------------------------------------------------- |
+| `pnpm test`          | All unit, contract and repo-guard tests, and the story tests (in Chromium)          |
+| `pnpm test:coverage` | The same, plus the coverage targets (what CI runs)                                  |
+| `pnpm storybook`     | Every component, alone, in each theme                                               |
+| `pnpm dev`           | The web app (Vite) and the server together; the app calls the server through `/api` |
+| `pnpm build`         | Builds the web app                                                                  |
+| `pnpm typecheck`     | TypeScript check                                                                    |
+| `pnpm lint`          | ESLint and Prettier check                                                           |
+| `pnpm format`        | Formats everything with Prettier                                                    |
 
 `GLADE_RENDER=1 pnpm test packages/testkit/render` runs the render goldens (needs Chrome).
 `GLADE_PERF=1 pnpm test` also runs the speed tests, which CI skips. Story tests need
-Chromium once: `pnpm exec playwright install chromium`. More commands (`pnpm dev`, `pnpm e2e`) arrive with the apps; see the
+Chromium once: `pnpm exec playwright install chromium`. More commands (`pnpm e2e`) arrive later; see the
 [roadmap](docs/roadmap.md).
 
 ## Before you push

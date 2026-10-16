@@ -99,7 +99,7 @@ a shared package only if a second game uses the same model.
 |              | `@glade/server`       | The API: shared maps and packs, upload checks, bug reports.                                                                                                          |
 
 Today the shared profile packages (`core`, `render`, `three`, `testkit`), `errors`, `logging`,
-`formats`, `edit`, `ui`, and Petit Planet's profile and `ui` exist. The other packages are made when their code arrives, in the order of the
+`formats`, `edit`, `ui`, Petit Planet's profile and `ui`, and the skeletons of both apps exist. The other packages are made when their code arrives, in the order of the
 [roadmap](roadmap.md).
 
 ### Where does it go?

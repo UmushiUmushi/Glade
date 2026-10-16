@@ -73,6 +73,50 @@ const uiDataOnly = {
   ],
 };
 
+/** The web app reaches games only through its registry, app/games.ts (docs/architecture.md). */
+const webGameFree = {
+  "no-restricted-imports": [
+    "error",
+    {
+      patterns: [
+        {
+          group: [
+            "@glade/*-profile",
+            "@glade/*-catalog",
+            "@glade/*-edit",
+            "@glade/*-ui",
+            "@glade/*-builder",
+            "**/games/**",
+          ],
+          message: "the web app gets games from its registry, app/games.ts",
+        },
+      ],
+    },
+  ],
+};
+
+/** The server checks files with the profiles; it never draws, edits on screen or styles a game. */
+const serverOnly = {
+  "no-restricted-imports": [
+    "error",
+    {
+      paths: [
+        "@glade/three",
+        "@glade/viewport",
+        "@glade/planner",
+        "@glade/builder",
+        "@glade/ui",
+      ].map((name) => ({ name, message: "the server never imports screen or 3D code" })),
+      patterns: [
+        {
+          group: ["@glade/*-ui", "@glade/*-builder"],
+          message: "the server never imports a game's look",
+        },
+      ],
+    },
+  ],
+};
+
 // Code style (docs/engineering/code-style.md), one block per rule.
 
 /** Rule 3 and the lint list: a promise is awaited or handled, never dropped. */
@@ -170,5 +214,14 @@ export default tseslint.config(
   {
     files: ["packages/games/*/ui/src/**/*.ts"],
     rules: uiDataOnly,
+  },
+  {
+    files: ["apps/web/**/*.{ts,tsx}"],
+    ignores: ["apps/web/src/app/games.ts"],
+    rules: webGameFree,
+  },
+  {
+    files: ["apps/server/**/*.ts"],
+    rules: serverOnly,
   },
 );
