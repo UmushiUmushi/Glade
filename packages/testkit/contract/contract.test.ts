@@ -14,6 +14,7 @@ import {
 } from "@glade/core";
 import { createDraft, diffDocs, freezeDoc } from "@glade/edit";
 import { readMapFile, writeMapFile } from "@glade/formats";
+import { contrastProblems } from "@glade/ui";
 import { resolveLook, styleProblems, type InstancesSpec, type MeshSpec } from "@glade/render";
 import { describe, expect, it } from "vitest";
 import { allMaps, bound, games } from "../src/games";
@@ -25,6 +26,19 @@ const MAPS = allMaps().map(({ game, map, samples }) => {
 });
 
 const NOW = new Date("2026-09-29T00:00:00.000Z");
+
+describe("game looks", () => {
+  for (const { game, ui } of Object.values(games)) {
+    if (!ui) continue;
+    it(`${game.id}: its theme's text passes contrast in light and dark`, () => {
+      expect(contrastProblems(ui.theme)).toEqual([]);
+    });
+
+    it(`${game.id}: its icon ids are kebab-case`, () => {
+      for (const id of Object.keys(ui.icons)) expect(id).toMatch(/^[a-z]+(-[a-z]+)*$/);
+    });
+  }
+});
 
 describe("games", () => {
   it("have unique ids, and each map knows its game", () => {

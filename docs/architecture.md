@@ -99,7 +99,7 @@ a shared package only if a second game uses the same model.
 |              | `@glade/server`       | The API: shared maps and packs, upload checks, bug reports.                                                                                                          |
 
 Today the shared profile packages (`core`, `render`, `three`, `testkit`), `errors`, `logging`,
-`formats`, `edit`, `ui` and Petit Planet's profile exist. The other packages are made when their code arrives, in the order of the
+`formats`, `edit`, `ui`, and Petit Planet's profile and `ui` exist. The other packages are made when their code arrives, in the order of the
 [roadmap](roadmap.md).
 
 ### Where does it go?
@@ -305,7 +305,7 @@ app. ESLint and `tests/boundaries.test.ts` check these.
 | A game's `profile`               | `core`, `render`                                                      | Its game's `catalog`, `edit`, `ui` or `builder`; any app       |
 | A game's `catalog`               | Its `profile`, `core`, `render`                                       | Its `edit` or `ui`; other games; any app                       |
 | A game's `edit`                  | Its `profile`, `core`, `edit`                                         | Its `ui`; other games; any app                                 |
-| A game's `ui`                    | Its `profile`, `ui` (tokens and icons)                                | React; other games; any app                                    |
+| A game's `ui`                    | Its `profile`, `ui` (types only: tokens and icon maps)                | React; other games; any app                                    |
 | A game's `builder`               | `builder` (not its screens), its `profile` and `ui`, `core`, `render` | React; its `catalog` or `edit`; other games; any app           |
 | `apps/web` (except the registry) | Shared packages                                                       | Games (they arrive through the registry)                       |
 | `apps/web/src/app/games.ts`      | Every game's packages                                                 | —                                                              |

@@ -25,6 +25,7 @@
     "@glade/core": "workspace:*",
     "@glade/fixture-profile": "workspace:*",
     "@glade/petit-planet-profile": "workspace:*",
+    "@glade/petit-planet-ui": "workspace:*",
     "@glade/render": "workspace:*",
     "@glade/testkit": "workspace:*",
     "@glade/three": "workspace:*",

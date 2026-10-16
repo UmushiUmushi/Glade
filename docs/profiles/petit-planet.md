@@ -4,13 +4,13 @@ Petit Planet is the first game in Glade. Its profile is `@glade/petit-planet-pro
 ([its README](../../packages/games/petit-planet/profile/README.md) has the grids, layers, rules,
 kinds and params). This page shows how the game's five packages fit together in Glade.
 
-| Package                       | Holds                                                                                                      |
-| ----------------------------- | ---------------------------------------------------------------------------------------------------------- |
-| `@glade/petit-planet-profile` | The island and the homes: grids, layers, rules, kinds, params, look. Exists today.                         |
-| `@glade/petit-planet-catalog` | Base items with original models, categories.                                                               |
-| `@glade/petit-planet-edit`    | Terrain editing (brush, raise / lower, lift and drop, terraces, later sculpt) and bridges that span a gap. |
-| `@glade/petit-planet-ui`      | Theme, fonts, hand-drawn icons (the Grab glove, plants, items…), modes, layers, rule text, guide pages.    |
-| `@glade/petit-planet-builder` | The builder's side of the game: 12 templates, smart parts, materials, the builder's look.                  |
+| Package                       | Holds                                                                                                                                       |
+| ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| `@glade/petit-planet-profile` | The island and the homes: grids, layers, rules, kinds, params, look. Exists today.                                                          |
+| `@glade/petit-planet-catalog` | Base items with original models, categories.                                                                                                |
+| `@glade/petit-planet-edit`    | Terrain editing (brush, raise / lower, lift and drop, terraces, later sculpt) and bridges that span a gap.                                  |
+| `@glade/petit-planet-ui`      | Theme, fonts, hand-drawn icons (the Grab glove, plants, items…), modes, layers, rule text, guide pages. Theme, fonts and icons exist today. |
+| `@glade/petit-planet-builder` | The builder's side of the game: 12 templates, smart parts, materials, the builder's look.                                                   |
 
 ## Per map
 

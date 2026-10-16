@@ -47,6 +47,32 @@ const profileOnly = {
   ],
 };
 
+/**
+ * A game's ui package is data and plain functions, never React: the shared screens draw every game
+ * with the same components. It may use @glade/ui's types (Theme, GameIcons), not its components.
+ */
+const uiDataOnly = {
+  "@typescript-eslint/no-restricted-imports": [
+    "error",
+    {
+      paths: [
+        { name: "@glade/ui", allowTypeImports: true, message: "a game's ui imports only types" },
+        ...["react", "react-dom", "react-aria-components", "lucide-react"].map((name) => ({
+          name,
+          message: "a game's ui package is data, never React",
+        })),
+      ],
+      patterns: [
+        noApps,
+        {
+          group: ["@glade/*-catalog", "@glade/*-edit", "@glade/*-builder"],
+          message: "a game's ui never imports its catalog, edit or builder",
+        },
+      ],
+    },
+  ],
+};
+
 // Code style (docs/engineering/code-style.md), one block per rule.
 
 /** Rule 3 and the lint list: a promise is awaited or handled, never dropped. */
@@ -140,5 +166,9 @@ export default tseslint.config(
   {
     files: ["packages/games/*/profile/**/*.ts"],
     rules: profileOnly,
+  },
+  {
+    files: ["packages/games/*/ui/src/**/*.ts"],
+    rules: uiDataOnly,
   },
 );

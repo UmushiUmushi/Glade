@@ -21,6 +21,8 @@ import {
   showroomMap,
 } from "@glade/petit-planet-profile/samples";
 import type { RenderableMap } from "@glade/render";
+import { petitPlanetIcons, petitPlanetTheme } from "@glade/petit-planet-ui";
+import type { GameIcons, Theme } from "@glade/ui";
 
 /** A map bound to a catalog: what the tests and the render goldens work with. */
 export type Shown = Bound<RenderableMap>;
@@ -37,6 +39,8 @@ export interface MapSamples {
 export interface GameSamples {
   /** The game as its profile exports it: kinds and maps, no catalog. */
   game: GameProfile<RenderableMap>;
+  /** How the game looks in Glade (its ui package), once it has one. */
+  ui?: { theme: Theme; icons: GameIcons };
   /** Samples for each of the game's maps, by map id. */
   maps: Record<string, MapSamples>;
 }
@@ -44,6 +48,7 @@ export interface GameSamples {
 export const games: Record<string, GameSamples> = {
   "petit-planet": {
     game: petitPlanet,
+    ui: { theme: petitPlanetTheme, icons: petitPlanetIcons },
     maps: {
       planet: {
         items: demoCatalog.entries,

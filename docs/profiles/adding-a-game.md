@@ -187,7 +187,14 @@ and `style.defaults` is the style used when the file is missing.
 2. **Edit** (`@glade/<id>-edit`): the ops each map uses. Use the shared ops in `@glade/edit` and
    add only what no other game has.
 3. **UI** (`@glade/<id>-ui`): theme, icons and fonts, and for each map you support: modes, layers,
-   environment, rule text and screen reader text. Data only, no React.
+   environment, rule text and screen reader text. Data only, no React (lint refuses it).
+   - The theme fills in `@glade/ui`'s tokens (`Theme`) and must pass `contrastProblems`.
+   - Draw only the icons the game wants as its own, as SVG files in `theme/icons/`. Every other
+     icon comes from the shared set.
+   - Fonts are open fonts served by Glade (`@fontsource`), in a `fonts.css` the package exports.
+   - Add the game to `packages/testkit/src/games.ts` (`ui`) and to `.storybook/themes.ts`, so the
+     contract tests and Storybook's theme switcher see it. Petit Planet's
+     (`packages/games/petit-planet/ui`) is the example.
 4. **Builder** (`@glade/<id>-builder`): templates, smart parts, materials, the builder's look, and
    how a recipe becomes a catalog entry. Data and plain functions on `@glade/builder`, no React.
 5. Add the game to `apps/web/src/app/games.ts`.
