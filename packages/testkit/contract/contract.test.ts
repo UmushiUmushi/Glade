@@ -12,6 +12,7 @@ import {
   validate,
   type Entity,
 } from "@glade/core";
+import { createDraft, diffDocs, freezeDoc } from "@glade/edit";
 import { readMapFile, writeMapFile } from "@glade/formats";
 import { resolveLook, styleProblems, type InstancesSpec, type MeshSpec } from "@glade/render";
 import { describe, expect, it } from "vitest";
@@ -86,6 +87,25 @@ for (const { game, map, demo } of MAPS) {
         const read = readMapFile(writeMapFile(doc, map), game);
         expect(read.ok && deepEqual(read.value.doc, doc)).toBe(true);
       }
+    });
+
+    it("a recording draft of its demo map gives the same patch as a full diff", () => {
+      const base = freezeDoc(demo());
+      const draft = createDraft(base);
+      for (const layer of Object.values(draft.doc.layers)) {
+        if (layer.kind === "grid") {
+          const cells = layer.cells;
+          const last = cells[cells.length - 1];
+          if (cells[0]?.length && last?.length) cells[0][0] = last[last.length - 1];
+        } else {
+          const [first] = Object.values(layer.items);
+          if (first) layer.items[first.id] = { ...first };
+          layer.items["contract-added"] = { id: "contract-added", type: "contract" };
+        }
+      }
+      const { patch, doc } = draft.finish();
+      expect(patch).toEqual(diffDocs(base, doc));
+      expect(Object.isFrozen(doc)).toBe(true);
     });
 
     it("files saved under a former game id, or before maps had ids, load as this map", () => {

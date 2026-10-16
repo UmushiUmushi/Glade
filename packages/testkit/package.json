@@ -7,6 +7,7 @@
   "type": "module",
   "dependencies": {
     "@glade/core": "workspace:*",
+    "@glade/edit": "workspace:*",
     "@glade/fixture-profile": "workspace:*",
     "@glade/formats": "workspace:*",
     "@glade/petit-planet-profile": "workspace:*",

@@ -71,6 +71,15 @@ importers:
 
   packages/core: {}
 
+  packages/edit:
+    dependencies:
+      '@glade/core':
+        specifier: workspace:*
+        version: link:../core
+      '@glade/errors':
+        specifier: workspace:*
+        version: link:../errors
+
   packages/errors: {}
 
   packages/formats:
@@ -136,6 +145,9 @@ importers:
       '@glade/core':
         specifier: workspace:*
         version: link:../core
+      '@glade/edit':
+        specifier: workspace:*
+        version: link:../edit
       '@glade/fixture-profile':
         specifier: workspace:*
         version: link:../games/_fixture/profile

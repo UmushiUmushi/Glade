@@ -59,6 +59,20 @@ eraser never terrace: blocks they can't change get red stripes instead
 | `transaction` | Run ops on a draft → patch → `map.locate` gives the changed area → `validate(draft, map, { region })` → commit or reject.                                 |
 | `history`     | Undo and redo stacks of patches (200 steps).                                                                                                              |
 
+**Rules for ops** (code in `packages/edit/src/`):
+
+- An op changes the draft with ordinary writes, the way the profile's writers do:
+  `cells[y][x] = value`, `items[id] = entity`, `delete items[id]`. It never replaces a row or a layer.
+- An op **replaces** a cell or an entity; it never edits one in place. Committed maps are frozen, so
+  `items[id].x += 1` fails at once (`GLD-CHECK-001`) instead of quietly changing the map that the
+  screen, the undo history and the 3D view all share. Write `items[id] = { ...items[id], x: x + 1 }`.
+- An op returns an error for input it can't use. A missing op, an error or a throw stops the
+  transaction (`GLD-CHECK-001`), and nothing is kept: all ops happen, or none do.
+
+**Strict and lenient.** A strict transaction (the default) is rejected when it adds a problem in the
+changed area. A lenient one is kept and its problems are shown. Problems the map already had there
+never reject a change, because works in progress are fine.
+
 The recording draft matters for speed. Copying the whole island and diffing it after each change
 takes about 20 ms on a fast laptop, too slow to run while dragging. Recording changes as they
 happen and checking only the changed area (`validate` with a `region` takes about 3.4 ms) keeps a

@@ -1,0 +1,15 @@
+{
+  "name": "@glade/edit",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Changes maps: ops on a recording draft, patches, transactions and undo. Game-free.",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@glade/core": "workspace:*",
+    "@glade/errors": "workspace:*"
+  }
+}

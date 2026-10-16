@@ -99,7 +99,7 @@ a shared package only if a second game uses the same model.
 |              | `@glade/server`       | The API: shared maps and packs, upload checks, bug reports.                                                                                                          |
 
 Today the shared profile packages (`core`, `render`, `three`, `testkit`), `errors`, `logging`,
-`formats` and Petit Planet's profile exist. The other packages are made when their code arrives, in the order of the
+`formats`, `edit` and Petit Planet's profile exist. The other packages are made when their code arrives, in the order of the
 [roadmap](roadmap.md).
 
 ### Where does it go?
@@ -406,6 +406,7 @@ Every game passes the contract tests in `packages/testkit`, for every map it has
 10. Every map in the profile either has a UI or is listed as "not supported yet".
 11. Every icon id a screen uses resolves, to the game's own drawing or to the shared set.
 12. Every map's new doc and demo map round-trip through a Glade map file (`@glade/formats`).
+13. A recording draft of every demo map gives the same patch as a full diff (`@glade/edit`).
 
 The `_fixture` game, with a 2D-only map, passes too. This proves the shared code works with any
 game and any set of views.
