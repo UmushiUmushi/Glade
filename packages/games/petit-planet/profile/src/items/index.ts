@@ -2,7 +2,7 @@
 // Every map of the game draws its plants and items through it; each map adds what its own
 // surroundings do. Item builders use it to show one item.
 
-export { drawItem2D, frontDoor } from "./draw2d";
+export { drawItem2D } from "./draw2d";
 export {
   appModel,
   BLOCK_TILES,

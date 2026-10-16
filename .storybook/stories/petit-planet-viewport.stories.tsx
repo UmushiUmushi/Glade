@@ -68,21 +68,26 @@ export const Island2D: Story = {
 /** The last viewport a story made, for its play steps. */
 const shown: { viewport: Viewport | null } = { viewport: null };
 
-/**
- * Up close in 2D, south of the town center, where houses, furniture and plants show as stickers.
- * The play step moves the camera (the plan has no mouse zoom yet). `zoom` is screen pixels a tile.
- */
-export const Island2DCloseUp: Story = {
-  name: "Island 2D close-up",
-  args: { view: "2d", onViewport: (vp) => (shown.viewport = vp) },
-  play: async ({ canvasElement }) => {
-    await framesReported(canvasElement);
-    const vp = shown.viewport;
-    await expect(vp?.planCamera()).toBeTruthy();
-    vp?.setPlanCamera({ cx: 88, cy: 104, pxPerUnit: 24 });
-    await planDrawn(canvasElement);
-  },
-};
+/** A 2D story looking at one spot up close (the plan has no mouse zoom yet). */
+function closeUp(name: string, cam: { cx: number; cy: number; pxPerUnit: number }): Story {
+  return {
+    name,
+    args: { view: "2d", onViewport: (vp) => (shown.viewport = vp) },
+    play: async ({ canvasElement }) => {
+      await framesReported(canvasElement);
+      const vp = shown.viewport;
+      await expect(vp?.planCamera()).toBeTruthy();
+      vp?.setPlanCamera(cam);
+      await planDrawn(canvasElement);
+    },
+  };
+}
+
+/** South of the town center: houses, furniture, plants and a pond, with their shadows. */
+export const Island2DCloseUp = closeUp("Island 2D close-up", { cx: 88, cy: 104, pxPerUnit: 24 });
+
+/** The terraced hill west of the town center: raised ground and the shadows it casts. */
+export const Island2DCliffs = closeUp("Island 2D cliffs", { cx: 50, cy: 66, pxPerUnit: 20 });
 
 export const IslandEveningWinter: Story = {
   args: { hour: 19, season: "winter", camera: "top" },

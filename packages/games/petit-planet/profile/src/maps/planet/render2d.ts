@@ -1,11 +1,11 @@
-// The planet from straight above (its plan view) on a 2D canvas, in the planner's cosy style
-// (plan-style.ts): the sea, terrain with a face below each raised edge, ponds and waterfalls,
-// paths, landmarks, plants and items; and what every view of it shares (its UI: layer toggles,
+// The planet from straight above (its plan view) on a 2D canvas, in the planner's flat colors lit
+// like the 3D view (plan-style.ts): the sea, terrain, ponds and waterfalls, paths, the shadows
+// raised ground casts, landmarks, plants and items; and what every view of it shares (its UI: layer toggles,
 // grids, hover text, click selection). The host draws the grid lines, violations, flashes,
 // selection, ruler and hover on top. Internally everything is drawn in minor cells (half a world
 // tile), so the host's world transform is scaled by 1/2 here.
 
-import type { MapUI, PlanView, RenderableMap } from "@glade/render";
+import { resolveLook, type MapUI, type PlanView, type RenderableMap } from "@glade/render";
 import type { Entity, Selection } from "@glade/core";
 import { boundingRect, type Box } from "@glade/core";
 import type { BoxPart, Model, ModelPart } from "@glade/render";
@@ -41,7 +41,8 @@ import {
 import { catalogEntry, pathEntry, type Catalog } from "../../catalog";
 import { profileOf } from "./data";
 import { appModel, drawItem2D, itemSize } from "../../items";
-import { EDGE_LINE, faceDepth, levelColor, outlineWidth, PLAN, POND_RIM } from "../../plan-style";
+import { LEVEL_MINOR } from "../../items/model";
+import { levelColor, PLAN, POND_DROP, shadeFor, type Shade } from "../../plan-style";
 import { onSurfaceBox, onSurfaces } from "../../surfaces";
 import { armBacks, fenceArms, type Arm } from "./fences";
 import { floodRegion } from "./select";
@@ -63,6 +64,8 @@ export interface Scene {
   spec: GridSpec;
   /** The app's model for a placed thing, if it gives one (RenderableMap.itemModel). */
   modelOf(thing: Entity): Model | undefined;
+  /** Where shadows fall, from the look's sun; none without it. */
+  shade?: Shade;
 }
 
 /** Visible minor cells for a canvas of cssW x cssH under a minor-cell view. */
@@ -100,7 +103,6 @@ export function drawScene(
   ctx.imageSmoothingEnabled = false;
   ctx.drawImage(terrainBitmap(map, profile, spec, layers), 0, 0);
   const blocks = { t0x, t0y, t1x, t1y };
-  if (layers.water && 2 / px >= 6) drawPondRims(ctx, map, spec, blocks);
   // Waterfall streaks
   if (layers.water) {
     ctx.strokeStyle = "rgba(255,255,255,0.8)";
@@ -119,10 +121,8 @@ export function drawScene(
       }
     }
   }
-  if (layers.heights) drawRaisedEdges(ctx, map, profile, spec, blocks, px);
 
-  // Cut and rounded water and cliff corners: the corner region in the color it takes, and a
-  // cliff line along the curve.
+  // Cut and rounded water and cliff corners: the corner region in the color it takes.
   if (layers.heights || layers.water) {
     for (const v of cornerCells(map, "terrainCorners")) {
       if (
@@ -145,13 +145,6 @@ export function drawScene(
             : PLAN.grass;
       polygon(ctx, pts);
       ctx.fill();
-      if (layers.heights && c.kind === "cliff") {
-        const curve = cornerCurve(V, c.dir, c.leg, c.shape);
-        ctx.strokeStyle = PLAN.face;
-        ctx.lineWidth = Math.max(px, faceDepth(Math.abs(c.own.h - c.surround.h)) / 2);
-        polygon(ctx, curve, false);
-        ctx.stroke();
-      }
     }
   }
 
@@ -174,8 +167,13 @@ export function drawScene(
     }
   }
 
-  // Landmarks: a pale plaza with a dashed edge and its name on an ink tag, like the design's
-  // area labels.
+  // The shadows raised ground casts on lower ground (and banks on ponds), over paths too.
+  if (s.shade && (layers.heights || layers.water)) {
+    drawGroundShadows(ctx, map, profile, spec, blocks, s.shade, layers);
+  }
+
+  // Landmarks: a pale plaza and its name on an ink tag, like the design's area labels. The dashed
+  // line is the terrain it locks.
   if (layers.landmarks) {
     for (const lm of profile.landmarks) {
       const r = toMinorRect(spec, { grid: "major", x: lm.x, y: lm.y, w: lm.w, h: lm.h });
@@ -196,7 +194,11 @@ export function drawScene(
     for (const p of plantsOf(map)) {
       const r = plantRect(p);
       if (!inVis(r, vis)) continue;
-      drawItem2D(ctx, s.catalog, p.type, r, 0, px, { as: "plant", model: s.modelOf(p) });
+      drawItem2D(ctx, s.catalog, p.type, r, 0, px, {
+        as: "plant",
+        model: s.modelOf(p),
+        shade: s.shade,
+      });
     }
   }
 
@@ -209,7 +211,7 @@ export function drawScene(
       const model = s.modelOf(i);
       const linked = arms.get(i.id);
       if (linked) drawLinked(ctx, linked, r, px, linkLook(model));
-      else drawItem2D(ctx, s.catalog, i.type, r, i.rot, px, { as: "item", model });
+      else drawItem2D(ctx, s.catalog, i.type, r, i.rot, px, { as: "item", model, shade: s.shade });
     }
     // Things on surfaces, at their own size, centered on their place in the surface's grid.
     const hosts = surfaceHosts(map, s.catalog);
@@ -221,7 +223,11 @@ export function drawScene(
       const [tw, td] = b.rot === 90 || b.rot === 270 ? [d, w] : [w, d];
       const [cx, cy] = [b.x + b.w / 2, b.y + b.h / 2];
       const r = { x: cx - tw, y: cy - td, w: 2 * tw, h: 2 * td };
-      drawItem2D(ctx, s.catalog, t.type, r, b.rot, px, { as: "item", model: s.modelOf(t) });
+      drawItem2D(ctx, s.catalog, t.type, r, b.rot, px, {
+        as: "item",
+        model: s.modelOf(t),
+        shade: s.shade,
+      });
     }
   }
 }
@@ -234,66 +240,126 @@ interface Blocks {
   t1y: number;
 }
 
-/** Ponds: a soft inner rim on each block, as the design draws water tiles. */
-function drawPondRims(ctx: CanvasRenderingContext2D, map: MapDoc, spec: GridSpec, b: Blocks) {
-  const grid = terrainGrid(map);
-  const half = POND_RIM.width / 2;
-  ctx.strokeStyle = POND_RIM.color;
-  ctx.lineWidth = POND_RIM.width;
-  ctx.beginPath();
-  for (let ty = b.t0y; ty <= b.t1y; ty++) {
-    for (let tx = b.t0x; tx <= b.t1x; tx++) {
-      if (!grid[ty][tx].water) continue;
-      const r = toMinorRect(spec, { grid: "terrain", x: tx, y: ty, w: 1, h: 1 });
-      ctx.rect(r.x + half, r.y + half, r.w - 2 * half, r.h - 2 * half);
-    }
+/** Adds a quad to the current path, going clockwise, so one nonzero fill of many is their union. */
+function addQuad(ctx: CanvasRenderingContext2D, q: [number, number][]) {
+  let area = 0;
+  for (let i = 0; i < q.length; i++) {
+    const [a, b] = [q[i], q[(i + 1) % q.length]];
+    area += a[0] * b[1] - b[0] * a[1];
   }
-  ctx.stroke();
+  const pts = area < 0 ? [...q].reverse() : q;
+  pts.forEach(([x, y], i) => (i ? ctx.lineTo(x, y) : ctx.moveTo(x, y)));
+  ctx.closePath();
+}
+
+/** Point in polygon (even-odd), for points in minor units. */
+function inside(pts: [number, number][], x: number, y: number): boolean {
+  let hit = false;
+  for (let i = 0, j = pts.length - 1; i < pts.length; j = i++) {
+    const [xi, yi] = pts[i];
+    const [xj, yj] = pts[j];
+    if (yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi) hit = !hit;
+  }
+  return hit;
 }
 
 /**
- * Raised edges. Ground higher than the ground south of it shows its face, a darker band along its
- * south edge, deeper for a bigger drop (seen as from a little south, like the design). Other edges
- * between heights get a thin line. Half an edge beside a cut or rounded corner is left out; the
- * corner draws its own edge along the curve.
+ * The shadows the ground casts, lit as the 3D view is: every edge where ground drops, facing away
+ * from the sun, swept the way shadows fall, as long as the drop over the sun's elevation. A pond
+ * lies a little below its banks, so banks shade it too. No lines: only the shadow shows an edge.
+ * Half an edge beside a cut or rounded corner is left out; the corner's curve casts in its place.
  */
-function drawRaisedEdges(
+function drawGroundShadows(
   ctx: CanvasRenderingContext2D,
   map: MapDoc,
   profile: Profile,
   spec: GridSpec,
   b: Blocks,
-  px: number,
+  shade: Shade,
+  layers: Layers,
 ) {
   const grid = terrainGrid(map);
+  const level = (c: { h: number; water: boolean }) =>
+    (layers.heights ? c.h : 0) - (layers.water && c.water ? POND_DROP : 0);
   const shaped = (X: number, Y: number) =>
     !!cornerAt(map, "terrainCorners", X, Y) &&
     resolveTerrainCorner(map, profile, X, Y).status === "shaped";
-  const line = Math.max(px, 0.12);
+  const sweep = (drop: number) => drop * LEVEL_MINOR * shade.perHeight;
+  /** Casts from the segment a-b toward normal n (pointing to the lower side). */
+  let casts = 0;
+  const cast: Cast = (a, b2, n, drop) => {
+    if (n[0] * shade.dx + n[1] * shade.dy <= 0) return;
+    const [vx, vy] = [shade.dx * sweep(drop), shade.dy * sweep(drop)];
+    casts++;
+    addQuad(ctx, [a, b2, [b2[0] + vx, b2[1] + vy], [a[0] + vx, a[1] + vy]]);
+  };
+  ctx.beginPath();
   for (let ty = b.t0y; ty <= b.t1y; ty++) {
     for (let tx = b.t0x; tx <= b.t1x; tx++) {
-      const cell = grid[ty][tx];
+      const here = level(grid[ty][tx]);
       const r = toMinorRect(spec, { grid: "terrain", x: tx, y: ty, w: 1, h: 1 });
-      const right = grid[ty][tx + 1];
-      const down = grid[ty + 1]?.[tx];
-      if (right && right.h !== cell.h) {
-        const y0 = shaped(tx, ty - 1) ? r.y + r.h / 2 : r.y;
-        const y1 = shaped(tx, ty) ? r.y + r.h / 2 : r.y + r.h;
-        ctx.fillStyle = EDGE_LINE;
-        if (y1 > y0) ctx.fillRect(r.x + r.w - line / 2, y0, line, y1 - y0);
+      const [x0, y0, x1, y1] = [r.x, r.y, r.x + r.w, r.y + r.h];
+      const [xm, ym] = [r.x + r.w / 2, r.y + r.h / 2];
+      // Each side: its neighbor, its corners' vertices, its two ends and its outward normal.
+      const sides = [
+        [0, -1, [tx - 1, ty - 1], [tx, ty - 1], [x0, y0], [x1, y0]],
+        [1, 0, [tx, ty - 1], [tx, ty], [x1, y0], [x1, y1]],
+        [0, 1, [tx - 1, ty], [tx, ty], [x0, y1], [x1, y1]],
+        [-1, 0, [tx - 1, ty - 1], [tx - 1, ty], [x0, y0], [x0, y1]],
+      ] as const;
+      for (const [dx, dy, va, vb, ea, eb] of sides) {
+        const next = grid[ty + dy]?.[tx + dx];
+        if (!next) continue;
+        const drop = here - level(next);
+        if (drop <= 0) continue;
+        const a: [number, number] = shaped(...va) ? [dx ? ea[0] : xm, dy ? ea[1] : ym] : [...ea];
+        const e: [number, number] = shaped(...vb) ? [dx ? eb[0] : xm, dy ? eb[1] : ym] : [...eb];
+        if (a[0] !== e[0] || a[1] !== e[1]) cast(a, e, [dx, dy], drop);
       }
-      if (!down || down.h === cell.h) continue;
-      const x0 = shaped(tx - 1, ty) ? r.x + r.w / 2 : r.x;
-      const x1 = shaped(tx, ty) ? r.x + r.w / 2 : r.x + r.w;
-      if (x1 <= x0) continue;
-      if (down.h < cell.h && !cell.water) {
-        const depth = faceDepth(cell.h - down.h);
-        ctx.fillStyle = PLAN.face;
-        ctx.fillRect(x0, r.y + r.h - depth, x1 - x0, depth);
-      } else {
-        ctx.fillStyle = EDGE_LINE;
-        ctx.fillRect(x0, r.y + r.h - line / 2, x1 - x0, line);
-      }
+    }
+  }
+  castCorners(map, profile, b, level, cast);
+  if (!casts) return;
+  ctx.fillStyle = shade.color;
+  ctx.fill();
+}
+
+/** Casts from a segment toward a normal (pointing to the lower side), for a drop in levels. */
+type Cast = (a: [number, number], b: [number, number], n: [number, number], drop: number) => void;
+
+/** Cut and rounded corners: the curve between a corner's two heights casts in place of its edges. */
+function castCorners(
+  map: MapDoc,
+  profile: Profile,
+  b: Blocks,
+  level: (c: { h: number; water: boolean }) => number,
+  cast: Cast,
+) {
+  for (const v of cornerCells(map, "terrainCorners")) {
+    if (v.x < b.t0x - 1 || v.x > b.t1x || v.y < b.t0y - 1 || v.y > b.t1y) continue;
+    const res = resolveTerrainCorner(map, profile, v.x, v.y);
+    if (res.status !== "shaped") continue;
+    const c = res.corner;
+    const drop = level(c.own) - level(c.surround);
+    if (drop === 0) continue;
+    const V = vertexPoint(c.layer, c.vx, c.vy);
+    const region = cornerRegion(V, c.dir, c.leg, c.shape).map(([x, y]): [number, number] => [
+      2 * x,
+      2 * y,
+    ]);
+    const curve = cornerCurve(V, c.dir, c.leg, c.shape).map(([x, y]): [number, number] => [
+      2 * x,
+      2 * y,
+    ]);
+    for (let i = 0; i + 1 < curve.length; i++) {
+      const [p, q] = [curve[i], curve[i + 1]];
+      const len = Math.hypot(q[0] - p[0], q[1] - p[1]) || 1;
+      let n: [number, number] = [-(q[1] - p[1]) / len, (q[0] - p[0]) / len];
+      const mid = [(p[0] + q[0]) / 2, (p[1] + q[1]) / 2];
+      const intoRegion = inside(region, mid[0] + n[0] * 0.05, mid[1] + n[1] * 0.05);
+      // The region takes the surrounding height: it is the low side when the corner's own is higher.
+      if (intoRegion !== drop > 0) n = [-n[0], -n[1]];
+      cast(p, q, n, Math.abs(drop));
     }
   }
 }
@@ -371,11 +437,6 @@ function drawLandmark(
   ctx.beginPath();
   ctx.roundRect(r.x, r.y, r.w, r.h, 1.5);
   ctx.fill();
-  ctx.setLineDash([6 * px, 4 * px]);
-  ctx.strokeStyle = "rgba(61,54,50,0.55)";
-  ctx.lineWidth = Math.max(px, outlineWidth(px));
-  ctx.stroke();
-  ctx.setLineDash([]);
   if (r.w * scale < 60) return;
   ctx.font = `900 ${12 * px}px Nunito, ui-rounded, system-ui, sans-serif`;
   const [padX, h] = [10 * px, 22 * px];
@@ -436,7 +497,7 @@ function drawLinked(
     ctx.fill();
   }
   if (!look.posts) return;
-  ctx.fillStyle = PLAN.ink;
+  ctx.fillStyle = "#5a3e24";
   for (const [dx, dy] of arms) ctx.fillRect(cx + dx - 0.15, cy + dy - 0.15, 0.3, 0.3);
 }
 
@@ -544,6 +605,16 @@ export const ui: MapUI = {
   },
 };
 
+/** Shadows for the look's default time of day (the 3D view's midday sun), kept per style. */
+const shades = new WeakMap<object, Shade>();
+function shadeOf(game: Planet & RenderableMap): Shade | undefined {
+  const style = game.style?.defaults;
+  if (!style) return undefined;
+  let shade = shades.get(style);
+  if (!shade) shades.set(style, (shade = shadeFor(resolveLook(style).light.sun)));
+  return shade;
+}
+
 /** The plan view: the island from straight above. */
 export const plan: PlanView = {
   draw(ctx, doc, g, layers, visible: Box, pxPerUnit) {
@@ -570,6 +641,7 @@ export const plan: PlanView = {
         catalog: game.catalog,
         spec,
         modelOf: (thing) => appModel(game as Planet & RenderableMap, thing),
+        shade: shadeOf(game as Planet & RenderableMap),
       },
       layers as unknown as Layers,
       vis,

@@ -1,11 +1,12 @@
 // The item formula, in 2D: how one catalog entry looks from above, with no map around it. Drawn in
-// minor units (a tile is 2), the units every map of the game draws in, in the planner's cosy
-// style (plan-style.ts): each thing is a sticker, with one ink outline round it and a drop shadow.
+// minor units (a tile is 2), the units every map of the game draws in: its model's own top view,
+// in its parts' colors, and given a sun (plan-style.ts) a soft shadow cast the way the 3D view
+// casts it, longer for taller parts.
 
-import { silhouettes, type Model, type Turn } from "@glade/render";
-import { baseOf, catalogEntry, isA, type BaseKind, type Catalog } from "../catalog";
-import { lighten, outlineWidth, PLAN, SHADOW } from "../plan-style";
-import { frontSide } from "./model";
+import { convexHull, silhouettes, type Model, type Turn } from "@glade/render";
+import { baseOf, catalogEntry, type BaseKind, type Catalog } from "../catalog";
+import { lighten, PLAN, type Shade } from "../plan-style";
+import { LEVEL_MINOR } from "./model";
 
 /** A rect in minor units. */
 interface Box {
@@ -17,9 +18,9 @@ interface Box {
 
 /**
  * The catalog entry named `type` seen from above, filling the rect `r` at rotation `rot`: its
- * model as a sticker (or `model` in its place), or a symbol for its shape when it has none; an
- * incline's steps; and a building's door on its front. `as` is the base kind to draw a type the
- * catalog lacks as. `px` is one screen pixel.
+ * model's top view (or `model`'s in its place), or a symbol for its shape when it has none, and
+ * an incline's steps. `as` is the base kind to draw a type the catalog lacks as. `px` is one
+ * screen pixel. With `shade`, it casts a shadow.
  */
 export function drawItem2D(
   ctx: CanvasRenderingContext2D,
@@ -28,75 +29,77 @@ export function drawItem2D(
   r: Box,
   rot: number,
   px: number,
-  opts: { model?: Model; as?: BaseKind } = {},
+  opts: { model?: Model; as?: BaseKind; shade?: Shade } = {},
 ): void {
   const e = catalogEntry(catalog, type);
   const base = baseOf(catalog, type) ?? opts.as;
   const own = opts.model ?? e?.model;
+  // Shadows only where they show: a thing a few pixels across is just its colors.
+  const shade = Math.min(r.w, r.h) / px >= SHADOW_MIN_PX ? opts.shade : undefined;
   if (base === "plant") {
-    if (own && e) drawModel(ctx, own, e.footprint, r, 0, px, true);
-    else drawPlant(ctx, e?.shape ?? "blob", r, px);
+    if (own && e) drawModel(ctx, own, e.footprint, r, 0, px, shade);
+    else drawPlant(ctx, e?.shape ?? "blob", r, shade);
     return;
   }
-  if (base === "incline") drawShape(ctx, "incline", r, rot, px);
-  else if (own && e) drawModel(ctx, own, e.footprint, r, rot, px, false);
-  else drawShape(ctx, base === "bridge" ? "bridge" : (e?.shape ?? "block"), r, rot, px);
-  if (isA(catalog, type, "building")) drawDoor(ctx, r, rot);
+  if (base === "incline") drawShape(ctx, "incline", r, rot, px, undefined);
+  else if (own && e) drawModel(ctx, own, e.footprint, r, rot, px, shade);
+  else drawShape(ctx, base === "bridge" ? "bridge" : (e?.shape ?? "block"), r, rot, px, shade);
 }
 
+/** Below this many screen pixels across, a thing casts no shadow. */
+export const SHADOW_MIN_PX = 8;
+
+/** The height a symbol (a thing with no model) casts its shadow from, in levels. */
+const SYMBOL_HEIGHT = 0.6;
+
 /**
- * Draws round and square shapes as stickers: the first shape drawn gets the shadow and the ink
- * outline, the ones after sit on it as detail.
+ * Draws round and square symbol shapes; given a sun, the first shape drawn casts a shadow, as if
+ * it stood SYMBOL_HEIGHT tall.
  */
-function sticker(ctx: CanvasRenderingContext2D, px: number) {
+function flat(ctx: CanvasRenderingContext2D, shade: Shade | undefined) {
   let first = true;
-  const line = outlineWidth(px);
-  const draw = (trace: (dy: number) => void, color: string) => {
-    if (first) {
-      ctx.fillStyle = SHADOW.color;
-      trace(SHADOW.dy);
+  const draw = (trace: (ox: number, oy: number) => void, color: string) => {
+    if (first && shade) {
+      const len = SYMBOL_HEIGHT * LEVEL_MINOR * shade.perHeight;
+      ctx.fillStyle = shade.color;
+      ctx.beginPath();
+      for (let k = 1; k <= 8; k++) trace((shade.dx * len * k) / 8, (shade.dy * len * k) / 8);
       ctx.fill();
-      ctx.strokeStyle = PLAN.ink;
-      ctx.lineWidth = 2 * line;
-      trace(0);
-      ctx.stroke();
-      first = false;
     }
+    first = false;
     ctx.fillStyle = color;
-    trace(0);
+    ctx.beginPath();
+    trace(0, 0);
     ctx.fill();
   };
   return {
     circle(x: number, y: number, rad: number, color: string) {
-      draw((dy) => {
-        ctx.beginPath();
-        ctx.arc(x, y + dy, rad, 0, Math.PI * 2);
+      draw((ox, oy) => {
+        ctx.moveTo(x + ox + rad, y + oy);
+        ctx.arc(x + ox, y + oy, rad, 0, Math.PI * 2);
       }, color);
     },
     rect(x: number, y: number, w: number, h: number, color: string) {
-      draw((dy) => {
-        ctx.beginPath();
-        ctx.roundRect(x, y + dy, w, h, Math.min(w, h) * 0.2);
-      }, color);
+      draw((ox, oy) => ctx.rect(x + ox, y + oy, w, h), color);
     },
     ellipse(x: number, y: number, rx: number, ry: number, color: string) {
-      draw((dy) => {
-        ctx.beginPath();
-        ctx.ellipse(x, y + dy, rx, ry, 0, 0, Math.PI * 2);
+      draw((ox, oy) => {
+        ctx.moveTo(x + ox + rx, y + oy);
+        ctx.ellipse(x + ox, y + oy, rx, ry, 0, 0, Math.PI * 2);
       }, color);
     },
   };
 }
 
 /** A plant with no model, by its shape: a tree, a flower bed, a crop row or a bush. */
-function drawPlant(ctx: CanvasRenderingContext2D, shape: string, r: Box, px: number) {
+function drawPlant(ctx: CanvasRenderingContext2D, shape: string, r: Box, shade?: Shade) {
   const cx = r.x + r.w / 2;
   const cy = r.y + r.h / 2;
   switch (shape) {
     case "trunk-cone": {
-      const st = sticker(ctx, px);
+      const st = flat(ctx, shade);
       st.circle(cx, cy, 0.85, "#5f7d2a");
-      st.circle(cx - 0.3, cy - 0.3, 0.3, "#a4c148");
+      st.circle(cx - 0.2, cy - 0.2, 0.45, "#6f8f34");
       return;
     }
     case "dots":
@@ -106,29 +109,34 @@ function drawPlant(ctx: CanvasRenderingContext2D, shape: string, r: Box, px: num
         [-0.1, 0.4, "#c9a7e8"],
         [0.45, 0.45, "#e39aac"],
       ] as const) {
-        const st = sticker(ctx, px);
-        st.circle(cx + dx, cy + dy, 0.3, col);
-        st.circle(cx + dx, cy + dy, 0.1, col === PLAN.sun ? "#e39aac" : PLAN.sun);
+        flat(ctx, undefined).circle(cx + dx, cy + dy, 0.28, col);
       }
       return;
     case "row":
       for (let i = 0; i < 3; i++) {
-        sticker(ctx, px).rect(r.x + 0.25 + i * 0.55, r.y + 0.35, 0.35, 1.3, "#7fa83a");
+        flat(ctx, shade).rect(r.x + 0.25 + i * 0.55, r.y + 0.35, 0.35, 1.3, "#7fa83a");
       }
       return;
     default: {
-      const st = sticker(ctx, px);
+      const st = flat(ctx, shade);
       st.circle(cx, cy, 0.75, "#7f9f3a");
-      st.circle(cx - 0.25, cy - 0.25, 0.28, lighten("#7f9f3a", 0.35));
+      st.circle(cx + 0.2, cy - 0.2, 0.35, lighten("#7f9f3a", 0.15));
     }
   }
 }
 
-function drawShape(ctx: CanvasRenderingContext2D, shape: string, r: Box, rot: number, px: number) {
+function drawShape(
+  ctx: CanvasRenderingContext2D,
+  shape: string,
+  r: Box,
+  rot: number,
+  px: number,
+  shade: Shade | undefined,
+) {
   const cx = r.x + r.w / 2;
   const cy = r.y + r.h / 2;
   const m = Math.min(r.w, r.h) / 2;
-  const st = sticker(ctx, px);
+  const st = flat(ctx, shade);
   const inset = (d: number, color: string) =>
     st.rect(r.x + d, r.y + d, r.w - 2 * d, r.h - 2 * d, color);
   const lines = (color: string, draw: () => void) => {
@@ -296,15 +304,18 @@ interface Shape {
   color: string;
   glass: boolean;
   mesh: boolean;
+  /** Lowest and highest point, in levels (blocks). */
+  bottom: number;
+  top: number;
   ellipse: { cx: number; cy: number; rx: number; ry: number } | null;
   /** Flat x, y lists in minor units from the footprint's corner. */
   rings: number[][];
 }
 
-/** A model at one size and rotation, ready to draw, and its plant's light spot. */
+/** A model at one size and rotation, ready to draw, and its shadow for each sun it was lit by. */
 interface Prepared {
   shapes: Shape[];
-  spot: { x: number; y: number; r: number; color: string } | null;
+  shadows: Map<Shade, number[][]>;
 }
 
 /** Prepared models, kept as long as the model lives: working out silhouettes is the slow part. */
@@ -329,8 +340,8 @@ function prepare(model: Model, footprint: { w: number; h: number }, rot: number)
   const known = byKey?.get(key);
   if (known) return known;
   const shapes = silhouettes(model, footprint.w / 2, footprint.h / 2, rot as Turn).map(
-    ({ leaf, outline: o }): Shape => {
-      const base = { color: leaf.part.color, glass: leaf.part.finish === "glass" };
+    ({ leaf, outline: o, bottom, top }): Shape => {
+      const base = { color: leaf.part.color, glass: leaf.part.finish === "glass", bottom, top };
       if (o.kind === "ellipse") {
         const ellipse = { cx: 2 * o.cx, cy: 2 * o.cz, rx: 2 * o.rx, ry: 2 * o.rz };
         return { ...base, mesh: false, ellipse, rings: [] };
@@ -350,16 +361,7 @@ function prepare(model: Model, footprint: { w: number; h: number }, rot: number)
       return { ...base, mesh: true, ellipse: null, rings };
     },
   );
-  const top = shapes.at(-1)?.ellipse;
-  const spot = top
-    ? {
-        x: top.cx - top.rx * 0.35,
-        y: top.cy - top.ry * 0.35,
-        r: Math.min(top.rx, top.ry) * 0.32,
-        color: lighten(shapes[shapes.length - 1].color, 0.35),
-      }
-    : null;
-  const out = { shapes, spot };
+  const out = { shapes, shadows: new Map<Shade, number[][]>() };
   if (!byKey) preparedModels.set(model, (byKey = new Map()));
   byKey.set(key, out);
   return out;
@@ -381,14 +383,49 @@ function trace(ctx: CanvasRenderingContext2D, sh: Shape, ox: number, oy: number)
   }
 }
 
-/** Below this many screen pixels across, a sticker is drawn flat: no shadow, outline or spot. */
-export const STICKER_MIN_PX = 8;
+/** The convex pieces of a shape's outline, as point lists (an ellipse as 16 points). */
+function pieces(sh: Shape): [number, number][][] {
+  const e = sh.ellipse;
+  if (e) {
+    return [
+      Array.from({ length: 16 }, (_, i): [number, number] => {
+        const a = (i / 16) * Math.PI * 2;
+        return [e.cx + e.rx * Math.cos(a), e.cy + e.ry * Math.sin(a)];
+      }),
+    ];
+  }
+  return sh.rings.map((ring) => {
+    const pts: [number, number][] = [];
+    for (let i = 0; i < ring.length; i += 2) pts.push([ring[i], ring[i + 1]]);
+    return pts;
+  });
+}
 
 /**
- * A model seen from above, as a sticker: its shadow, one ink outline round all its parts, then
- * the parts lowest top first, so taller parts cover shorter ones, with a faint line where they
- * meet. Glass parts are see-through and get no outline. A plant (`shine`) gets a light spot on
- * its top, as the design's trees do. Too small to see those, it is just its parts.
+ * A model's shadow under `shade`: each part's outline swept from where its bottom's shadow falls
+ * to where its top's does (the hull of the two), so taller parts cast longer shadows and thin
+ * tall ones a solid streak. Worked out once per sun.
+ */
+function shadowOf(prepared: Prepared, shade: Shade): number[][] {
+  const known = prepared.shadows.get(shade);
+  if (known) return known;
+  const rings: number[][] = [];
+  for (const sh of prepared.shapes) {
+    const [t0, t1] = [sh.bottom, sh.top].map((h) => h * LEVEL_MINOR * shade.perHeight);
+    for (const piece of pieces(sh)) {
+      const moved = (t: number) =>
+        piece.map(([x, y]): [number, number] => [x + shade.dx * t, y + shade.dy * t]);
+      rings.push(clockwise(convexHull([...moved(t0), ...moved(t1)]).flat()));
+    }
+  }
+  prepared.shadows.set(shade, rings);
+  return rings;
+}
+
+/**
+ * A model seen from above: given a sun, its shadow first (filled once, so overlaps don't darken),
+ * then the parts lowest top first, so taller parts cover shorter ones. Glass parts are
+ * see-through.
  */
 function drawModel(
   ctx: CanvasRenderingContext2D,
@@ -397,85 +434,32 @@ function drawModel(
   r: Box,
   rot: number,
   px: number,
-  shine: boolean,
+  shade: Shade | undefined,
 ) {
-  const { shapes, spot } = prepare(model, footprint, rot);
-  const full = Math.min(r.w, r.h) / px >= STICKER_MIN_PX;
-  if (full) {
-    ctx.lineJoin = "round";
-    ctx.fillStyle = SHADOW.color;
+  const prepared = prepare(model, footprint, rot);
+  const { shapes } = prepared;
+  if (shade) {
+    ctx.fillStyle = shade.color;
     ctx.beginPath();
-    for (const sh of shapes) trace(ctx, sh, r.x, r.y + SHADOW.dy);
+    for (const ring of shadowOf(prepared, shade)) {
+      ctx.moveTo(r.x + ring[0], r.y + ring[1]);
+      for (let i = 2; i < ring.length; i += 2) ctx.lineTo(r.x + ring[i], r.y + ring[i + 1]);
+      ctx.closePath();
+    }
     ctx.fill();
-    // The ink: every solid outline stroked twice as wide as the line; the parts then cover its
-    // inner half, so only a line round the whole thing is left.
-    ctx.strokeStyle = PLAN.ink;
-    ctx.lineWidth = 2 * outlineWidth(px);
-    ctx.beginPath();
-    for (const sh of shapes) if (!sh.glass) trace(ctx, sh, r.x, r.y);
-    ctx.stroke();
-    ctx.lineWidth = px;
   }
+  ctx.lineWidth = px;
   for (const sh of shapes) {
     ctx.globalAlpha = sh.glass ? 0.45 : 1;
     ctx.fillStyle = sh.color;
     ctx.beginPath();
     trace(ctx, sh, r.x, r.y);
-    if (full && sh.mesh) {
+    if (sh.mesh) {
       // Close the hairline seams between a mesh's triangles.
       ctx.strokeStyle = sh.color;
       ctx.stroke();
     }
     ctx.fill();
-    if (full) {
-      ctx.strokeStyle = "rgba(61,54,50,0.3)";
-      ctx.stroke();
-    }
   }
   ctx.globalAlpha = 1;
-  ctx.lineJoin = "miter";
-  if (full && shine && spot) {
-    ctx.fillStyle = spot.color;
-    ctx.beginPath();
-    ctx.arc(r.x + spot.x, r.y + spot.y, spot.r, 0, Math.PI * 2);
-    ctx.fill();
-  }
-}
-
-/** A building's door: an ink arch on the middle of its front edge, as the design draws it. */
-function drawDoor(ctx: CanvasRenderingContext2D, r: Box, rot: number) {
-  const door = frontDoor(r, rot);
-  ctx.save();
-  ctx.translate(door.x, door.y);
-  ctx.rotate(door.angle);
-  ctx.fillStyle = PLAN.ink;
-  ctx.beginPath();
-  ctx.roundRect(-door.w / 2, -door.h, door.w, door.h, [door.w / 2, door.w / 2, 0, 0]);
-  ctx.fill();
-  ctx.restore();
-}
-
-/**
- * Where a building's door goes (minor units): the middle of its front edge (the side rule B1
- * checks), the turn that points the door's sill outward (0 for the south edge, clockwise in
- * radians), and its size, a fifth of the building's short side, kept readable.
- */
-export function frontDoor(
-  r: Box,
-  rot: number,
-): { side: string; x: number; y: number; angle: number; w: number; h: number } {
-  const side = frontSide(rot);
-  const w = Math.min(1.2, Math.max(0.5, Math.min(r.w, r.h) * 0.2));
-  const h = w * 1.3;
-  const [cx, cy] = [r.x + r.w / 2, r.y + r.h / 2];
-  switch (side) {
-    case "north":
-      return { side, x: cx, y: r.y, angle: Math.PI, w, h };
-    case "east":
-      return { side, x: r.x + r.w, y: cy, angle: -Math.PI / 2, w, h };
-    case "west":
-      return { side, x: r.x, y: cy, angle: Math.PI / 2, w, h };
-    default:
-      return { side, x: cx, y: r.y + r.h, angle: 0, w, h };
-  }
 }
