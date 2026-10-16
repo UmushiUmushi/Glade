@@ -99,9 +99,11 @@ shared set.
 **Redrawing an icon.** Each of Petit Planet's drawings is a file in
 `packages/games/petit-planet/ui/theme/icons/` (`Grab.svg`, `LayerPlants.svg`…). Save over the file
 and its id stays the same, so every screen picks up the new drawing. Storybook's **Petit Planet →
-Icons** page shows every drawing with its id and file name, in light and dark. A drawing can follow
-the text colour (`currentColor`, like the design's line icons) or use its own colours (like
-`Grab.svg`); check it shows on both the light and the dark cards. The game's tests check every file
+Icons** page shows every drawing with its id and file name, in light and dark. A drawing that should change
+colour with the theme fills (or strokes) with `currentColor`: it then takes the text colour, dark on
+light cards, light on dark cards, and the right colour on a selected button. `Grab.svg` does this.
+A drawing can also keep colours of its own (the mode icons do); check it shows on both the light
+and the dark cards. The game's tests check every file
 is in the icon map and is a safe SVG (no scripts, no links to outside files). How cursors behave: [the planner screen](../planner/screen.md#tools).
 
 ## Seeing the controls
