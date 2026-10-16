@@ -41,8 +41,7 @@ export const OpenAndClose: Story = {
     await expect(dialog).toHaveTextContent("Lagoon Village");
     await userEvent.keyboard("{Escape}");
     await waitFor(() => expect(body.queryByRole("dialog")).toBeNull());
-    // Focus comes back once the dialog has finished closing, which is slower on CI machines.
-    await waitFor(() => expect(opener).toHaveFocus(), { timeout: 5000 });
+    await waitFor(() => expect(opener).toHaveFocus());
 
     await userEvent.click(opener);
     const again = await body.findByRole("dialog");

@@ -54,6 +54,9 @@ const storyTests = {
   test: {
     name: "stories",
     testTimeout: STORY_TIMEOUT_MS,
+    // One story file at a time: stories run in frames of one page, and only one frame can hold
+    // keyboard focus, so focus checks (a dialog giving focus back) need the page to themselves.
+    fileParallelism: false,
     browser: {
       enabled: true,
       headless: true,
