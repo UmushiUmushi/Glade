@@ -32,6 +32,8 @@ const preview: Preview = {
   initialGlobals: { theme: "glade", mode: "light" },
   parameters: {
     a11y: { test: "error" },
+    // What every game shares first, then each game, then the made-up test game.
+    options: { storySort: { order: ["Glade", "Petit Planet", "Test game"] } },
     layout: "fullscreen",
   },
 };

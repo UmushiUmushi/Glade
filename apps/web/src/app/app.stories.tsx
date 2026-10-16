@@ -13,7 +13,7 @@ function fakeApi(answer: Awaited<ReturnType<ApiClient["getJson"]>>): ApiClient {
 }
 
 const meta = {
-  title: "Web/App",
+  title: "Glade/Web app/App",
   component: App,
   args: {
     api: fakeApi(ok({ status: "ok", version: "0.1.0", checks: {} })),

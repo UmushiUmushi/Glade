@@ -32,7 +32,7 @@ function Breakable(props: { onError: () => void }) {
 }
 
 const meta = {
-  title: "Web/RegionBoundary",
+  title: "Glade/Web app/Region safety net",
   component: Breakable,
   args: { onError: fn() },
 } satisfies Meta<typeof Breakable>;

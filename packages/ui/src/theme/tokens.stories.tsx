@@ -42,7 +42,7 @@ function Tokens() {
   );
 }
 
-const meta = { title: "Theme/Tokens", component: Tokens } satisfies Meta<typeof Tokens>;
+const meta = { title: "Glade/Theme/Tokens", component: Tokens } satisfies Meta<typeof Tokens>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;

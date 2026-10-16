@@ -8,7 +8,7 @@ import { expect, fn, userEvent, waitFor, within } from "storybook/test";
 import { IconButton } from "./icon-button";
 
 const meta = {
-  title: "Controls/IconButton",
+  title: "Glade/Controls/IconButton",
   component: IconButton,
   args: { label: "Rotate left", icon: "rotate-left", shortcut: "[", onPress: fn() },
 } satisfies Meta<typeof IconButton>;

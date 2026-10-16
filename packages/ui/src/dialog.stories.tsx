@@ -27,7 +27,9 @@ function SaveDialog() {
   );
 }
 
-const meta = { title: "Controls/Dialog", component: SaveDialog } satisfies Meta<typeof SaveDialog>;
+const meta = { title: "Glade/Controls/Dialog", component: SaveDialog } satisfies Meta<
+  typeof SaveDialog
+>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;

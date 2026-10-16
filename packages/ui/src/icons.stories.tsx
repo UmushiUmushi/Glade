@@ -25,7 +25,9 @@ function Gallery() {
   );
 }
 
-const meta = { title: "Theme/Icons", component: Gallery } satisfies Meta<typeof Gallery>;
+const meta = { title: "Glade/Theme/Shared icons", component: Gallery } satisfies Meta<
+  typeof Gallery
+>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;

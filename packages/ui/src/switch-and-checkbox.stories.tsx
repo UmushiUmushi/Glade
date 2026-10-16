@@ -27,7 +27,7 @@ function Controls() {
 }
 
 const meta = {
-  title: "Controls/Switch and Checkbox",
+  title: "Glade/Controls/Switch and Checkbox",
   component: Controls,
 } satisfies Meta<typeof Controls>;
 

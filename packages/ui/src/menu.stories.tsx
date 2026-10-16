@@ -35,7 +35,7 @@ function GladeMenu(props: { onAction: (id: Key) => void }) {
 }
 
 const meta = {
-  title: "Controls/Menu",
+  title: "Glade/Controls/Menu",
   component: GladeMenu,
   args: { onAction: fn() },
 } satisfies Meta<typeof GladeMenu>;

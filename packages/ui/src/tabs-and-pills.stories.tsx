@@ -48,7 +48,7 @@ function Parts(props: { onUndo: () => void }) {
 }
 
 const meta = {
-  title: "Controls/Tabs, Pills and Toast",
+  title: "Glade/Controls/Tabs, Pills and Toast",
   component: Parts,
   args: { onUndo: fn() },
 } satisfies Meta<typeof Parts>;

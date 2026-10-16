@@ -37,7 +37,9 @@ function Both() {
   );
 }
 
-const meta = { title: "Controls/Slider and Stepper", component: Both } satisfies Meta<typeof Both>;
+const meta = { title: "Glade/Controls/Slider and Stepper", component: Both } satisfies Meta<
+  typeof Both
+>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;

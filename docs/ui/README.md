@@ -112,6 +112,16 @@ is in the icon map and is a safe SVG (no scripts, no links to outside files). Ho
 (Glade, or a game's) and light or dark. Each story's play steps and an accessibility check (axe) run
 as tests in Chromium with `pnpm test`.
 
+The sidebar has one group per owner, so a page's group says whether it is shared or one game's:
+
+| Group        | What is in it                                                 | Title starts with |
+| ------------ | ------------------------------------------------------------- | ----------------- |
+| Glade        | What every game shares: controls, tokens, shared icons, app   | `Glade/`          |
+| Petit Planet | Petit Planet only: its icons, its look on the controls, maps  | `Petit Planet/`   |
+| Test game    | The made-up test game, which checks shared code with any game | `Test game/`      |
+
+A new game gets its own group, named after the game.
+
 ## Where UI code lives
 
 | What                                                     | Package          |

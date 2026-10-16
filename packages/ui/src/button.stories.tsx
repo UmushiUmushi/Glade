@@ -6,7 +6,7 @@ import { expect, fn, userEvent, within } from "storybook/test";
 import { Button } from "./button";
 
 const meta = {
-  title: "Controls/Button",
+  title: "Glade/Controls/Button",
   component: Button,
   args: { onPress: fn(), children: "Show 19 items" },
 } satisfies Meta<typeof Button>;
