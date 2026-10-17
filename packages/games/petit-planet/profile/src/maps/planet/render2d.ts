@@ -38,11 +38,20 @@ import {
   type Planet,
   type Profile,
 } from "./profile";
-import { catalogEntry, pathEntry, type Catalog } from "../../catalog";
+import { catalogEntry, isA, pathEntry, type Catalog } from "../../catalog";
 import { profileOf } from "./data";
 import { appModel, drawItem2D, itemSize } from "../../items";
-import { LEVEL_MINOR } from "../../items/model";
-import { levelColor, PLAN, POND_DROP, shadeFor, type Shade } from "../../plan-style";
+import { drawFrontArrow } from "../../items/draw2d";
+import {
+  BASE_LEVEL,
+  faceColor,
+  faceDepth,
+  levelColor,
+  PLAN,
+  POND_DROP,
+  shadeFor,
+  type Shade,
+} from "../../plan-style";
 import { onSurfaceBox, onSurfaces } from "../../surfaces";
 import { armBacks, fenceArms, type Arm } from "./fences";
 import { floodRegion } from "./select";
@@ -167,10 +176,9 @@ export function drawScene(
     }
   }
 
-  // The shadows raised ground casts on lower ground (and banks on ponds), over paths too.
-  if (s.shade && (layers.heights || layers.water)) {
-    drawGroundShadows(ctx, map, profile, spec, blocks, s.shade, layers);
-  }
+  // Raised ground's face along its south side, as the design draws cliffs (over paths: a path
+  // lies on the top, not down the face).
+  if (layers.heights || layers.water) drawFaces(ctx, map, profile, spec, blocks, layers);
 
   // Landmarks: a pale plaza and its name on an ink tag, like the design's area labels. The dashed
   // line is the terrain it locks.
@@ -240,18 +248,6 @@ interface Blocks {
   t1y: number;
 }
 
-/** Adds a quad to the current path, going clockwise, so one nonzero fill of many is their union. */
-function addQuad(ctx: CanvasRenderingContext2D, q: [number, number][]) {
-  let area = 0;
-  for (let i = 0; i < q.length; i++) {
-    const [a, b] = [q[i], q[(i + 1) % q.length]];
-    area += a[0] * b[1] - b[0] * a[1];
-  }
-  const pts = area < 0 ? [...q].reverse() : q;
-  pts.forEach(([x, y], i) => (i ? ctx.lineTo(x, y) : ctx.moveTo(x, y)));
-  ctx.closePath();
-}
-
 /** Point in polygon (even-odd), for points in minor units. */
 function inside(pts: [number, number][], x: number, y: number): boolean {
   let hit = false;
@@ -263,77 +259,57 @@ function inside(pts: [number, number][], x: number, y: number): boolean {
   return hit;
 }
 
+/** A cell's level for its face: its height, and a pond a little below its banks. */
+type Level = (c: { h: number; water: boolean }) => number;
+
 /**
- * The shadows the ground casts, lit as the 3D view is: every edge where ground drops, facing away
- * from the sun, swept the way shadows fall, as long as the drop over the sun's elevation. A pond
- * lies a little below its banks, so banks shade it too. No lines: only the shadow shows an edge.
- * Half an edge beside a cut or rounded corner is left out; the corner's curve casts in its place.
+ * Raised ground's faces, as the design draws cliffs: wherever ground is higher than the ground
+ * south of it, a band along the south side of the higher ground in a darker shade of its color,
+ * deeper for a bigger drop. No lines anywhere else. A pond lies a little below its banks, so the
+ * bank north of it shows a face too. Half an edge beside a cut or rounded corner is left out; the
+ * corner's curve shows the face instead.
  */
-function drawGroundShadows(
+function drawFaces(
   ctx: CanvasRenderingContext2D,
   map: MapDoc,
   profile: Profile,
   spec: GridSpec,
   b: Blocks,
-  shade: Shade,
   layers: Layers,
 ) {
   const grid = terrainGrid(map);
-  const level = (c: { h: number; water: boolean }) =>
-    (layers.heights ? c.h : 0) - (layers.water && c.water ? POND_DROP : 0);
+  const level: Level = (c) =>
+    (layers.heights ? c.h : BASE_LEVEL) - (layers.water && c.water ? POND_DROP : 0);
   const shaped = (X: number, Y: number) =>
     !!cornerAt(map, "terrainCorners", X, Y) &&
     resolveTerrainCorner(map, profile, X, Y).status === "shaped";
-  const sweep = (drop: number) => drop * LEVEL_MINOR * shade.perHeight;
-  /** Casts from the segment a-b toward normal n (pointing to the lower side). */
-  let casts = 0;
-  const cast: Cast = (a, b2, n, drop) => {
-    if (n[0] * shade.dx + n[1] * shade.dy <= 0) return;
-    const [vx, vy] = [shade.dx * sweep(drop), shade.dy * sweep(drop)];
-    casts++;
-    addQuad(ctx, [a, b2, [b2[0] + vx, b2[1] + vy], [a[0] + vx, a[1] + vy]]);
-  };
-  ctx.beginPath();
   for (let ty = b.t0y; ty <= b.t1y; ty++) {
     for (let tx = b.t0x; tx <= b.t1x; tx++) {
-      const here = level(grid[ty][tx]);
+      const cell = grid[ty][tx];
+      const down = grid[ty + 1]?.[tx];
+      if (!down || cell.water) continue;
+      const drop = level(cell) - level(down);
+      if (drop <= 0) continue;
       const r = toMinorRect(spec, { grid: "terrain", x: tx, y: ty, w: 1, h: 1 });
-      const [x0, y0, x1, y1] = [r.x, r.y, r.x + r.w, r.y + r.h];
-      const [xm, ym] = [r.x + r.w / 2, r.y + r.h / 2];
-      // Each side: its neighbor, its corners' vertices, its two ends and its outward normal.
-      const sides = [
-        [0, -1, [tx - 1, ty - 1], [tx, ty - 1], [x0, y0], [x1, y0]],
-        [1, 0, [tx, ty - 1], [tx, ty], [x1, y0], [x1, y1]],
-        [0, 1, [tx - 1, ty], [tx, ty], [x0, y1], [x1, y1]],
-        [-1, 0, [tx - 1, ty - 1], [tx - 1, ty], [x0, y0], [x0, y1]],
-      ] as const;
-      for (const [dx, dy, va, vb, ea, eb] of sides) {
-        const next = grid[ty + dy]?.[tx + dx];
-        if (!next) continue;
-        const drop = here - level(next);
-        if (drop <= 0) continue;
-        const a: [number, number] = shaped(...va) ? [dx ? ea[0] : xm, dy ? ea[1] : ym] : [...ea];
-        const e: [number, number] = shaped(...vb) ? [dx ? eb[0] : xm, dy ? eb[1] : ym] : [...eb];
-        if (a[0] !== e[0] || a[1] !== e[1]) cast(a, e, [dx, dy], drop);
-      }
+      const x0 = shaped(tx - 1, ty) ? r.x + r.w / 2 : r.x;
+      const x1 = shaped(tx, ty) ? r.x + r.w / 2 : r.x + r.w;
+      if (x1 <= x0) continue;
+      const depth = faceDepth(drop);
+      ctx.fillStyle = faceColor(layers.heights ? cell.h : BASE_LEVEL);
+      ctx.fillRect(x0, r.y + r.h - depth, x1 - x0, depth);
     }
   }
-  castCorners(map, profile, b, level, cast);
-  if (!casts) return;
-  ctx.fillStyle = shade.color;
-  ctx.fill();
+  drawCornerFaces(ctx, map, profile, b, level, layers);
 }
 
-/** Casts from a segment toward a normal (pointing to the lower side), for a drop in levels. */
-type Cast = (a: [number, number], b: [number, number], n: [number, number], drop: number) => void;
-
-/** Cut and rounded corners: the curve between a corner's two heights casts in place of its edges. */
-function castCorners(
+/** Cut and rounded corners: the face along the part of the curve that looks south. */
+function drawCornerFaces(
+  ctx: CanvasRenderingContext2D,
   map: MapDoc,
   profile: Profile,
   b: Blocks,
-  level: (c: { h: number; water: boolean }) => number,
-  cast: Cast,
+  level: Level,
+  layers: Layers,
 ) {
   for (const v of cornerCells(map, "terrainCorners")) {
     if (v.x < b.t0x - 1 || v.x > b.t1x || v.y < b.t0y - 1 || v.y > b.t1y) continue;
@@ -342,25 +318,34 @@ function castCorners(
     const c = res.corner;
     const drop = level(c.own) - level(c.surround);
     if (drop === 0) continue;
+    const high = drop > 0 ? c.own : c.surround;
+    if (high.water) continue;
     const V = vertexPoint(c.layer, c.vx, c.vy);
-    const region = cornerRegion(V, c.dir, c.leg, c.shape).map(([x, y]): [number, number] => [
-      2 * x,
-      2 * y,
-    ]);
-    const curve = cornerCurve(V, c.dir, c.leg, c.shape).map(([x, y]): [number, number] => [
-      2 * x,
-      2 * y,
-    ]);
+    const minor = ([x, y]: [number, number]): [number, number] => [2 * x, 2 * y];
+    const region = cornerRegion(V, c.dir, c.leg, c.shape).map(minor);
+    const curve = cornerCurve(V, c.dir, c.leg, c.shape).map(minor);
+    const depth = faceDepth(Math.abs(drop));
+    ctx.fillStyle = faceColor(layers.heights ? high.h : BASE_LEVEL);
+    ctx.beginPath();
     for (let i = 0; i + 1 < curve.length; i++) {
       const [p, q] = [curve[i], curve[i + 1]];
       const len = Math.hypot(q[0] - p[0], q[1] - p[1]) || 1;
+      // n: the segment's normal toward the lower side. The region takes the surrounding height,
+      // so it is the low side when the corner's own is higher.
       let n: [number, number] = [-(q[1] - p[1]) / len, (q[0] - p[0]) / len];
       const mid = [(p[0] + q[0]) / 2, (p[1] + q[1]) / 2];
       const intoRegion = inside(region, mid[0] + n[0] * 0.05, mid[1] + n[1] * 0.05);
-      // The region takes the surrounding height: it is the low side when the corner's own is higher.
       if (intoRegion !== drop > 0) n = [-n[0], -n[1]];
-      cast(p, q, n, Math.abs(drop));
+      if (n[1] <= 0.01) continue;
+      // The band lies on the high side, scaled by how much the segment looks south.
+      const d = depth * n[1];
+      ctx.moveTo(p[0], p[1]);
+      ctx.lineTo(q[0], q[1]);
+      ctx.lineTo(q[0] - n[0] * d, q[1] - n[1] * d);
+      ctx.lineTo(p[0] - n[0] * d, p[1] - n[1] * d);
+      ctx.closePath();
     }
+    ctx.fill();
   }
 }
 
@@ -647,6 +632,23 @@ export const plan: PlanView = {
       vis,
       scale,
     );
+    ctx.restore();
+  },
+
+  /** On hover, a building shows which way it faces: an arrow out of its front (rule B1's side). */
+  drawHover(ctx, doc, g, p, pxPerUnit) {
+    const game = g as Planet;
+    const m = toMinor(p);
+    const building = itemsOf(doc as MapDoc)
+      .filter((i) => isA(game.catalog, i.type, "building"))
+      .findLast((i) => {
+        const r = itemRect(game.catalog, i);
+        return m.x >= r.x && m.y >= r.y && m.x < r.x + r.w && m.y < r.y + r.h;
+      });
+    if (!building) return;
+    ctx.save();
+    ctx.scale(0.5, 0.5);
+    drawFrontArrow(ctx, itemRect(game.catalog, building), building.rot, 2 / pxPerUnit);
     ctx.restore();
   },
 };

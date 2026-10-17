@@ -4,7 +4,8 @@
 import type { SolidPart } from "@glade/render";
 import { describe, expect, it } from "vitest";
 import { catalogEntry } from "../src/catalog";
-import { drawItem2D } from "../src/items";
+import { drawItem2D, frontArrow } from "../src/items";
+import { frontSide } from "../src/items/model";
 import { shadeFor } from "../src/plan-style";
 import { testCatalog as catalog } from "../samples";
 import { recordCanvas } from "./canvas";
@@ -83,5 +84,33 @@ describe("plants", () => {
     const log = draw("bush", NEAR, { x: 0, y: 0, w: 2, h: 2 }, { lit: true });
     expect(log).toContain("fillStyle=#7f9f3a");
     expect(log).toContain(`fillStyle=${shade.color}`);
+  });
+});
+
+describe("a building's front arrow", () => {
+  const house = { x: 0, y: 0, w: 10, h: 8 };
+
+  it("points out of the front edge (the side rule B1 checks), from just outside it", () => {
+    for (const rot of [0, 90, 180, 270]) {
+      const pts = frontArrow(house, rot, 2);
+      const [tx, ty] = pts[0];
+      const outside = {
+        south: pts.every(([, y]) => y > house.h) && ty === house.h + 0.4 + 2,
+        north: pts.every(([, y]) => y < 0) && ty === -0.4 - 2,
+        east: pts.every(([x]) => x > house.w) && tx === house.w + 0.4 + 2,
+        west: pts.every(([x]) => x < 0) && tx === -0.4 - 2,
+      }[frontSide(rot)];
+      expect(outside, `rot ${rot}`).toBe(true);
+    }
+  });
+
+  it("sits on the middle of the edge, the same on both sides", () => {
+    const pts = frontArrow(house, 0, 2);
+    expect(pts[0][0]).toBe(5);
+    for (let i = 1; i < pts.length; i++) {
+      const mirror = pts[pts.length - i];
+      expect(pts[i][0] - 5).toBeCloseTo(5 - mirror[0]);
+      expect(pts[i][1]).toBeCloseTo(mirror[1]);
+    }
   });
 });

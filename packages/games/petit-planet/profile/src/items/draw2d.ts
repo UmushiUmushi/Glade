@@ -6,7 +6,7 @@
 import { convexHull, silhouettes, type Model, type Turn } from "@glade/render";
 import { baseOf, catalogEntry, type BaseKind, type Catalog } from "../catalog";
 import { lighten, PLAN, type Shade } from "../plan-style";
-import { LEVEL_MINOR } from "./model";
+import { frontSide, LEVEL_MINOR } from "./model";
 
 /** A rect in minor units. */
 interface Box {
@@ -462,4 +462,49 @@ function drawModel(
     ctx.fill();
   }
   ctx.globalAlpha = 1;
+}
+
+/**
+ * The arrow that shows a building's front (minor units): an arrow with a shaft, just outside the
+ * middle of its front edge (the side rule B1 checks), pointing out, `size` long and kept off the
+ * edge by a small gap. Its first point is the tip.
+ */
+export function frontArrow(r: Box, rot: number, size: number): [number, number][] {
+  const side = frontSide(rot);
+  const [ox, oy] = { south: [0, 1], north: [0, -1], east: [1, 0], west: [-1, 0] }[side];
+  const [cx, cy] = [r.x + r.w / 2, r.y + r.h / 2];
+  const gap = size * 0.2;
+  // The middle of the arrow's base, then points along (a) and across (c) the arrow.
+  const [bx, by] = [cx + (ox * r.w) / 2 + ox * gap, cy + (oy * r.h) / 2 + oy * gap];
+  const at = (a: number, c: number): [number, number] => [
+    bx + ox * a * size - oy * c * size,
+    by + oy * a * size + ox * c * size,
+  ];
+  return [
+    at(1, 0),
+    at(0.5, 0.45),
+    at(0.5, 0.18),
+    at(0, 0.18),
+    at(0, -0.18),
+    at(0.5, -0.18),
+    at(0.5, -0.45),
+  ];
+}
+
+/**
+ * Draws a building's front arrow: ink with a light edge, so it reads on any roof or ground and
+ * isn't mistaken for the yellow problem marker.
+ */
+export function drawFrontArrow(ctx: CanvasRenderingContext2D, r: Box, rot: number, px: number) {
+  const pts = frontArrow(r, rot, Math.max(1.2, 18 * px));
+  ctx.beginPath();
+  pts.forEach(([x, y], i) => (i ? ctx.lineTo(x, y) : ctx.moveTo(x, y)));
+  ctx.closePath();
+  ctx.lineJoin = "round";
+  ctx.strokeStyle = PLAN.paper;
+  ctx.lineWidth = 3 * px;
+  ctx.stroke();
+  ctx.fillStyle = PLAN.ink;
+  ctx.fill();
+  ctx.lineJoin = "miter";
 }

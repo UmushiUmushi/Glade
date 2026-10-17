@@ -71,6 +71,18 @@ export interface PlanView {
     visible: Box,
     pxPerUnit: number,
   ): void;
+  /**
+   * Marks for what is under the pointer at world point `p`, drawn over the plan on its own layer
+   * while the pointer is there (for example which way the thing there faces). Same transform as
+   * `draw`. Optional: without it, hovering shows nothing extra.
+   */
+  drawHover?(
+    ctx: CanvasRenderingContext2D,
+    doc: Doc,
+    game: Bound,
+    p: { x: number; y: number },
+    pxPerUnit: number,
+  ): void;
 }
 
 /** The views a map can be seen in; a viewer offers each one the map has. */

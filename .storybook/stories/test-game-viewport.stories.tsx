@@ -42,9 +42,11 @@ export const SheetHasNo3D: Story = {
   name: "Sheet has no 3D",
   play: async ({ canvasElement }) => {
     await framesReported(canvasElement);
-    const [plan, scene] = canvasElement.querySelectorAll("canvas");
-    await expect(plan.style.visibility).toBe("visible");
-    await expect(scene.style.visibility).toBe("hidden");
+    const layer = (name: string) =>
+      canvasElement.querySelector<HTMLCanvasElement>(`canvas[data-layer="${name}"]`);
+    const [plan, scene] = [layer("plan"), layer("scene")];
+    await expect(plan?.style.visibility).toBe("visible");
+    await expect(scene?.style.visibility).toBe("hidden");
     await planDrawn(canvasElement);
     await expect(within(canvasElement).getByRole("img")).toBeVisible();
   },

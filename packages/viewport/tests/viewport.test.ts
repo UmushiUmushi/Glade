@@ -5,16 +5,26 @@
 import type { GladeError } from "@glade/errors";
 import { beforeEach, describe, expect, it } from "vitest";
 import { createViewport } from "../src/viewport";
-import { doc, FakeScene, fakeCanvases, fakeFrames, fakeMap, load3d, planCalls } from "./fakes";
+import {
+  doc,
+  FakeScene,
+  fakeCanvases,
+  fakeFrames,
+  fakeMap,
+  hoverCalls,
+  load3d,
+  planCalls,
+} from "./fakes";
 
 beforeEach(() => {
   planCalls.length = 0;
+  hoverCalls.length = 0;
   FakeScene.made = [];
 });
 
-function setup(views = { plan: true, scene: true }) {
+function setup(views = { plan: true, scene: true }, withHover = true) {
   const frames = fakeFrames();
-  const parts = fakeCanvases();
+  const parts = fakeCanvases(withHover);
   const fps: number[] = [];
   const errors: GladeError[] = [];
   const shownViews: string[] = [];
@@ -75,6 +85,67 @@ describe("the plan", () => {
     await vp.setView("3d");
     expect(parts.plan.canvas.style.visibility).toBe("hidden");
     expect(parts.scene.canvas.style.visibility).toBe("visible");
+  });
+});
+
+describe("hover marks", () => {
+  it("are drawn on their own layer for the point under the pointer, without redrawing the plan", () => {
+    const { vp, frames, parts } = setup();
+    frames.step(0);
+    const clears = parts.hover.ctx.clears;
+    vp.setHover({ x: 5, y: 6 });
+    frames.step(16);
+    expect(hoverCalls).toEqual([{ x: 5, y: 6 }]);
+    expect(planCalls).toHaveLength(1);
+    expect(parts.hover.ctx.clears).toBe(clears + 1);
+  });
+
+  it("are drawn once for a point, and again only when it moves", () => {
+    const { vp, frames } = setup();
+    frames.step(0);
+    vp.setHover({ x: 5, y: 6 });
+    frames.step(16);
+    vp.setHover({ x: 5, y: 6 });
+    frames.step(32);
+    vp.setHover({ x: 7, y: 6 });
+    frames.step(48);
+    expect(hoverCalls).toEqual([
+      { x: 5, y: 6 },
+      { x: 7, y: 6 },
+    ]);
+  });
+
+  it("are cleared when the pointer leaves", () => {
+    const { vp, frames, parts } = setup();
+    vp.setHover({ x: 5, y: 6 });
+    frames.step(0);
+    const clears = parts.hover.ctx.clears;
+    vp.setHover(null);
+    frames.step(16);
+    expect(hoverCalls).toHaveLength(1);
+    expect(parts.hover.ctx.clears).toBe(clears + 1);
+  });
+
+  it("follow the plan's camera, sit on a layer the plan's size, and hide in 3D", async () => {
+    const { vp, frames, parts } = setup();
+    vp.setHover({ x: 5, y: 6 });
+    frames.step(0);
+    const cam = vp.planCamera();
+    if (cam) vp.setPlanCamera({ ...cam, cx: 1 });
+    frames.step(16);
+    expect(hoverCalls).toHaveLength(2);
+    expect(parts.hover.canvas.width).toBe(parts.plan.canvas.width);
+    expect(parts.hover.canvas.height).toBe(parts.plan.canvas.height);
+    await vp.setView("3d");
+    expect(parts.hover.canvas.style.visibility).toBe("hidden");
+  });
+
+  it("are left out when there is no hover layer", () => {
+    const { vp, frames } = setup({ plan: true, scene: true }, false);
+    vp.setHover({ x: 5, y: 6 });
+    frames.step(0);
+    expect(hoverCalls).toEqual([]);
+    expect(planCalls).toHaveLength(1);
   });
 });
 

@@ -19,6 +19,8 @@ const style = {
 /** Calls a plan view gets, to check what was drawn and how. */
 export const planCalls: { visible: unknown; pxPerUnit: number; layers: Record<string, boolean> }[] =
   [];
+/** Calls the plan view's hover marks get: the point under the pointer. */
+export const hoverCalls: { x: number; y: number }[] = [];
 
 export function fakeMap(views: { plan: boolean; scene: boolean; curvature?: boolean }): ShownMap {
   return {
@@ -39,6 +41,9 @@ export function fakeMap(views: { plan: boolean; scene: boolean; curvature?: bool
               pxPerUnit: number,
             ) => {
               planCalls.push({ visible, pxPerUnit, layers });
+            },
+            drawHover: (_ctx: unknown, _doc: unknown, _g: unknown, p: { x: number; y: number }) => {
+              hoverCalls.push(p);
             },
           }
         : undefined,
@@ -81,13 +86,19 @@ export function fakeCanvas() {
   return { canvas, ctx };
 }
 
-export function fakeCanvases() {
+export function fakeCanvases(withHover = true) {
   const plan = fakeCanvas();
   const scene = fakeCanvas();
+  const hover = fakeCanvas();
   return {
     plan,
     scene,
-    canvases: { plan: plan.canvas, scene: scene.canvas } as unknown as ViewportCanvases,
+    hover,
+    canvases: {
+      plan: plan.canvas,
+      scene: scene.canvas,
+      hover: withHover ? hover.canvas : undefined,
+    } as unknown as ViewportCanvases,
   };
 }
 

@@ -340,22 +340,24 @@ two seasons (spring, winter), and the game's walk camera. The planet is seen in 
 its UI and plan view are in `src/maps/planet/render2d.ts`, its 3D view in
 `src/maps/planet/render3d/`.
 
-**From above** the planet is drawn in the planner design's flat colors, lit like the 3D view:
-shadows fall away from the look's default sun (midday), as long as the height over the sun's
-elevation. The colors and the sun maths are in `src/plan-style.ts`:
+**From above** the planet is drawn in the planner design's flat colors. Raised ground shows its
+face along its south side, as the design draws cliffs. Things cast a soft shadow away from the 3D
+look's default sun (midday), as long as their height over the sun's elevation. The colors and
+sizes are in `src/plan-style.ts`:
 
-| What               | Looks like                                                                   |
-| ------------------ | ---------------------------------------------------------------------------- |
-| Sea                | Deep blue round the island, as far as the screen shows                       |
-| Ground             | Grass at the base level; meadow one level up; lighter toward the hilltops    |
-| Raised ground      | No lines: its color, and the shadow it casts on lower ground                 |
-| Pond               | One sky-blue fill, a little below its banks, so the banks shade it           |
-| Path               | Its catalog color, full blocks                                               |
-| Thing with a model | Its model's own top view in its parts' colors, and the shadow its parts cast |
-| Landmark           | A pale plaza and its `name` on an ink tag                                    |
+| What               | Looks like                                                                        |
+| ------------------ | --------------------------------------------------------------------------------- |
+| Sea                | Deep blue round the island, as far as the screen shows                            |
+| Ground             | Grass at the base level; meadow one level up; lighter toward the hilltops         |
+| Raised ground      | No lines: its color, and a darker band along its south side, deeper for more drop |
+| Pond               | One sky-blue fill, a little below its banks, so the bank north of it shows a face |
+| Path               | Its catalog color, full blocks                                                    |
+| Thing with a model | Its model's own top view in its parts' colors, and the shadow its parts cast      |
+| Landmark           | A pale plaza and its `name` on an ink tag                                         |
+| Hovered building   | An ink arrow out of the middle of its front edge (the side rule B1 checks)        |
 
 Below `SHADOW_MIN_PX` screen pixels across, a thing casts no shadow, which keeps the whole island
-quick to draw. A building's front isn't drawn from above; the 3D view shows its door.
+quick to draw. The hover arrow is `plan.drawHover`, drawn by the viewport on its own layer.
 
 Model finishes take their look from the style too: each time of day's `colors.glow` is the light
 glowing parts give (black for none, white for full: faint by day, full at night), and

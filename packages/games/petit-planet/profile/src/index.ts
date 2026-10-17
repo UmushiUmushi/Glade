@@ -52,6 +52,7 @@ export {
   appModel,
   BLOCK_TILES,
   drawItem2D,
+  frontArrow,
   frontSide,
   itemModel,
   itemSize,

@@ -2,7 +2,15 @@
 
 import { describe, expect, it } from "vitest";
 import { BLOCK_TILES, LEVEL_MINOR } from "../src/items/model";
-import { BASE_LEVEL, levelColor, lighten, PLAN, shadeFor } from "../src/plan-style";
+import {
+  BASE_LEVEL,
+  faceColor,
+  faceDepth,
+  levelColor,
+  lighten,
+  PLAN,
+  shadeFor,
+} from "../src/plan-style";
 
 const brightness = (hex: string) =>
   [1, 3, 5].reduce((sum, i) => sum + parseInt(hex.slice(i, i + 2), 16), 0);
@@ -22,6 +30,22 @@ describe("ground colors", () => {
 
   it("are a deeper green below the base level", () => {
     expect(brightness(levelColor(0))).toBeLessThan(brightness(PLAN.grass));
+  });
+});
+
+describe("faces", () => {
+  it("are each level's color darker", () => {
+    for (let h = 0; h < 9; h++) {
+      expect(brightness(faceColor(h))).toBeLessThan(brightness(levelColor(h)));
+    }
+  });
+
+  it("are nothing without a drop, a quarter block for one level, deeper for more, up to a cap", () => {
+    expect(faceDepth(0)).toBe(0);
+    expect(faceDepth(1)).toBeCloseTo(0.5);
+    expect(faceDepth(2)).toBeGreaterThan(faceDepth(1));
+    expect(faceDepth(0.4)).toBeLessThan(faceDepth(1));
+    expect(faceDepth(30)).toBe(1.2);
   });
 });
 

@@ -1,5 +1,6 @@
-// The viewport: shows one map on two canvases, the 2D plan and the 3D scene, one visible at a time.
-// One frame loop draws the 3D scene every frame and the plan only when something changed, and
+// The viewport: shows one map on two canvases, the 2D plan and the 3D scene, one visible at a time,
+// with a third over the plan for hover marks. One frame loop draws the 3D scene every frame and
+// the plan only when something changed (the hover layer alone when only the pointer moved), and
 // counts frames for the FPS readout. The 3D code loads the first time 3D is shown, so the first
 // page load stays small. If 3D can't start, or the GPU drops it, the viewport says so
 // (GLD-STAGE-001) and shows the plan.
@@ -16,6 +17,8 @@ import { viewsOf, type CameraKind, type ViewKind } from "./views";
 export interface ViewportCanvases {
   plan: HTMLCanvasElement;
   scene: HTMLCanvasElement;
+  /** Over the plan, for what the map marks under the pointer (PlanView.drawHover). */
+  hover?: HTMLCanvasElement;
 }
 
 export interface ViewportDeps {
@@ -47,6 +50,8 @@ export interface Viewport {
   /** The plan's camera, for input and overlays. */
   planCamera(): PlanCamera | null;
   setPlanCamera(cam: PlanCamera): void;
+  /** The world point under the pointer in the plan, or null when it leaves. */
+  setHover(p: { x: number; y: number } | null): void;
   state(): { view: ViewKind; camera: CameraKind; ready3d: boolean };
   /** Frames drawn so far, and how long the 3D scene's last build took. */
   stats(): { frames: number; build: { ms: number; chunks: number } | null };
@@ -64,15 +69,16 @@ interface State {
   dpr: number;
   plan: PlanCamera | null;
   planDirty: boolean;
+  hover: { x: number; y: number } | null;
+  hoverDirty: boolean;
   scene: MapScene | null;
   loading: Promise<MapScene | null> | null;
 }
 
-/** The plan, drawn with the context moved so one unit is one world unit. */
-function drawPlan(canvas: HTMLCanvasElement, s: State): void {
+/** Clears a plan canvas and moves its context so one unit is one world unit; null if it can't. */
+function worldContext(canvas: HTMLCanvasElement, s: State): CanvasRenderingContext2D | null {
   const ctx = canvas.getContext("2d");
-  const plan = s.map?.views.plan;
-  if (!ctx || !plan || !s.map || !s.doc || !s.plan) return;
+  if (!ctx || !s.plan) return null;
   const { w, h } = s.size;
   ctx.setTransform(1, 0, 0, 1, 0, 0);
   ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -85,7 +91,23 @@ function drawPlan(canvas: HTMLCanvasElement, s: State): void {
     (w / 2 - s.plan.cx * s.plan.pxPerUnit) * s.dpr,
     (h / 2 - s.plan.cy * s.plan.pxPerUnit) * s.dpr,
   );
-  plan.draw(ctx, s.doc, s.map, s.layers, planVisible(s.plan, s.size), s.plan.pxPerUnit);
+  return ctx;
+}
+
+/** The plan. */
+function drawPlan(canvas: HTMLCanvasElement, s: State): void {
+  const plan = s.map?.views.plan;
+  if (!plan || !s.map || !s.doc || !s.plan) return;
+  const ctx = worldContext(canvas, s);
+  if (ctx) plan.draw(ctx, s.doc, s.map, s.layers, planVisible(s.plan, s.size), s.plan.pxPerUnit);
+}
+
+/** The hover layer: cleared, then the map's marks for the point under the pointer, if any. */
+function drawHover(canvas: HTMLCanvasElement, s: State): void {
+  const ctx = worldContext(canvas, s);
+  const plan = s.map?.views.plan;
+  if (!ctx || !plan?.drawHover || !s.map || !s.doc || !s.plan || !s.hover) return;
+  plan.drawHover(ctx, s.doc, s.map, s.hover, s.plan.pxPerUnit);
 }
 
 /** Point the 3D camera at the whole map with the chosen preset. */
@@ -111,6 +133,8 @@ export function createViewport(canvases: ViewportCanvases, deps: ViewportDeps): 
     dpr: 1,
     plan: null,
     planDirty: true,
+    hover: null,
+    hoverDirty: false,
     scene: null,
     loading: null,
   };
@@ -122,6 +146,7 @@ export function createViewport(canvases: ViewportCanvases, deps: ViewportDeps): 
   /** Show the canvas of the current view only. */
   function showCanvas(): void {
     canvases.plan.style.visibility = s.view === "2d" ? "visible" : "hidden";
+    if (canvases.hover) canvases.hover.style.visibility = s.view === "2d" ? "visible" : "hidden";
     canvases.scene.style.visibility = s.view === "3d" ? "visible" : "hidden";
   }
 
@@ -175,9 +200,12 @@ export function createViewport(canvases: ViewportCanvases, deps: ViewportDeps): 
     if (s.view === "3d" && s.scene) {
       s.scene.render(dt);
       frames++;
-    } else if (s.view === "2d" && s.planDirty) {
-      drawPlan(canvases.plan, s);
+    } else if (s.view === "2d" && (s.planDirty || s.hoverDirty)) {
+      if (s.planDirty) drawPlan(canvases.plan, s);
+      // The hover marks follow the plan's camera, so they redraw with it.
+      if (canvases.hover) drawHover(canvases.hover, s);
       s.planDirty = false;
+      s.hoverDirty = false;
       frames++;
     }
     const reading = fps.frame(now);
@@ -234,6 +262,10 @@ export function createViewport(canvases: ViewportCanvases, deps: ViewportDeps): 
       s.dpr = dpr;
       canvases.plan.width = Math.max(1, Math.round(size.w * dpr));
       canvases.plan.height = Math.max(1, Math.round(size.h * dpr));
+      if (canvases.hover) {
+        canvases.hover.width = canvases.plan.width;
+        canvases.hover.height = canvases.plan.height;
+      }
       if (first && s.map) s.plan = fitPlan(s.map.space.bounds, size);
       s.scene?.stage.resize(size.w, size.h);
       s.planDirty = true;
@@ -242,6 +274,12 @@ export function createViewport(canvases: ViewportCanvases, deps: ViewportDeps): 
     setPlanCamera(cam) {
       s.plan = cam;
       s.planDirty = true;
+    },
+    setHover(p) {
+      const same = p && s.hover ? p.x === s.hover.x && p.y === s.hover.y : p === s.hover;
+      if (same) return;
+      s.hover = p ? { x: p.x, y: p.y } : null;
+      s.hoverDirty = true;
     },
     state: () => ({ view: s.view, camera: s.camera, ready3d: !!s.scene }),
     stats: () => ({ frames, build: s.scene ? { ...s.scene.lastBuild } : null }),

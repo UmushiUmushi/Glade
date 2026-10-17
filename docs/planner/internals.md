@@ -103,18 +103,19 @@ flowchart LR
     UI --> VP
 ```
 
-| Need                     | How                                                                                                                                                                          |
-| ------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Show a map in 3D         | `new MapScene(canvas)`, `setMap(bound)`, `setDoc(doc)`, `setLook(look, { flat, curvature })`, `setLayers(...)`                                                               |
-| Time of day and snow     | `resolveLookAt(style, hour, season)` → `setLook`                                                                                                                             |
-| Draw each frame          | The viewport's loop calls `scene.render(dt)` and counts frames for the FPS readout.                                                                                          |
-| Cameras                  | `scene.stage`: `frame`, `switchPreset("top" \| "iso" \| "walk")`, `panBy`, `zoomAt`. The viewport turns off the stage's own orbit controls when it drives the camera itself. |
-| Screen point → map point | `scene.pick(x, y)` (on the ground) or `scene.pickPlane(x, y, height)`                                                                                                        |
-| Overlays in 3D           | The viewport adds three.js objects to `scene.overlays`, draped on the ground with `scene.groundAt`. They stay out of captures.                                               |
-| 2D                       | The viewport's canvas, moved to world units, then `map.views.plan.draw(ctx, doc, map, layers, visible, pxPerUnit)`, then the overlays on top                                 |
-| Grids and hover text     | `map.ui.grids()`, `map.ui.hover(doc, map, point)`                                                                                                                            |
-| After each commit        | `scene.setDoc(newMap)`. `MapScene` rebuilds only the touched chunks (all island items are one chunk today; roadmap task T-2).                                                |
-| Screenshots              | `scene.capture({ rect, camera, size, time, season }, looks)` for library cards and bug reports (`looks` tells it how to draw another time of day)                            |
+| Need                     | How                                                                                                                                                                           |
+| ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Show a map in 3D         | `new MapScene(canvas)`, `setMap(bound)`, `setDoc(doc)`, `setLook(look, { flat, curvature })`, `setLayers(...)`                                                                |
+| Time of day and snow     | `resolveLookAt(style, hour, season)` → `setLook`                                                                                                                              |
+| Draw each frame          | The viewport's loop calls `scene.render(dt)` and counts frames for the FPS readout.                                                                                           |
+| Cameras                  | `scene.stage`: `frame`, `switchPreset("top" \| "iso" \| "walk")`, `panBy`, `zoomAt`. The viewport turns off the stage's own orbit controls when it drives the camera itself.  |
+| Screen point → map point | `scene.pick(x, y)` (on the ground) or `scene.pickPlane(x, y, height)`                                                                                                         |
+| Overlays in 3D           | The viewport adds three.js objects to `scene.overlays`, draped on the ground with `scene.groundAt`. They stay out of captures.                                                |
+| 2D                       | The viewport's canvas, moved to world units, then `map.views.plan.draw(ctx, doc, map, layers, visible, pxPerUnit)`, then the overlays on top                                  |
+| Grids and hover text     | `map.ui.grids()`, `map.ui.hover(doc, map, point)`                                                                                                                             |
+| Hover marks in 2D        | `map.views.plan.drawHover(ctx, doc, map, point, pxPerUnit)`, on a layer over the plan, redrawn only when the pointer moves (Petit Planet: an arrow out of a building's front) |
+| After each commit        | `scene.setDoc(newMap)`. `MapScene` rebuilds only the touched chunks (all island items are one chunk today; roadmap task T-2).                                                 |
+| Screenshots              | `scene.capture({ rect, camera, size, time, season }, looks)` for library cards and bug reports (`looks` tells it how to draw another time of day)                             |
 
 - 3D code loads only when first needed (it is split into its own bundle).
 - The frame loop draws the 3D scene every frame, and the 2D plan only when something changed

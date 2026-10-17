@@ -2,10 +2,19 @@
 // The controls pick the view, camera, time of day and season.
 
 import { bound, games } from "@glade/testkit/src/games";
-import type { CameraKind, ViewKind, Viewport } from "@glade/viewport";
+import {
+  frontArrow,
+  type Catalog,
+  isA,
+  itemRect,
+  itemsOf,
+  type Item,
+  type MapDoc,
+} from "@glade/petit-planet-profile";
+import { planToScreen, type CameraKind, type ViewKind, type Viewport } from "@glade/viewport";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { useMemo } from "react";
-import { expect, waitFor, within } from "storybook/test";
+import { expect, fireEvent, waitFor, within } from "storybook/test";
 import { framesReported, planDrawn, ViewportDemo } from "./viewport-demo";
 
 interface Props {
@@ -88,6 +97,55 @@ export const Island2DCloseUp = closeUp("Island 2D close-up", { cx: 88, cy: 104, 
 
 /** The terraced hill west of the town center: raised ground and the shadows it casts. */
 export const Island2DCliffs = closeUp("Island 2D cliffs", { cx: 50, cy: 66, pxPerUnit: 20 });
+
+/**
+ * Hovering a house in 2D shows which way it faces: an arrow out of its front. The play step points
+ * at the house nearest the close-up's middle and checks the hover layer drew the arrow there; the
+ * arrow stays, to look at.
+ */
+export const Island2DFrontOnHover: Story = {
+  name: "Island 2D front on hover",
+  args: { view: "2d", onViewport: (vp) => (shown.viewport = vp) },
+  play: async ({ canvasElement }) => {
+    await framesReported(canvasElement);
+    const vp = shown.viewport;
+    if (!vp) throw new Error("the viewport is ready");
+    const cam = { cx: 88, cy: 104, pxPerUnit: 24 };
+    vp.setPlanCamera(cam);
+    const { map, doc } = load("island");
+    const catalog = map.catalog as unknown as Catalog;
+    const centre = (i: Item) => {
+      const r = itemRect(catalog, i);
+      return { x: (r.x + r.w / 2) / 2, y: (r.y + r.h / 2) / 2 };
+    };
+    const house = itemsOf(doc as MapDoc)
+      .filter((i) => isA(catalog, i.type, "building"))
+      .map((i) => ({ i, c: centre(i) }))
+      .sort(
+        (a, b) =>
+          Math.hypot(a.c.x - cam.cx, a.c.y - cam.cy) - Math.hypot(b.c.x - cam.cx, b.c.y - cam.cy),
+      )[0];
+    const box = within(canvasElement).getByRole("img");
+    const rect = box.getBoundingClientRect();
+    const at = planToScreen(cam, { w: rect.width, h: rect.height }, house.c);
+    await fireEvent.pointerMove(box, { clientX: rect.left + at.x, clientY: rect.top + at.y });
+    // The arrow's tip, just outside the front edge, in the hover layer's pixels.
+    const [tip] = frontArrow(itemRect(catalog, house.i), house.i.rot, 1);
+    const tipAt = planToScreen(
+      cam,
+      { w: rect.width, h: rect.height },
+      { x: tip[0] / 2, y: tip[1] / 2 },
+    );
+    const hover = canvasElement.querySelector<HTMLCanvasElement>('canvas[data-layer="hover"]');
+    if (!hover) throw new Error("the viewport has a hover layer");
+    const k = hover.width / rect.width;
+    await waitFor(() => {
+      const ctx = hover.getContext("2d");
+      const px = ctx?.getImageData(Math.round(tipAt.x * k), Math.round(tipAt.y * k), 1, 1).data;
+      return expect(px?.[3]).toBeGreaterThan(0);
+    });
+  },
+};
 
 export const IslandEveningWinter: Story = {
   args: { hour: 19, season: "winter", camera: "top" },

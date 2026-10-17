@@ -1,6 +1,7 @@
 // How Petit Planet looks from above: the flat colors of the planner's design (soft greens, caramel
-// sand, sky-blue ponds on a deep sea), lit like the 3D view. Raised ground, items and plants cast
-// a soft shadow away from the 3D look's sun, longer for taller things. The planet's plan, the
+// sand, sky-blue ponds on a deep sea). Raised ground shows a darker face along its south side, as
+// the design draws cliffs. Items and plants cast a soft shadow away from the 3D look's sun, longer
+// for taller things. The planet's plan, the
 // home's plan and the item drawing share it.
 
 /** The design's named colors. */
@@ -31,6 +32,33 @@ export function levelColor(h: number): string {
   if (h < BASE_LEVEL) return DOWN;
   if (h === BASE_LEVEL) return PLAN.grass;
   return UP[Math.min(UP.length - 1, h - BASE_LEVEL - 1)];
+}
+
+/**
+ * The face below raised ground at height `h`: its color about 30% darker, as the design's cliff
+ * face is to its meadow.
+ */
+export function faceColor(h: number): string {
+  const ch = [1, 3, 5].map((i) => parseInt(levelColor(h).slice(i, i + 2), 16));
+  return (
+    "#" +
+    ch
+      .map((c) =>
+        Math.round(c * 0.69)
+          .toString(16)
+          .padStart(2, "0"),
+      )
+      .join("")
+  );
+}
+
+/**
+ * How deep (minor units) a face is drawn for a drop of `levels`: a quarter of a terrain block for
+ * one level, as in the design, a little more for each level more, up to most of a block.
+ */
+export function faceDepth(levels: number): number {
+  if (levels <= 0) return 0;
+  return Math.min(1.2, 0.3 + 0.2 * levels);
 }
 
 /** How far below its banks a pond's surface lies, in levels, for the banks' shadow. */

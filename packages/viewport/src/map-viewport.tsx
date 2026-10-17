@@ -1,11 +1,13 @@
 // <MapViewport>: the viewport as a React component. It fills its parent, keeps the canvases sized
-// to it, and passes each prop on to the viewport as it changes. The planner draws its controls
-// over it; the viewport draws only the map.
+// to it, passes each prop on to the viewport as it changes, and tells it where the pointer is over
+// the plan, for the map's hover marks. The planner draws its controls over it; the viewport draws
+// only the map.
 
 import type { Doc } from "@glade/core";
 import type { GladeError } from "@glade/errors";
 import { useEffect, useRef } from "react";
 import type { Environment } from "./environment";
+import { screenToPlan } from "./plan-camera";
 import type { CameraKind, ViewKind } from "./views";
 import { createViewport, type ShownMap, type Viewport, type ViewportDeps } from "./viewport";
 
@@ -28,6 +30,7 @@ export interface MapViewportProps {
 }
 
 const canvasStyle = { position: "absolute", inset: 0, width: "100%", height: "100%" } as const;
+const hoverStyle = { ...canvasStyle, pointerEvents: "none" } as const;
 
 /** The callbacks, kept fresh without remaking the viewport each render. */
 function useLatest<T>(value: T) {
@@ -38,10 +41,20 @@ function useLatest<T>(value: T) {
   return ref;
 }
 
+/** The world point under the pointer, in the plan, or null before the plan has a camera. */
+function planPoint(e: React.PointerEvent<HTMLElement>, vp: Viewport | null) {
+  const cam = vp?.planCamera();
+  if (!cam) return null;
+  const r = e.currentTarget.getBoundingClientRect();
+  const at = { x: e.clientX - r.left, y: e.clientY - r.top };
+  return screenToPlan(cam, { w: r.width, h: r.height }, at);
+}
+
 export function MapViewport(props: MapViewportProps) {
   const box = useRef<HTMLDivElement>(null);
   const plan = useRef<HTMLCanvasElement>(null);
   const scene = useRef<HTMLCanvasElement>(null);
+  const hover = useRef<HTMLCanvasElement>(null);
   const viewport = useRef<Viewport | null>(null);
   const latest = useLatest(props);
 
@@ -49,7 +62,7 @@ export function MapViewport(props: MapViewportProps) {
   useEffect(() => {
     if (!box.current || !plan.current || !scene.current) return;
     const vp = createViewport(
-      { plan: plan.current, scene: scene.current },
+      { plan: plan.current, scene: scene.current, hover: hover.current ?? undefined },
       {
         requestFrame: (run) => requestAnimationFrame(run),
         cancelFrame: (id) => cancelAnimationFrame(id),
@@ -89,9 +102,12 @@ export function MapViewport(props: MapViewportProps) {
       role="img"
       aria-label={props.label}
       style={{ position: "relative", width: "100%", height: "100%", overflow: "hidden" }}
+      onPointerMove={(e) => viewport.current?.setHover(planPoint(e, viewport.current))}
+      onPointerLeave={() => viewport.current?.setHover(null)}
     >
-      <canvas ref={plan} style={canvasStyle} aria-hidden="true" />
-      <canvas ref={scene} style={canvasStyle} aria-hidden="true" />
+      <canvas ref={plan} data-layer="plan" style={canvasStyle} aria-hidden="true" />
+      <canvas ref={hover} data-layer="hover" style={hoverStyle} aria-hidden="true" />
+      <canvas ref={scene} data-layer="scene" style={canvasStyle} aria-hidden="true" />
     </div>
   );
 }

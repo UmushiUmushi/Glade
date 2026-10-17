@@ -74,7 +74,7 @@ export async function framesReported(canvasElement: HTMLElement): Promise<void> 
 
 /** Whether the plan canvas has something drawn in its middle. */
 export async function planDrawn(canvasElement: HTMLElement): Promise<void> {
-  const plan = canvasElement.querySelector("canvas");
+  const plan = canvasElement.querySelector<HTMLCanvasElement>('canvas[data-layer="plan"]');
   const ctx = plan?.getContext("2d");
   const x = Math.floor((plan?.width ?? 0) / 2);
   const y = Math.floor((plan?.height ?? 0) / 2);
