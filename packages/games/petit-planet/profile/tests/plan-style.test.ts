@@ -1,16 +1,7 @@
-// The plan style's numbers: ground colors by height, where shadows fall for a sun, highlights.
+// The plan style's numbers: ground colors by height, the drop below raised ground, highlights.
 
 import { describe, expect, it } from "vitest";
-import { BLOCK_TILES, LEVEL_MINOR } from "../src/items/model";
-import {
-  BASE_LEVEL,
-  faceColor,
-  faceDepth,
-  levelColor,
-  lighten,
-  PLAN,
-  shadeFor,
-} from "../src/plan-style";
+import { BASE_LEVEL, DROP, dropDepth, levelColor, lighten, PLAN } from "../src/plan-style";
 
 const brightness = (hex: string) =>
   [1, 3, 5].reduce((sum, i) => sum + parseInt(hex.slice(i, i + 2), 16), 0);
@@ -33,44 +24,20 @@ describe("ground colors", () => {
   });
 });
 
-describe("faces", () => {
-  it("are each level's color darker", () => {
-    for (let h = 0; h < 9; h++) {
-      expect(brightness(faceColor(h))).toBeLessThan(brightness(levelColor(h)));
-    }
+describe("drops", () => {
+  it("darken what they fall on as the design's face darkens its meadow (#a1af66 to #6f7a3f)", () => {
+    const alpha = Number(DROP.match(/[\d.]+\)$/)?.[0].slice(0, -1));
+    const meadow = [0xa1, 0xaf, 0x66];
+    const design = [0x6f, 0x7a, 0x3f];
+    meadow.forEach((c, i) => expect(Math.abs(c * (1 - alpha) - design[i])).toBeLessThanOrEqual(8));
   });
 
   it("are nothing without a drop, a quarter block for one level, deeper for more, up to a cap", () => {
-    expect(faceDepth(0)).toBe(0);
-    expect(faceDepth(1)).toBeCloseTo(0.5);
-    expect(faceDepth(2)).toBeGreaterThan(faceDepth(1));
-    expect(faceDepth(0.4)).toBeLessThan(faceDepth(1));
-    expect(faceDepth(30)).toBe(1.2);
-  });
-});
-
-describe("shadows", () => {
-  it("fall away from the sun: a sun due south casts them north, one due east casts them west", () => {
-    const south = shadeFor({ azimuth: 180, elevation: 60 });
-    expect(south.dx).toBeCloseTo(0);
-    expect(south.dy).toBeCloseTo(-1);
-    const east = shadeFor({ azimuth: 90, elevation: 60 });
-    expect(east.dx).toBeCloseTo(-1);
-    expect(east.dy).toBeCloseTo(0);
-  });
-
-  it("are as long as the height at 45 degrees, shorter for a higher sun", () => {
-    expect(shadeFor({ azimuth: 0, elevation: 45 }).perHeight).toBeCloseTo(1);
-    expect(shadeFor({ azimuth: 0, elevation: 60 }).perHeight).toBeCloseTo(1 / Math.sqrt(3));
-  });
-
-  it("stay finite for a sun on the horizon or straight overhead", () => {
-    expect(Number.isFinite(shadeFor({ azimuth: 0, elevation: 0 }).perHeight)).toBe(true);
-    expect(shadeFor({ azimuth: 0, elevation: 90 }).perHeight).toBeGreaterThan(0);
-  });
-
-  it("measure height in blocks, as 3D does", () => {
-    expect(LEVEL_MINOR).toBe(2 * BLOCK_TILES);
+    expect(dropDepth(0)).toBe(0);
+    expect(dropDepth(1)).toBeCloseTo(0.5);
+    expect(dropDepth(2)).toBeGreaterThan(dropDepth(1));
+    expect(dropDepth(0.4)).toBeLessThan(dropDepth(1));
+    expect(dropDepth(30)).toBe(1.2);
   });
 });
 

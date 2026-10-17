@@ -5,7 +5,7 @@
 // selection, ruler and hover on top. Internally everything is drawn in minor cells (half a world
 // tile), so the host's world transform is scaled by 1/2 here.
 
-import { resolveLook, type MapUI, type PlanView, type RenderableMap } from "@glade/render";
+import type { MapUI, PlanView, RenderableMap } from "@glade/render";
 import type { Entity, Selection } from "@glade/core";
 import { boundingRect, type Box } from "@glade/core";
 import type { BoxPart, Model, ModelPart } from "@glade/render";
@@ -42,16 +42,7 @@ import { catalogEntry, isA, pathEntry, type Catalog } from "../../catalog";
 import { profileOf } from "./data";
 import { appModel, drawItem2D, itemSize } from "../../items";
 import { drawFrontArrow } from "../../items/draw2d";
-import {
-  BASE_LEVEL,
-  faceColor,
-  faceDepth,
-  levelColor,
-  PLAN,
-  POND_DROP,
-  shadeFor,
-  type Shade,
-} from "../../plan-style";
+import { BASE_LEVEL, DROP, dropDepth, levelColor, PLAN, POND_DROP } from "../../plan-style";
 import { onSurfaceBox, onSurfaces } from "../../surfaces";
 import { armBacks, fenceArms, type Arm } from "./fences";
 import { floodRegion } from "./select";
@@ -73,8 +64,6 @@ export interface Scene {
   spec: GridSpec;
   /** The app's model for a placed thing, if it gives one (RenderableMap.itemModel). */
   modelOf(thing: Entity): Model | undefined;
-  /** Where shadows fall, from the look's sun; none without it. */
-  shade?: Shade;
 }
 
 /** Visible minor cells for a canvas of cssW x cssH under a minor-cell view. */
@@ -176,9 +165,8 @@ export function drawScene(
     }
   }
 
-  // Raised ground's face along its south side, as the design draws cliffs (over paths: a path
-  // lies on the top, not down the face).
-  if (layers.heights || layers.water) drawFaces(ctx, map, profile, spec, blocks, layers);
+  // Raised ground's drop just south of it, as the design's cliffs (over paths on the ground below).
+  if (layers.heights || layers.water) drawDrops(ctx, map, profile, spec, blocks, layers);
 
   // Landmarks: a pale plaza and its name on an ink tag, like the design's area labels. The dashed
   // line is the terrain it locks.
@@ -205,7 +193,6 @@ export function drawScene(
       drawItem2D(ctx, s.catalog, p.type, r, 0, px, {
         as: "plant",
         model: s.modelOf(p),
-        shade: s.shade,
       });
     }
   }
@@ -219,7 +206,7 @@ export function drawScene(
       const model = s.modelOf(i);
       const linked = arms.get(i.id);
       if (linked) drawLinked(ctx, linked, r, px, linkLook(model));
-      else drawItem2D(ctx, s.catalog, i.type, r, i.rot, px, { as: "item", model, shade: s.shade });
+      else drawItem2D(ctx, s.catalog, i.type, r, i.rot, px, { as: "item", model });
     }
     // Things on surfaces, at their own size, centered on their place in the surface's grid.
     const hosts = surfaceHosts(map, s.catalog);
@@ -234,7 +221,6 @@ export function drawScene(
       drawItem2D(ctx, s.catalog, t.type, r, b.rot, px, {
         as: "item",
         model: s.modelOf(t),
-        shade: s.shade,
       });
     }
   }
@@ -259,17 +245,17 @@ function inside(pts: [number, number][], x: number, y: number): boolean {
   return hit;
 }
 
-/** A cell's level for its face: its height, and a pond a little below its banks. */
+/** A cell's level for its drop: its height, and a pond a little below its banks. */
 type Level = (c: { h: number; water: boolean }) => number;
 
 /**
- * Raised ground's faces, as the design draws cliffs: wherever ground is higher than the ground
- * south of it, a band along the south side of the higher ground in a darker shade of its color,
- * deeper for a bigger drop. No lines anywhere else. A pond lies a little below its banks, so the
- * bank north of it shows a face too. Half an edge beside a cut or rounded corner is left out; the
- * corner's curve shows the face instead.
+ * Raised ground's drop, as the design's cliffs: wherever ground is higher than the ground south
+ * of it, a see-through dark band just outside its south edge, on the lower ground, deeper for a
+ * bigger drop. No lines anywhere else. A pond lies a little below its banks, so the bank north of
+ * it drops onto it too. Half an edge beside a cut or rounded corner is left out; the corner's
+ * curve drops instead.
  */
-function drawFaces(
+function drawDrops(
   ctx: CanvasRenderingContext2D,
   map: MapDoc,
   profile: Profile,
@@ -283,6 +269,7 @@ function drawFaces(
   const shaped = (X: number, Y: number) =>
     !!cornerAt(map, "terrainCorners", X, Y) &&
     resolveTerrainCorner(map, profile, X, Y).status === "shaped";
+  ctx.fillStyle = DROP;
   for (let ty = b.t0y; ty <= b.t1y; ty++) {
     for (let tx = b.t0x; tx <= b.t1x; tx++) {
       const cell = grid[ty][tx];
@@ -293,40 +280,34 @@ function drawFaces(
       const r = toMinorRect(spec, { grid: "terrain", x: tx, y: ty, w: 1, h: 1 });
       const x0 = shaped(tx - 1, ty) ? r.x + r.w / 2 : r.x;
       const x1 = shaped(tx, ty) ? r.x + r.w / 2 : r.x + r.w;
-      if (x1 <= x0) continue;
-      const depth = faceDepth(drop);
-      ctx.fillStyle = faceColor(layers.heights ? cell.h : BASE_LEVEL);
-      ctx.fillRect(x0, r.y + r.h - depth, x1 - x0, depth);
+      if (x1 > x0) ctx.fillRect(x0, r.y + r.h, x1 - x0, dropDepth(drop));
     }
   }
-  drawCornerFaces(ctx, map, profile, b, level, layers);
+  drawCornerDrops(ctx, map, profile, b, level);
 }
 
-/** Cut and rounded corners: the face along the part of the curve that looks south. */
-function drawCornerFaces(
+/** Cut and rounded corners: the drop outside the part of the curve that looks south. */
+function drawCornerDrops(
   ctx: CanvasRenderingContext2D,
   map: MapDoc,
   profile: Profile,
   b: Blocks,
   level: Level,
-  layers: Layers,
 ) {
+  ctx.fillStyle = DROP;
+  ctx.beginPath();
   for (const v of cornerCells(map, "terrainCorners")) {
     if (v.x < b.t0x - 1 || v.x > b.t1x || v.y < b.t0y - 1 || v.y > b.t1y) continue;
     const res = resolveTerrainCorner(map, profile, v.x, v.y);
     if (res.status !== "shaped") continue;
     const c = res.corner;
     const drop = level(c.own) - level(c.surround);
-    if (drop === 0) continue;
-    const high = drop > 0 ? c.own : c.surround;
-    if (high.water) continue;
+    if (drop === 0 || (drop > 0 ? c.own : c.surround).water) continue;
     const V = vertexPoint(c.layer, c.vx, c.vy);
     const minor = ([x, y]: [number, number]): [number, number] => [2 * x, 2 * y];
     const region = cornerRegion(V, c.dir, c.leg, c.shape).map(minor);
     const curve = cornerCurve(V, c.dir, c.leg, c.shape).map(minor);
-    const depth = faceDepth(Math.abs(drop));
-    ctx.fillStyle = faceColor(layers.heights ? high.h : BASE_LEVEL);
-    ctx.beginPath();
+    const depth = dropDepth(Math.abs(drop));
     for (let i = 0; i + 1 < curve.length; i++) {
       const [p, q] = [curve[i], curve[i + 1]];
       const len = Math.hypot(q[0] - p[0], q[1] - p[1]) || 1;
@@ -337,16 +318,16 @@ function drawCornerFaces(
       const intoRegion = inside(region, mid[0] + n[0] * 0.05, mid[1] + n[1] * 0.05);
       if (intoRegion !== drop > 0) n = [-n[0], -n[1]];
       if (n[1] <= 0.01) continue;
-      // The band lies on the high side, scaled by how much the segment looks south.
+      // The band lies on the low side, as deep as the segment looks south.
       const d = depth * n[1];
       ctx.moveTo(p[0], p[1]);
       ctx.lineTo(q[0], q[1]);
-      ctx.lineTo(q[0] - n[0] * d, q[1] - n[1] * d);
-      ctx.lineTo(p[0] - n[0] * d, p[1] - n[1] * d);
+      ctx.lineTo(q[0] + n[0] * d, q[1] + n[1] * d);
+      ctx.lineTo(p[0] + n[0] * d, p[1] + n[1] * d);
       ctx.closePath();
     }
-    ctx.fill();
   }
+  ctx.fill();
 }
 
 let cache: { map: MapDoc; key: string; canvas: HTMLCanvasElement } | null = null;
@@ -590,16 +571,6 @@ export const ui: MapUI = {
   },
 };
 
-/** Shadows for the look's default time of day (the 3D view's midday sun), kept per style. */
-const shades = new WeakMap<object, Shade>();
-function shadeOf(game: Planet & RenderableMap): Shade | undefined {
-  const style = game.style?.defaults;
-  if (!style) return undefined;
-  let shade = shades.get(style);
-  if (!shade) shades.set(style, (shade = shadeFor(resolveLook(style).light.sun)));
-  return shade;
-}
-
 /** The plan view: the island from straight above. */
 export const plan: PlanView = {
   draw(ctx, doc, g, layers, visible: Box, pxPerUnit) {
@@ -626,7 +597,6 @@ export const plan: PlanView = {
         catalog: game.catalog,
         spec,
         modelOf: (thing) => appModel(game as Planet & RenderableMap, thing),
-        shade: shadeOf(game as Planet & RenderableMap),
       },
       layers as unknown as Layers,
       vis,

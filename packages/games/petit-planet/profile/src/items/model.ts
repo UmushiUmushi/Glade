@@ -15,9 +15,6 @@ import { baseOf, catalogEntry, isA, type Catalog, type CatalogEntry } from "../c
 /** Tiles per block: how tall a block is next to a tile, for parts turned in true proportions. */
 export const BLOCK_TILES = 0.825;
 
-/** A height level (one block) in minor units: a tile is 2 minor cells. */
-export const LEVEL_MINOR = 2 * BLOCK_TILES;
-
 /** The side a building's front faces: south at rotation 0, turning clockwise with rotation. */
 export function frontSide(rot: number): "south" | "west" | "north" | "east" {
   return rot === 90 ? "west" : rot === 180 ? "north" : rot === 270 ? "east" : "south";
