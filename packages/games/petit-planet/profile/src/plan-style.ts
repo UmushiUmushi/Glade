@@ -1,6 +1,6 @@
 // How Petit Planet looks from above: the flat colors of the planner's design (soft greens, caramel
 // sand, sky-blue ponds on a deep sea), with a darker band just south of raised ground, as the
-// design draws cliffs. The planet's plan, the home's plan and the item drawing share it.
+// design draws cliffs, and soft short shadows south-east of things. The planet's plan, the home's plan and the item drawing share it.
 
 /** The design's named colors. */
 export const PLAN = {
@@ -50,6 +50,17 @@ export function dropDepth(levels: number): number {
 
 /** How far below its banks a pond's surface lies, in levels, for the banks' drop. */
 export const POND_DROP = 0.4;
+
+/**
+ * Things' shadows: soft and short, falling south-east (as if lit from the north-west), a quarter
+ * of a thing's height long. `dx`, `dy` is the way they fall (unit, minor units).
+ */
+export const SHADE = {
+  dx: Math.SQRT1_2,
+  dy: Math.SQRT1_2,
+  perHeight: 0.25,
+  color: "rgba(36,48,30,0.13)",
+} as const;
 
 /** `hex` mixed toward white by `t` (0 to 1). */
 export function lighten(hex: string, t: number): string {

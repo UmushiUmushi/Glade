@@ -344,18 +344,20 @@ its UI and plan view are in `src/maps/planet/render2d.ts`, its 3D view in
 dark band just outside its south edge, as the design draws cliffs. The colors and sizes are in
 `src/plan-style.ts`:
 
-| What               | Looks like                                                                         |
-| ------------------ | ---------------------------------------------------------------------------------- |
-| Sea                | Deep blue round the island, as far as the screen shows                             |
-| Ground             | Grass at the base level; meadow one level up; lighter toward the hilltops          |
-| Raised ground      | No lines: its color, and a see-through dark band just south of it, on lower ground |
-| Pond               | One sky-blue fill, a little below its banks, so the bank north of it drops onto it |
-| Path               | Its catalog color, full blocks                                                     |
-| Thing with a model | Its model's own top view in its parts' colors, with no outline or shadow           |
-| Landmark           | A pale plaza and its `name` on an ink tag                                          |
-| Hovered building   | An ink arrow out of the middle of its front edge (the side rule B1 checks)         |
+| What               | Looks like                                                                                |
+| ------------------ | ----------------------------------------------------------------------------------------- |
+| Sea                | Deep blue round the island, as far as the screen shows                                    |
+| Ground             | Grass at the base level; meadow one level up; lighter toward the hilltops                 |
+| Raised ground      | No lines: its color, and a see-through dark band just south of it, on lower ground        |
+| Pond               | One sky-blue fill, a little below its banks, so the bank north of it drops onto it        |
+| Path               | Its catalog color, full blocks                                                            |
+| Thing with a model | Its model's own top view in its parts' colors, no outline, a soft short shadow south-east |
+| Landmark           | A pale plaza and its `name` on an ink tag                                                 |
+| Hovered building   | A small ink triangle with soft corners just outside the middle of its front edge          |
+| Stairs             | The same triangle on the steps, pointing up the incline                                   |
 
-The hover arrow is `plan.drawHover`, drawn by the viewport on its own layer.
+Shadows are `SHADE` in `src/plan-style.ts`; a thing under `SHADOW_MIN_PX` screen pixels across casts
+none. The hover marker is `plan.drawHover`, drawn by the viewport on its own layer.
 
 Model finishes take their look from the style too: each time of day's `colors.glow` is the light
 glowing parts give (black for none, white for full: faint by day, full at night), and

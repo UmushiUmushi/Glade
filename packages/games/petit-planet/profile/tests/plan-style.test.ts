@@ -1,7 +1,7 @@
 // The plan style's numbers: ground colors by height, the drop below raised ground, highlights.
 
 import { describe, expect, it } from "vitest";
-import { BASE_LEVEL, DROP, dropDepth, levelColor, lighten, PLAN } from "../src/plan-style";
+import { BASE_LEVEL, DROP, dropDepth, levelColor, lighten, PLAN, SHADE } from "../src/plan-style";
 
 const brightness = (hex: string) =>
   [1, 3, 5].reduce((sum, i) => sum + parseInt(hex.slice(i, i + 2), 16), 0);
@@ -38,6 +38,16 @@ describe("drops", () => {
     expect(dropDepth(2)).toBeGreaterThan(dropDepth(1));
     expect(dropDepth(0.4)).toBeLessThan(dropDepth(1));
     expect(dropDepth(30)).toBe(1.2);
+  });
+});
+
+describe("shadows", () => {
+  it("fall south-east, soft, and shorter than the thing is tall", () => {
+    expect(SHADE.dx).toBeGreaterThan(0);
+    expect(SHADE.dy).toBeGreaterThan(0);
+    expect(Math.hypot(SHADE.dx, SHADE.dy)).toBeCloseTo(1);
+    expect(SHADE.perHeight).toBeLessThan(1);
+    expect(Number(SHADE.color.match(/[\d.]+\)$/)?.[0].slice(0, -1))).toBeLessThan(0.2);
   });
 });
 

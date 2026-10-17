@@ -6,7 +6,7 @@ import { describe, expect, it } from "vitest";
 import { resolveTerrainCorner, vertexOf } from "../../src/maps/planet/corners";
 import { setCornerAt, terrainGrid, type MapDoc } from "../../src/maps/planet/model";
 import { plan } from "../../src/maps/planet/render2d";
-import { DROP, dropDepth, PLAN, POND_DROP } from "../../src/plan-style";
+import { DROP, dropDepth, PLAN, POND_DROP, SHADE } from "../../src/plan-style";
 import { recordCanvas } from "../canvas";
 import { addItems, blankMap, game, item, profile, stamp } from "./helpers";
 
@@ -105,6 +105,13 @@ describe("landmarks", () => {
       drawPlan(blankMap(), whole, ppu).some((l) => l.startsWith("fillText(Town center,"));
     expect(named(8)).toBe(true);
     expect(named(1)).toBe(false);
+  });
+});
+
+describe("things on the map", () => {
+  it("cast their soft shadows", () => {
+    const map = addItems(blankMap(), { ...item("bench", 80, 80), id: "b1" });
+    expect(drawPlan(map)).toContain(`fillStyle=${SHADE.color}`);
   });
 });
 

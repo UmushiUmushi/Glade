@@ -193,6 +193,7 @@ export function drawScene(
       drawItem2D(ctx, s.catalog, p.type, r, 0, px, {
         as: "plant",
         model: s.modelOf(p),
+        shadow: true,
       });
     }
   }
@@ -206,7 +207,7 @@ export function drawScene(
       const model = s.modelOf(i);
       const linked = arms.get(i.id);
       if (linked) drawLinked(ctx, linked, r, px, linkLook(model));
-      else drawItem2D(ctx, s.catalog, i.type, r, i.rot, px, { as: "item", model });
+      else drawItem2D(ctx, s.catalog, i.type, r, i.rot, px, { as: "item", model, shadow: true });
     }
     // Things on surfaces, at their own size, centered on their place in the surface's grid.
     const hosts = surfaceHosts(map, s.catalog);
@@ -221,6 +222,7 @@ export function drawScene(
       drawItem2D(ctx, s.catalog, t.type, r, b.rot, px, {
         as: "item",
         model: s.modelOf(t),
+        shadow: true,
       });
     }
   }
