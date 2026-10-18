@@ -21,6 +21,8 @@ const meta = {
     api: fakeApi(ok({ status: "ok", version: "0.1.0", checks: {} })),
     history: memoryHistory("/"),
     onError: fn(),
+    // The test browser is narrower than a desktop: force the desktop layout, as Settings can.
+    layout: "desktop",
   },
   parameters: { layout: "fullscreen" },
 } satisfies Meta<typeof App>;
@@ -97,6 +99,17 @@ export const PickerListsGames: Story = {
     const later = body.getByRole("menuitemradio", { name: /^Palworld/ });
     await expect(later).toHaveAttribute("aria-disabled", "true");
     await userEvent.keyboard("{Escape}");
+  },
+};
+
+/** On a tablet the side panel is the rail, 76 px wide. */
+export const TabletRail: Story = {
+  args: { history: memoryHistory("/petit-planet/planner"), layout: "tablet" },
+  play: async ({ canvasElement }) => {
+    const rail = await within(canvasElement).findByRole("navigation", {
+      name: "Planner controls, minimized",
+    });
+    await expect(rail.getBoundingClientRect().width).toBe(76);
   },
 };
 

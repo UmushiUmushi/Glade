@@ -1,9 +1,10 @@
-// A game's planner at /<game>/planner, in the game's own look: for now the game picker and the
-// map, a new empty one, in the viewport. The planner's layout (side panel, viewport card, toolbox)
-// arrives with step 1.3.
+// A game's planner at /<game>/planner, in the game's own look: the planner's three cards on the
+// tray. For now the side panel holds its header's game picker and the viewport a new empty map;
+// the panel's controls, the rail's buttons and the toolbox's contents arrive in steps 1.4 to 1.8.
 
-import { MapViewport, startView } from "@glade/viewport";
+import { PlannerLayout, useScreenLayout, type LayoutSetting } from "@glade/planner";
 import { GamePicker, type GameChoice } from "@glade/ui";
+import { MapViewport, startView } from "@glade/viewport";
 import { useEffect, useMemo } from "react";
 import type { GamePlanner, GladeGame } from "./games";
 import { useHistory } from "./navigation";
@@ -13,6 +14,8 @@ export interface PlannerPageProps {
   game: GladeGame;
   planner: GamePlanner;
   games: readonly GladeGame[];
+  /** Auto (the window's size decides) or a layout Settings forces. */
+  layout?: LayoutSetting;
 }
 
 /** The games as the picker lists them: each in its own title font, the unready ones "Soon". */
@@ -27,33 +30,39 @@ export function gameChoices(games: readonly GladeGame[]): GameChoice[] {
 
 const NOON = { hour: 12 };
 
-export function PlannerPage({ game, planner, games }: PlannerPageProps) {
+export function PlannerPage({ game, planner, games, layout }: PlannerPageProps) {
   const history = useHistory();
   const doc = useMemo(() => planner.newDoc(), [planner]);
+  // The rail on a tablet; the phone layout (a top bar) arrives in step 1.9, until then the rail.
+  const panelState = useScreenLayout(layout) === "desktop" ? "open" : "rail";
   useEffect(() => {
     document.title = `${game.title} planner · Glade`;
   }, [game.title]);
+  const picker = (
+    <GamePicker
+      games={gameChoices(games)}
+      current={game.id}
+      onPick={(id) => history.push(routePath({ page: "planner", game: id }))}
+    />
+  );
   return (
-    <main className="glade-planner">
-      <header className="glade-planner-header">
-        <div className="glade-planner-picker">
-          <GamePicker
-            games={gameChoices(games)}
-            current={game.id}
-            onPick={(id) => history.push(routePath({ page: "planner", game: id }))}
+    <main>
+      <h1 className="glade-visually-hidden">{game.title} planner</h1>
+      <PlannerLayout
+        panelState={panelState}
+        panel={panelState === "open" && <div className="glade-planner-header">{picker}</div>}
+        viewport={
+          <MapViewport
+            map={planner.map}
+            doc={doc}
+            view={startView(planner.map)}
+            camera="iso"
+            environment={NOON}
+            label={`${game.title} map, new and empty`}
           />
-        </div>
-      </header>
-      <div className="glade-planner-map">
-        <MapViewport
-          map={planner.map}
-          doc={doc}
-          view={startView(planner.map)}
-          camera="iso"
-          environment={NOON}
-          label={`${game.title} map, new and empty`}
-        />
-      </div>
+        }
+        toolbox={null}
+      />
     </main>
   );
 }

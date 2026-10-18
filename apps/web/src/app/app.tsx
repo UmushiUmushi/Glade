@@ -3,6 +3,7 @@
 // system. A safety net goes round each page, so a crash shows a calm message, not a blank screen.
 
 import type { GladeError } from "@glade/errors";
+import type { LayoutSetting } from "@glade/planner";
 import { gladeTheme, ThemeRoot, type GameIcons, type Theme } from "@glade/ui";
 import type { ReactNode } from "react";
 import type { ApiClient } from "../platform/api-client";
@@ -21,6 +22,8 @@ export interface AppProps {
   onError: (error: GladeError) => void;
   /** The games to offer; the registry's unless a story or test passes its own. */
   games?: readonly GladeGame[];
+  /** The planner's layout: auto (the window's size decides) or forced (Settings, stories). */
+  layout?: LayoutSetting;
 }
 
 /** A page and the look it wears. */
@@ -30,14 +33,19 @@ interface Shown {
   icons?: GameIcons;
 }
 
-function show(route: Route, api: ApiClient, games: readonly GladeGame[]): Shown {
+function show(
+  route: Route,
+  api: ApiClient,
+  games: readonly GladeGame[],
+  layout: LayoutSetting,
+): Shown {
   if (route.page === "home") {
     return { page: <HomePage api={api} games={games} />, theme: gladeTheme };
   }
   const game = route.page === "planner" ? games.find((g) => g.id === route.game) : undefined;
   if (game?.planner) {
     return {
-      page: <PlannerPage game={game} planner={game.planner} games={games} />,
+      page: <PlannerPage game={game} planner={game.planner} games={games} layout={layout} />,
       theme: game.theme ?? gladeTheme,
       icons: game.icons,
     };
@@ -46,9 +54,9 @@ function show(route: Route, api: ApiClient, games: readonly GladeGame[]): Shown 
   return { page: <NotFoundPage />, theme: gladeTheme };
 }
 
-export function App({ api, history, onError, games = registry }: AppProps) {
+export function App({ api, history, onError, games = registry, layout = "auto" }: AppProps) {
   const route = useRoute(history);
-  const { page, theme, icons } = show(route, api, games);
+  const { page, theme, icons } = show(route, api, games, layout);
   return (
     <HistoryProvider value={history}>
       <ThemeRoot theme={theme} icons={icons} mode="system">

@@ -1,0 +1,67 @@
+/* The planner's layout (planner-layout.tsx). From the design: the tray fills the window with a
+   gap round and between the cards; each card has the theme's corners, border and a solid lip under
+   it. Below 1080 x 760 the tray keeps that size and the page scrolls (the phone layout comes
+   later). */
+
+.glade-planner-tray {
+  box-sizing: border-box;
+  width: 100%;
+  height: 100vh;
+  min-width: 1080px;
+  min-height: 760px;
+  display: flex;
+  gap: var(--gap);
+  padding: var(--gap);
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--font-ui);
+  font-weight: var(--weight-ui);
+}
+
+.glade-planner-card {
+  box-sizing: border-box;
+  position: relative;
+  background: var(--paper);
+  border: var(--border-card) solid var(--frame);
+  border-radius: var(--radius-card);
+  box-shadow: 0 5px 0 var(--lip);
+}
+
+.glade-planner-panel {
+  width: 336px;
+  flex: none;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  z-index: 20;
+}
+
+.glade-planner-panel[data-rail] {
+  width: 76px;
+}
+
+.glade-planner-main {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+}
+
+.glade-planner-viewport {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  background: var(--inset);
+}
+
+.glade-planner-toolbox {
+  flex: none;
+  min-height: 120px;
+  padding: 14px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  z-index: 15;
+}

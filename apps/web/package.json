@@ -17,6 +17,7 @@
     "@glade/logging": "workspace:*",
     "@glade/petit-planet-profile": "workspace:*",
     "@glade/petit-planet-ui": "workspace:*",
+    "@glade/planner": "workspace:*",
     "@glade/render": "workspace:*",
     "@glade/three": "workspace:*",
     "@glade/ui": "workspace:*",

@@ -1,0 +1,17 @@
+{
+  "name": "@glade/planner",
+  "version": "0.0.0",
+  "private": true,
+  "description": "The planner's screens: its layout, side panel, rail, viewport controls and toolbox, the same for every game",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@glade/ui": "workspace:*"
+  },
+  "peerDependencies": {
+    "react": "^19.3.1"
+  }
+}
