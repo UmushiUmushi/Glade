@@ -32,7 +32,9 @@ describe("the island file", () => {
     const made = serializeMap(generateIsland(), planet);
     if (process.env.UPDATE_GOLDENS === "1") writeFileSync(FILE, made);
     expect(readFileSync(FILE, "utf8"), "run UPDATE_GOLDENS=1 pnpm test island").toBe(made);
-  }, 60_000);
+    // About 25 s alone (the generator checks every rule as it places); far longer while the whole
+    // suite runs at once on a busy machine.
+  }, 120_000);
 
   /** The saved island, read when a test first needs it (after the first test may rewrite it). */
   let saved: MapDoc | undefined;

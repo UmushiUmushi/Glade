@@ -13,5 +13,8 @@
     "@fontsource/baloo-2": "^5.3.0",
     "@fontsource/nunito": "^5.3.0",
     "@glade/ui": "workspace:*"
+  },
+  "devDependencies": {
+    "@glade/petit-planet-profile": "workspace:*"
   }
 }

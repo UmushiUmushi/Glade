@@ -1,0 +1,214 @@
+/* The side panel (side-panel.tsx). From the design: a pinned header, then sections split by dotted
+   lines, each with a small capital heading; tools are 44 px round buttons that fill with the
+   selected colour when chosen; the selection modes are a segmented pill; layer rows are 44 px with
+   an icon disc, the name and an eye. */
+
+.glade-panel-header,
+.glade-rail-header {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 18px 14px;
+}
+
+.glade-rail-header {
+  flex-direction: column;
+  padding: 14px 0 10px;
+}
+
+.glade-panel-picker {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+}
+
+.glade-panel-picker > * {
+  flex: 1;
+  min-width: 0;
+}
+
+.glade-panel-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 0 18px 24px;
+}
+
+.glade-panel-section {
+  border-top: 2px dotted var(--line);
+  padding: 16px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.glade-panel-section-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.glade-panel-heading {
+  margin: 0;
+  font-size: 13px;
+  line-height: 16px;
+  font-weight: var(--weight-title);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
+
+.glade-panel-aside {
+  font-size: 13px;
+  line-height: 18px;
+  color: var(--ink-muted);
+}
+
+.glade-panel-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.glade-panel-grow {
+  flex: 1;
+  display: flex;
+}
+
+.glade-panel-grow > * {
+  flex: 1;
+}
+
+/* Tools: round, no fill; the chosen one in the selected colour. */
+.glade-tool-group {
+  display: flex;
+  gap: 3px;
+}
+
+.glade-tool {
+  width: 44px;
+  height: 44px;
+  flex: none;
+  border: none;
+  border-radius: 999px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  background: transparent;
+  color: var(--ink);
+  transition: background 140ms;
+  outline: none;
+}
+
+.glade-tool[data-hovered] {
+  background: var(--inset);
+}
+
+.glade-tool[data-selected] {
+  background: var(--selected);
+  color: var(--on-selected);
+}
+
+/* The selection modes: a segmented pill; the chosen one stands out on paper. */
+.glade-segments {
+  display: flex;
+  padding: 3px;
+  border-radius: 999px;
+  background: var(--inset);
+}
+
+.glade-segment {
+  width: 32px;
+  height: 38px;
+  border: none;
+  border-radius: 999px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  background: transparent;
+  color: var(--ink);
+  outline: none;
+}
+
+.glade-segment[data-selected] {
+  background: var(--paper);
+  box-shadow: 0 2px 0 var(--lip);
+}
+
+.glade-tool[data-focus-visible],
+.glade-segment[data-focus-visible],
+.glade-layer-row[data-focus-visible] {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+/* Layers: rows with an icon disc, the name, and an eye. */
+.glade-layer-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.glade-layer-row {
+  height: 44px;
+  width: 100%;
+  border: none;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 12px 0 6px;
+  background: transparent;
+  font-family: var(--font-ui);
+  font-size: 16px;
+  line-height: 20px;
+  font-weight: var(--weight-title);
+  color: var(--ink-muted);
+  cursor: pointer;
+  outline: none;
+}
+
+.glade-layer-row[data-selected] {
+  color: var(--ink);
+}
+
+.glade-layer-row[data-hovered] {
+  background: var(--inset);
+}
+
+.glade-layer-row[data-disabled] {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.glade-layer-disc {
+  width: 32px;
+  height: 32px;
+  flex: none;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  box-shadow: inset 0 0 0 2px var(--line);
+}
+
+.glade-layer-row[data-selected] .glade-layer-disc {
+  background: var(--float);
+  color: var(--on-float);
+}
+
+.glade-layer-name {
+  flex: 1;
+  text-align: left;
+}
+
+.glade-panel-always {
+  border-top: 2px dotted var(--line);
+  padding-top: 6px;
+  display: flex;
+  flex-direction: column;
+}

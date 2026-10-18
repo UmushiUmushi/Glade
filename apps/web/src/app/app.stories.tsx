@@ -102,6 +102,23 @@ export const PickerListsGames: Story = {
   },
 };
 
+/** The side panel's Minimize shrinks it to the rail; the rail's Expand opens it again. */
+export const MinimizeAndExpand: Story = {
+  args: { history: memoryHistory("/petit-planet/planner") },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.getByRole("heading", { level: 2, name: "Layers" })).toBeVisible();
+    await userEvent.click(canvas.getByRole("button", { name: "Minimize panel" }));
+    await expect(
+      await canvas.findByRole("navigation", { name: "Planner controls, minimized" }),
+    ).toBeVisible();
+    await userEvent.click(canvas.getByRole("button", { name: "Expand panel" }));
+    await expect(
+      await canvas.findByRole("complementary", { name: "Planner controls" }),
+    ).toBeVisible();
+  },
+};
+
 /** On a tablet the side panel is the rail, 76 px wide. */
 export const TabletRail: Story = {
   args: { history: memoryHistory("/petit-planet/planner"), layout: "tablet" },

@@ -68,19 +68,6 @@
   font-weight: var(--weight-strong);
 }
 
-/* The planner's side panel header (the rest of its layout is @glade/planner's). */
-.glade-planner-header {
-  flex: none;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 16px 18px 14px;
-}
-
-.glade-planner-header > * {
-  flex: 1;
-}
-
 /* Read by screen readers, not shown. */
 .glade-visually-hidden {
   position: absolute;

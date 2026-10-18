@@ -9,7 +9,8 @@
     ".": "./src/index.ts"
   },
   "dependencies": {
-    "@glade/ui": "workspace:*"
+    "@glade/ui": "workspace:*",
+    "react-aria-components": "^1.22.1"
   },
   "peerDependencies": {
     "react": "^19.3.1"
