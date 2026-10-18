@@ -1,6 +1,6 @@
 // The planner's own state (not the map's): the active tool, how a new selection combines with the
-// old, the ruler, which layer rows are hidden, the "Always on" ticks and whether the side panel is
-// open or the rail. A pure reducer, so the rules in docs/planner/screen.md are tested without a
+// old, the ruler, which layer rows are hidden, the "Always on" ticks, the time of day and snow,
+// and whether the side panel is open or the rail. A pure reducer, so the rules in docs/planner/screen.md are tested without a
 // screen.
 
 /** Tools that share the one "active tool" (paint tools join them with the toolbox). */
@@ -22,6 +22,10 @@ export interface PlannerState {
   hidden: readonly string[];
   /** "Always on" ticks: unticked, the row is locked and only a spotlight shows. */
   alwaysOn: Readonly<Record<HostLayer, boolean>>;
+  /** The time of day, in hours (0 to 24). */
+  hour: number;
+  /** Winter (Snow ticked). */
+  snow: boolean;
   panel: "open" | "rail";
 }
 
@@ -31,17 +35,26 @@ export type PlannerAction =
   | { type: "ruler"; on: boolean }
   | { type: "toggle-layer"; id: string }
   | { type: "always-on"; layer: HostLayer; on: boolean }
+  | { type: "hour"; hour: number }
+  | { type: "snow"; on: boolean }
   | { type: "panel"; panel: "open" | "rail" };
 
-/** A new planner: the Pointer, Set, no ruler, every layer shown, the grid always on. */
-export function initialPlanner(panel: "open" | "rail" = "open"): PlannerState {
+/**
+ * A new planner: the Pointer, Set, no ruler, every layer shown, the grid always on, no snow, at
+ * `hour` (the look's default time).
+ */
+export function initialPlanner(
+  start: { panel?: "open" | "rail"; hour?: number } = {},
+): PlannerState {
   return {
     tool: "pointer",
     selectMode: "set",
     ruler: false,
     hidden: [],
     alwaysOn: { grid: true, area: false },
-    panel,
+    hour: start.hour ?? 12,
+    snow: false,
+    panel: start.panel ?? "open",
   };
 }
 
@@ -66,6 +79,10 @@ export function plannerReducer(state: PlannerState, action: PlannerAction): Plan
       return state.alwaysOn[action.layer] === action.on
         ? state
         : { ...state, alwaysOn: { ...state.alwaysOn, [action.layer]: action.on } };
+    case "hour":
+      return state.hour === action.hour ? state : { ...state, hour: action.hour };
+    case "snow":
+      return state.snow === action.on ? state : { ...state, snow: action.on };
     case "panel":
       return state.panel === action.panel ? state : { ...state, panel: action.panel };
   }

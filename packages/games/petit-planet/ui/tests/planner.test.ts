@@ -3,7 +3,7 @@
 
 import { petitPlanet } from "@glade/petit-planet-profile";
 import { describe, expect, it } from "vitest";
-import { islandLayers, petitPlanetIcons } from "../src";
+import { islandLayers, islandSnowSeason, islandTimeStops, petitPlanetIcons } from "../src";
 
 describe("the island's layer rows", () => {
   const toggles = petitPlanet.maps.planet.ui.layerNames().map((l) => l.id);
@@ -23,5 +23,20 @@ describe("the island's layer rows", () => {
     expect(hosts.map((r) => r.id)).toEqual(["grid", "area"]);
     for (const r of hosts) expect(r.layers).toEqual([]);
     expect(new Set(islandLayers.map((r) => r.id)).size).toBe(islandLayers.length);
+  });
+});
+
+describe("the island's time of day", () => {
+  const style = petitPlanet.maps.planet.style.defaults;
+
+  it("names every preset of the island's look, earliest first", () => {
+    const presets = Object.entries(style.presets)
+      .sort(([, a], [, b]) => (a as { hour: number }).hour - (b as { hour: number }).hour)
+      .map(([name]) => name);
+    expect(islandTimeStops.map((s) => s.preset)).toEqual(presets);
+  });
+
+  it("turns on a season the look has", () => {
+    expect(Object.keys(style.seasons ?? {})).toContain(islandSnowSeason);
   });
 });

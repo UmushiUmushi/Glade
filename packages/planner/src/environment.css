@@ -1,0 +1,42 @@
+/* The Environment section (environment.tsx). From the design: the sky dome above the slider on
+   the left, 184 interface pixels wide; the Snow tick on the right. The sun turns on the dome's
+   centre and its colours ease, unless motion is turned down. */
+
+.glade-environment {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: calc(12 * var(--u));
+}
+
+.glade-environment-time {
+  width: calc(184 * var(--u));
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  gap: calc(6 * var(--u));
+}
+
+.glade-sky {
+  display: block;
+  width: calc(184 * var(--u));
+  height: calc(80 * var(--u));
+  overflow: hidden;
+}
+
+.glade-sky path,
+.glade-sky circle {
+  transition:
+    fill 160ms ease,
+    opacity 160ms ease;
+}
+
+.glade-sky-sun {
+  transform-box: view-box;
+  transform-origin: 92px 92.9px;
+  transition: transform 180ms ease-out;
+}
+
+.glade-sky-paper {
+  fill: var(--paper);
+}

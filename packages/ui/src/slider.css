@@ -22,3 +22,8 @@
   font-weight: var(--weight-ui);
   color: var(--ink-muted);
 }
+
+.glade-slider-stops > [data-current] {
+  color: var(--ink);
+  font-weight: var(--weight-strong);
+}

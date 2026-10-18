@@ -2,7 +2,7 @@
 // range input (keyboard and screen readers work as people expect), in the text colour, with
 // optional labels for its stops underneath.
 
-import { useId } from "react";
+import { useId, type KeyboardEvent } from "react";
 import "./slider.css";
 
 export interface SliderProps {
@@ -17,14 +17,18 @@ export interface SliderProps {
   valueText?: (value: number) => string;
   /** Labels shown under the track, evenly spaced from min to max: Dawn, Day, Dusk, Night. */
   stops?: string[];
-  /** Track width in CSS pixels. */
+  /** The stop label to show as the current one (bold, in the text colour). */
+  currentStop?: number;
+  /** Track width in interface pixels. */
   width?: number;
+  /** Keys of its own (call preventDefault to stop the browser's step). */
+  onKeyDown?: (e: KeyboardEvent<HTMLInputElement>) => void;
 }
 
 export function Slider(props: SliderProps) {
   const id = useId();
   return (
-    <div className="glade-slider" style={{ width: props.width ?? 184 }}>
+    <div className="glade-slider" style={{ width: `calc(${props.width ?? 184} * var(--u))` }}>
       <input
         id={id}
         type="range"
@@ -35,11 +39,14 @@ export function Slider(props: SliderProps) {
         aria-label={props.label}
         aria-valuetext={props.valueText?.(props.value)}
         onChange={(e) => props.onChange(Number(e.currentTarget.value))}
+        onKeyDown={props.onKeyDown}
       />
       {props.stops && (
         <div className="glade-slider-stops" aria-hidden="true">
-          {props.stops.map((stop) => (
-            <span key={stop}>{stop}</span>
+          {props.stops.map((stop, i) => (
+            <span key={stop} data-current={i === props.currentStop ? "" : undefined}>
+              {stop}
+            </span>
           ))}
         </div>
       )}

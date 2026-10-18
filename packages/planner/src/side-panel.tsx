@@ -66,7 +66,13 @@ const MODES: ToolDef[] = [
   },
 ];
 
-function Section(props: { id: string; title: string; aside?: string; children: ReactNode }) {
+/** A section of the side panel: a dotted line above, a small capital heading, its controls. */
+export function PanelSection(props: {
+  id: string;
+  title: string;
+  aside?: string;
+  children: ReactNode;
+}) {
   return (
     <section className="glade-panel-section" aria-labelledby={props.id}>
       <div className="glade-panel-section-head">
@@ -142,7 +148,7 @@ function LayerToggle(props: {
 
 function SelectSection({ state, dispatch, onClearSelection }: SidePanelProps) {
   return (
-    <Section id="glade-panel-select" title="Select">
+    <PanelSection id="glade-panel-select" title="Select">
       <div className="glade-panel-row">
         <ToolGroup
           label="Selection tool"
@@ -170,7 +176,7 @@ function SelectSection({ state, dispatch, onClearSelection }: SidePanelProps) {
           Ruler
         </Checkbox>
       </div>
-    </Section>
+    </PanelSection>
   );
 }
 
@@ -179,7 +185,7 @@ function LayersSection({ state, dispatch, layers }: SidePanelProps) {
   // The design lists the ticks the other way up: Area, then Grid.
   const hosts = layers.filter((r) => r.host).reverse();
   return (
-    <Section
+    <PanelSection
       id="glade-panel-layers"
       title="Layers"
       aside={`${visibleCount} of ${layers.length} visible`}
@@ -202,7 +208,7 @@ function LayersSection({ state, dispatch, layers }: SidePanelProps) {
           ))}
         </div>
       )}
-    </Section>
+    </PanelSection>
   );
 }
 
@@ -222,14 +228,14 @@ export function SidePanel(props: SidePanelProps) {
         />
       </div>
       <div className="glade-panel-body">
-        <Section id="glade-panel-tools" title="Tools" aside="Hold Shift to swap">
+        <PanelSection id="glade-panel-tools" title="Tools" aside="Hold Shift to swap">
           <ToolGroup
             label="Tools"
             tools={TOOLS}
             chosen={state.tool}
             onChoose={(id) => dispatch({ type: "tool", tool: id as ToolId })}
           />
-        </Section>
+        </PanelSection>
         <SelectSection {...props} />
         {props.environment}
         <LayersSection {...props} />

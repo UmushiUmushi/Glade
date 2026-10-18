@@ -17,7 +17,7 @@ const ROWS: LayerRow[] = [
 ];
 
 function Panel(props: { onAction: (a: PlannerAction) => void; onClear: () => void }) {
-  const [state, dispatch] = useReducer(plannerReducer, "open", initialPlanner);
+  const [state, dispatch] = useReducer(plannerReducer, {}, initialPlanner);
   return (
     <div
       style={{

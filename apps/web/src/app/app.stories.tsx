@@ -105,6 +105,21 @@ export const PickerListsGames: Story = {
   },
 };
 
+/** The island's environment: the look's hours with the game's names, starting at midday. */
+export const Environment: Story = {
+  args: { history: memoryHistory("/petit-planet/planner") },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.getByRole("heading", { level: 2, name: "Environment" })).toBeVisible();
+    const slider = canvas.getByRole("slider", { name: "Time of day" });
+    await expect(slider).toHaveAttribute("aria-valuetext", "Day, 12:00 PM");
+    slider.focus();
+    await userEvent.keyboard("{PageUp}");
+    await expect(slider).toHaveAttribute("aria-valuetext", "Dusk, 4:30 PM");
+    await expect(canvas.getByRole("checkbox", { name: "Snow" })).toBeVisible();
+  },
+};
+
 /** The side panel's Minimize shrinks it to the rail; the rail's Expand opens it again. */
 export const MinimizeAndExpand: Story = {
   args: { history: memoryHistory("/petit-planet/planner") },

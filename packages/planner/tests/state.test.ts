@@ -25,7 +25,9 @@ describe("a new planner", () => {
     expect(s.hidden).toEqual([]);
     expect(s.alwaysOn).toEqual({ grid: true, area: false });
     expect(s.panel).toBe("open");
-    expect(initialPlanner("rail").panel).toBe("rail");
+    expect(s.hour).toBe(12);
+    expect(s.snow).toBe(false);
+    expect(initialPlanner({ panel: "rail", hour: 7 })).toMatchObject({ panel: "rail", hour: 7 });
   });
 });
 
@@ -73,6 +75,15 @@ describe("layer rows", () => {
     const gridOff = plannerReducer(s, { type: "always-on", layer: "grid", on: false });
     expect(isVisible(gridOff, "grid")).toBe(false);
     expect(plannerReducer(gridOff, { type: "always-on", layer: "grid", on: false })).toBe(gridOff);
+  });
+});
+
+describe("time and snow", () => {
+  it("change, and stay the same object when nothing changes", () => {
+    const s = run({ type: "hour", hour: 16.5 }, { type: "snow", on: true });
+    expect(s).toMatchObject({ hour: 16.5, snow: true });
+    expect(plannerReducer(s, { type: "hour", hour: 16.5 })).toBe(s);
+    expect(plannerReducer(s, { type: "snow", on: true })).toBe(s);
   });
 });
 

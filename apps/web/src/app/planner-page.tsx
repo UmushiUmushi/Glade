@@ -4,17 +4,26 @@
 // steps 1.5 to 1.8; the Menu holds Home until the rest of it arrives in step 1.11.
 
 import {
+  EnvironmentSection,
   initialPlanner,
   mapLayers,
   PlannerLayout,
   plannerReducer,
   RailHeader,
   SidePanel,
+  timeStopsFor,
   useScreenLayout,
   type LayoutSetting,
 } from "@glade/planner";
 import { GamePicker, IconButton, Menu, MenuItem, type GameChoice } from "@glade/ui";
-import { MapViewport, startView } from "@glade/viewport";
+import {
+  MapViewport,
+  seasons,
+  startEnvironment,
+  startView,
+  timeStops,
+  type Environment,
+} from "@glade/viewport";
 import { useEffect, useMemo, useReducer } from "react";
 import type { GamePlanner, GladeGame } from "./games";
 import { useHistory } from "./navigation";
@@ -37,8 +46,6 @@ export function gameChoices(games: readonly GladeGame[]): GameChoice[] {
     ready: g.planner !== null,
   }));
 }
-
-const NOON = { hour: 12 };
 
 function MainMenu() {
   const history = useHistory();
@@ -63,9 +70,10 @@ function MainMenu() {
  */
 function usePlanner(planner: GamePlanner, layout: LayoutSetting | undefined) {
   const screen = useScreenLayout(layout);
+  const start = useMemo(() => startEnvironment(planner.map), [planner]);
   const [state, dispatch] = useReducer(
     plannerReducer,
-    screen === "desktop" ? "open" : "rail",
+    { panel: screen === "desktop" ? "open" : "rail", hour: start.hour },
     initialPlanner,
   );
   useEffect(
@@ -80,12 +88,24 @@ function usePlanner(planner: GamePlanner, layout: LayoutSetting | undefined) {
     () => mapLayers(state, planner.layers, defaults),
     [state, planner, defaults],
   );
-  return { state, dispatch, layers };
+  const time = useMemo(() => {
+    const stops = timeStopsFor(timeStops(planner.map), planner.timeStops);
+    const snow = planner.snowSeason;
+    return { stops, hasSnow: !!snow && seasons(planner.map).includes(snow) };
+  }, [planner]);
+  const environment = useMemo<Environment>(
+    () => ({
+      hour: state.hour,
+      season: state.snow && planner.snowSeason ? planner.snowSeason : start.season,
+    }),
+    [state.hour, state.snow, planner, start],
+  );
+  return { state, dispatch, layers, time, environment };
 }
 
 export function PlannerPage({ game, planner, games, layout }: PlannerPageProps) {
   const history = useHistory();
-  const { state, dispatch, layers } = usePlanner(planner, layout);
+  const { state, dispatch, layers, time, environment } = usePlanner(planner, layout);
   const doc = useMemo(() => planner.newDoc(), [planner]);
   useEffect(() => {
     document.title = `${game.title} planner · Glade`;
@@ -110,6 +130,17 @@ export function PlannerPage({ game, planner, games, layout }: PlannerPageProps) 
               menu={<MainMenu />}
               picker={picker}
               layers={planner.layers}
+              environment={
+                // A map with a fixed look (one time, no seasons) has no Environment section.
+                time.stops.length > 1 && (
+                  <EnvironmentSection
+                    state={state}
+                    dispatch={dispatch}
+                    stops={time.stops}
+                    hasSnow={time.hasSnow}
+                  />
+                )
+              }
               onClearSelection={() => {}}
             />
           ) : (
@@ -122,7 +153,7 @@ export function PlannerPage({ game, planner, games, layout }: PlannerPageProps) 
             doc={doc}
             view={startView(planner.map)}
             camera="iso"
-            environment={NOON}
+            environment={environment}
             layers={layers}
             label={`${game.title} map, new and empty`}
           />

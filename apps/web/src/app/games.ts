@@ -7,11 +7,13 @@ import { bind, type Bound, type Doc } from "@glade/core";
 import { petitPlanet } from "@glade/petit-planet-profile";
 import {
   islandLayers,
+  islandSnowSeason,
+  islandTimeStops,
   petitPlanetIcons,
   petitPlanetTheme,
   title as petitPlanetTitle,
 } from "@glade/petit-planet-ui";
-import type { LayerRow } from "@glade/planner";
+import type { LayerRow, TimeStopName } from "@glade/planner";
 import "@glade/petit-planet-ui/fonts.css";
 import type { RenderableMap } from "@glade/render";
 import type { GameIcons, Theme } from "@glade/ui";
@@ -36,6 +38,10 @@ export interface GamePlanner {
   newDoc(): Doc;
   /** The side panel's layer rows for that map. */
   layers: readonly LayerRow[];
+  /** The time of day's stops: a name and sky colour for each of the look's presets. */
+  timeStops: readonly TimeStopName[];
+  /** The look's season that Snow turns on; none for a map without one. */
+  snowSeason?: string;
 }
 
 const island = bind(petitPlanet.maps[petitPlanet.defaultMap], {
@@ -49,7 +55,13 @@ export const games: readonly GladeGame[] = [
     title: petitPlanetTitle,
     theme: petitPlanetTheme,
     icons: petitPlanetIcons,
-    planner: { map: island, newDoc: () => island.newDoc("Island"), layers: islandLayers },
+    planner: {
+      map: island,
+      newDoc: () => island.newDoc("Island"),
+      layers: islandLayers,
+      timeStops: islandTimeStops,
+      snowSeason: islandSnowSeason,
+    },
   },
   { id: "palworld", title: "Palworld", theme: null, planner: null },
   { id: "stardew-valley", title: "Stardew Valley", theme: null, planner: null },
