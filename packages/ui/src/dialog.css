@@ -12,8 +12,8 @@
 }
 
 .glade-dialog-modal {
-  max-width: calc(100% - 32px);
-  max-height: calc(100% - 32px);
+  max-width: calc(100% - calc(32 * var(--u)));
+  max-height: calc(100% - calc(32 * var(--u)));
   overflow-y: auto;
   box-sizing: border-box;
   background: var(--pop);
@@ -24,10 +24,10 @@
 }
 
 .glade-dialog {
-  padding: 20px;
+  padding: calc(20 * var(--u));
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: calc(14 * var(--u));
   outline: none;
 }
 
@@ -35,7 +35,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
+  gap: calc(8 * var(--u));
 }
 
 .glade-dialog-titles {
@@ -47,15 +47,15 @@
 .glade-dialog-title {
   margin: 0;
   font-family: var(--font-title);
-  font-size: 24px;
-  line-height: 28px;
+  font-size: calc(24 * var(--u));
+  line-height: calc(28 * var(--u));
   font-weight: var(--weight-title);
   color: var(--ink-title);
 }
 
 .glade-dialog-subtitle {
-  font-size: 14px;
-  line-height: 18px;
+  font-size: calc(14 * var(--u));
+  line-height: calc(18 * var(--u));
   color: var(--ink-muted);
   white-space: nowrap;
   overflow: hidden;

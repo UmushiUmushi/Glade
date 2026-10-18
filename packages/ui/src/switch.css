@@ -5,49 +5,49 @@
   display: inline-flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
-  min-height: 44px;
+  gap: calc(12 * var(--u));
+  min-height: calc(44 * var(--u));
   cursor: pointer;
-  font-size: 16px;
-  line-height: 20px;
+  font-size: calc(16 * var(--u));
+  line-height: calc(20 * var(--u));
   font-weight: var(--weight-ui);
   color: var(--ink);
 }
 
 .glade-switch-track {
   position: relative;
-  width: 40px;
-  height: 24px;
+  width: calc(40 * var(--u));
+  height: calc(24 * var(--u));
   flex: none;
-  border-radius: 999px;
+  border-radius: calc(999 * var(--u));
   background: var(--paper);
-  box-shadow: inset 0 0 0 2.5px var(--line);
+  box-shadow: inset 0 0 0 calc(2.5 * var(--u)) var(--line);
 }
 
 .glade-switch-knob {
   position: absolute;
-  top: 5px;
-  left: 5px;
-  width: 14px;
-  height: 14px;
-  border-radius: 999px;
+  top: calc(5 * var(--u));
+  left: calc(5 * var(--u));
+  width: calc(14 * var(--u));
+  height: calc(14 * var(--u));
+  border-radius: calc(999 * var(--u));
   background: var(--ink-muted);
   transition: left 160ms ease;
 }
 
 .glade-switch[data-selected] .glade-switch-track {
   background: var(--selected);
-  box-shadow: inset 0 0 0 2.5px var(--on-selected);
+  box-shadow: inset 0 0 0 calc(2.5 * var(--u)) var(--on-selected);
 }
 
 .glade-switch[data-selected] .glade-switch-knob {
-  left: 21px;
+  left: calc(21 * var(--u));
   background: var(--on-selected);
 }
 
 .glade-switch[data-focus-visible] .glade-switch-track {
-  outline: 3px solid var(--focus);
-  outline-offset: 2px;
+  outline: calc(3 * var(--u)) solid var(--focus);
+  outline-offset: calc(2 * var(--u));
 }
 
 .glade-switch[data-disabled] {

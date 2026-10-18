@@ -18,8 +18,8 @@
 
 .glade-root :focus-visible,
 .glade-root [data-focus-visible] {
-  outline: 3px solid var(--focus);
-  outline-offset: 2px;
+  outline: calc(3 * var(--u)) solid var(--focus);
+  outline-offset: calc(2 * var(--u));
 }
 
 .glade-root[data-reduce-motion] *,

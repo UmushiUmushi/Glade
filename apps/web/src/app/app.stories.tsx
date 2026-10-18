@@ -14,6 +14,9 @@ function fakeApi(answer: Awaited<ReturnType<ApiClient["getJson"]>>): ApiClient {
   return { getJson: async () => answer as never };
 }
 
+/** One interface pixel where `el` is (the theme root's --u), in CSS pixels. */
+const unit = (el: Element) => parseFloat(getComputedStyle(el).getPropertyValue("--u")) || 1;
+
 const meta = {
   title: "Glade/Web app/App",
   component: App,
@@ -119,14 +122,14 @@ export const MinimizeAndExpand: Story = {
   },
 };
 
-/** On a tablet the side panel is the rail, 76 px wide. */
+/** On a tablet the side panel is the rail, 76 interface pixels wide. */
 export const TabletRail: Story = {
   args: { history: memoryHistory("/petit-planet/planner"), layout: "tablet" },
   play: async ({ canvasElement }) => {
     const rail = await within(canvasElement).findByRole("navigation", {
       name: "Planner controls, minimized",
     });
-    await expect(rail.getBoundingClientRect().width).toBe(76);
+    await expect(rail.getBoundingClientRect().width).toBeCloseTo(76 * unit(rail), 1);
   },
 };
 

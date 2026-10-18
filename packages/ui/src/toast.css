@@ -2,32 +2,32 @@
    and a 36 px action button in the selected colour. The screen decides where it sits. */
 
 .glade-toast {
-  height: 48px;
+  height: calc(48 * var(--u));
   box-sizing: border-box;
-  padding: 0 6px 0 20px;
-  border-radius: 999px;
+  padding: 0 calc(6 * var(--u)) 0 calc(20 * var(--u));
+  border-radius: calc(999 * var(--u));
   display: inline-flex;
   align-items: center;
-  gap: 14px;
+  gap: calc(14 * var(--u));
   background: var(--strong);
   color: var(--on-strong);
   box-shadow: var(--shadow-float);
-  font-size: 15px;
-  line-height: 20px;
+  font-size: calc(15 * var(--u));
+  line-height: calc(20 * var(--u));
   font-weight: var(--weight-ui);
   white-space: nowrap;
 }
 
 .glade-toast-action {
-  height: 36px;
+  height: calc(36 * var(--u));
   border: none;
-  border-radius: 999px;
-  padding: 0 16px;
+  border-radius: calc(999 * var(--u));
+  padding: 0 calc(16 * var(--u));
   cursor: pointer;
   background: var(--selected);
   color: var(--on-selected);
   font-family: var(--font-ui);
-  font-size: 15px;
-  line-height: 20px;
+  font-size: calc(15 * var(--u));
+  line-height: calc(20 * var(--u));
   font-weight: var(--weight-strong);
 }

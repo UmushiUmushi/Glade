@@ -3,11 +3,11 @@
    button. plain: paper, no shadow. */
 
 .glade-icon-button {
-  width: 44px;
-  height: 44px;
+  width: calc(44 * var(--u));
+  height: calc(44 * var(--u));
   flex: none;
   border: none;
-  border-radius: 999px;
+  border-radius: calc(999 * var(--u));
   padding: 0;
   display: grid;
   place-items: center;
@@ -15,8 +15,8 @@
 }
 
 .glade-icon-button[data-size="36"] {
-  width: 36px;
-  height: 36px;
+  width: calc(36 * var(--u));
+  height: calc(36 * var(--u));
 }
 
 .glade-icon-button[data-variant="float"] {
@@ -45,7 +45,7 @@
 }
 
 .glade-icon-button[data-pressed] {
-  transform: translateY(2px);
+  transform: translateY(calc(2 * var(--u)));
   box-shadow: none;
 }
 

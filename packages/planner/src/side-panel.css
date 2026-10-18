@@ -8,13 +8,13 @@
   flex: none;
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 16px 18px 14px;
+  gap: calc(8 * var(--u));
+  padding: calc(16 * var(--u)) calc(18 * var(--u)) calc(14 * var(--u));
 }
 
 .glade-rail-header {
   flex-direction: column;
-  padding: 14px 0 10px;
+  padding: calc(14 * var(--u)) 0 calc(10 * var(--u));
 }
 
 .glade-panel-picker {
@@ -32,28 +32,28 @@
   flex: 1;
   min-height: 0;
   overflow-y: auto;
-  padding: 0 18px 24px;
+  padding: 0 calc(18 * var(--u)) calc(24 * var(--u));
 }
 
 .glade-panel-section {
-  border-top: 2px dotted var(--line);
-  padding: 16px 0;
+  border-top: calc(2 * var(--u)) dotted var(--line);
+  padding: calc(16 * var(--u)) 0;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: calc(12 * var(--u));
 }
 
 .glade-panel-section-head {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  gap: 8px;
+  gap: calc(8 * var(--u));
 }
 
 .glade-panel-heading {
   margin: 0;
-  font-size: 13px;
-  line-height: 16px;
+  font-size: calc(13 * var(--u));
+  line-height: calc(16 * var(--u));
   font-weight: var(--weight-title);
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -61,8 +61,8 @@
 }
 
 .glade-panel-aside {
-  font-size: 13px;
-  line-height: 18px;
+  font-size: calc(13 * var(--u));
+  line-height: calc(18 * var(--u));
   color: var(--ink-muted);
 }
 
@@ -70,7 +70,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: calc(12 * var(--u));
 }
 
 .glade-panel-grow {
@@ -85,15 +85,15 @@
 /* Tools: round, no fill; the chosen one in the selected colour. */
 .glade-tool-group {
   display: flex;
-  gap: 3px;
+  gap: calc(3 * var(--u));
 }
 
 .glade-tool {
-  width: 44px;
-  height: 44px;
+  width: calc(44 * var(--u));
+  height: calc(44 * var(--u));
   flex: none;
   border: none;
-  border-radius: 999px;
+  border-radius: calc(999 * var(--u));
   padding: 0;
   display: grid;
   place-items: center;
@@ -116,16 +116,16 @@
 /* The selection modes: a segmented pill; the chosen one stands out on paper. */
 .glade-segments {
   display: flex;
-  padding: 3px;
-  border-radius: 999px;
+  padding: calc(3 * var(--u));
+  border-radius: calc(999 * var(--u));
   background: var(--inset);
 }
 
 .glade-segment {
-  width: 32px;
-  height: 38px;
+  width: calc(32 * var(--u));
+  height: calc(38 * var(--u));
   border: none;
-  border-radius: 999px;
+  border-radius: calc(999 * var(--u));
   padding: 0;
   display: grid;
   place-items: center;
@@ -137,36 +137,36 @@
 
 .glade-segment[data-selected] {
   background: var(--paper);
-  box-shadow: 0 2px 0 var(--lip);
+  box-shadow: 0 calc(2 * var(--u)) 0 var(--lip);
 }
 
 .glade-tool[data-focus-visible],
 .glade-segment[data-focus-visible],
 .glade-layer-row[data-focus-visible] {
-  outline: 3px solid var(--focus);
-  outline-offset: 2px;
+  outline: calc(3 * var(--u)) solid var(--focus);
+  outline-offset: calc(2 * var(--u));
 }
 
 /* Layers: rows with an icon disc, the name, and an eye. */
 .glade-layer-rows {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: calc(2 * var(--u));
 }
 
 .glade-layer-row {
-  height: 44px;
+  height: calc(44 * var(--u));
   width: 100%;
   border: none;
-  border-radius: 999px;
+  border-radius: calc(999 * var(--u));
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 0 12px 0 6px;
+  gap: calc(12 * var(--u));
+  padding: 0 calc(12 * var(--u)) 0 calc(6 * var(--u));
   background: transparent;
   font-family: var(--font-ui);
-  font-size: 16px;
-  line-height: 20px;
+  font-size: calc(16 * var(--u));
+  line-height: calc(20 * var(--u));
   font-weight: var(--weight-title);
   color: var(--ink-muted);
   cursor: pointer;
@@ -187,13 +187,13 @@
 }
 
 .glade-layer-disc {
-  width: 32px;
-  height: 32px;
+  width: calc(32 * var(--u));
+  height: calc(32 * var(--u));
   flex: none;
-  border-radius: 999px;
+  border-radius: calc(999 * var(--u));
   display: grid;
   place-items: center;
-  box-shadow: inset 0 0 0 2px var(--line);
+  box-shadow: inset 0 0 0 calc(2 * var(--u)) var(--line);
 }
 
 .glade-layer-row[data-selected] .glade-layer-disc {
@@ -207,8 +207,8 @@
 }
 
 .glade-panel-always {
-  border-top: 2px dotted var(--line);
-  padding-top: 6px;
+  border-top: calc(2 * var(--u)) dotted var(--line);
+  padding-top: calc(6 * var(--u));
   display: flex;
   flex-direction: column;
 }

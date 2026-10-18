@@ -158,7 +158,7 @@ export function iconResolves(id: string, gameIcons: GameIcons): boolean {
 
 export interface IconProps {
   id: IconId;
-  /** Width and height in CSS pixels. */
+  /** Width and height in interface pixels (the theme root's `--u`). */
   size?: number;
   /** Line weight for shared icons, which follow the text colour. */
   strokeWidth?: number;
@@ -167,12 +167,13 @@ export interface IconProps {
 /** An icon, for decoration: the control around it carries the name. Unknown ids draw nothing. */
 export function Icon({ id, size = 20, strokeWidth = 2.4 }: IconProps) {
   const own = useContext(IconContext)[id];
+  const box = { width: `calc(${size} * var(--u, 1px))`, height: `calc(${size} * var(--u, 1px))` };
   if (own) {
     return (
       <span
         className="glade-icon"
         aria-hidden="true"
-        style={{ width: size, height: size }}
+        style={box}
         // A game's own SVG file from its repo, never content a user sent.
         dangerouslySetInnerHTML={{ __html: own }}
       />
@@ -185,6 +186,7 @@ export function Icon({ id, size = 20, strokeWidth = 2.4 }: IconProps) {
       className="glade-icon"
       aria-hidden="true"
       size={size}
+      style={box}
       strokeWidth={strokeWidth}
       absoluteStrokeWidth={false}
     />

@@ -32,6 +32,8 @@ export interface ThemeRootProps {
   reduceMotion?: boolean;
   /** The game's own drawings, by icon id. Every other icon comes from the shared set. */
   icons?: GameIcons;
+  /** Settings → Interface size: 1 is 100 % (70 % to 130 %). */
+  interfaceSize?: number;
   className?: string;
   children: ReactNode;
 }
@@ -48,7 +50,7 @@ export function ThemeRoot(props: ThemeRootProps) {
       data-theme={props.theme.id}
       data-mode={mode}
       data-reduce-motion={props.reduceMotion ? "" : undefined}
-      style={cssVars(props.theme, mode)}
+      style={cssVars(props.theme, mode, props.interfaceSize)}
     >
       {/* Popups (menus, tooltips, dialogs) open inside this root, so they wear its theme too. */}
       <UNSAFE_PortalProvider getContainer={() => root.current}>

@@ -5,27 +5,27 @@
 .glade-pill {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 5px 12px;
-  border-radius: 999px;
+  gap: calc(6 * var(--u));
+  padding: calc(5 * var(--u)) calc(12 * var(--u));
+  border-radius: calc(999 * var(--u));
   background: var(--strong);
   color: var(--on-strong);
-  font-size: 13px;
-  line-height: 18px;
+  font-size: calc(13 * var(--u));
+  line-height: calc(18 * var(--u));
   font-weight: var(--weight-ui);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
 
 .glade-chip {
-  height: 28px;
+  height: calc(28 * var(--u));
   border: none;
-  border-radius: 999px;
-  padding: 0 10px;
+  border-radius: calc(999 * var(--u));
+  padding: 0 calc(10 * var(--u));
   cursor: pointer;
   font-family: var(--font-ui);
-  font-size: 13px;
-  line-height: 16px;
+  font-size: calc(13 * var(--u));
+  line-height: calc(16 * var(--u));
   font-weight: var(--weight-ui);
   color: var(--ink);
   background: var(--paper);

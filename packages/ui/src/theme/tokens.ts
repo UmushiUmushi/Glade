@@ -84,11 +84,28 @@ export function cssName(token: string): string {
   return `--${token.replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`)}`;
 }
 
-/** A theme's tokens for one mode, as CSS custom properties. */
-export function cssVars(theme: Theme, mode: ColorMode): Record<string, string> {
-  const vars: Record<string, string> = {};
-  for (const [token, value] of Object.entries({ ...theme[mode], ...theme.shape })) {
-    vars[cssName(token)] = value;
+/**
+ * How big Glade draws the design's sizes. The design's pixel sizes read far too big on a desktop
+ * screen, so every interface size is drawn at this share of them (the map is not scaled).
+ * Settings → Interface size multiplies it again.
+ */
+export const UI_BASE_SCALE = 0.8;
+
+/** Sizes in pixels as interface units: `0 4px 0` → `0 calc(4 * var(--u)) 0`. */
+export function inInterfaceUnits(value: string): string {
+  return value.replace(/(?<![\w.-])(-?\d+(?:\.\d+)?)px\b/g, "calc($1 * var(--u))");
+}
+
+/**
+ * A theme's tokens for one mode, as CSS custom properties, with `--u`: one interface pixel, the
+ * design's pixel at `interfaceSize` (1 is 100 %) of the base scale. Every size in the shared
+ * screens is a number of `--u`.
+ */
+export function cssVars(theme: Theme, mode: ColorMode, interfaceSize = 1): Record<string, string> {
+  const vars: Record<string, string> = { "--u": `${UI_BASE_SCALE * interfaceSize}px` };
+  for (const [token, value] of Object.entries(theme[mode])) vars[cssName(token)] = value;
+  for (const [token, value] of Object.entries(theme.shape)) {
+    vars[cssName(token)] = inInterfaceUnits(value);
   }
   return vars;
 }

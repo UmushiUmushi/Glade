@@ -4,25 +4,25 @@
 
 .glade-tab-list {
   display: flex;
-  gap: 6px;
+  gap: calc(6 * var(--u));
   overflow-x: auto;
   scrollbar-width: none;
-  padding: 2px 28px 6px 2px;
-  -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 40px), transparent);
-  mask-image: linear-gradient(90deg, #000 calc(100% - 40px), transparent);
+  padding: calc(2 * var(--u)) calc(28 * var(--u)) calc(6 * var(--u)) calc(2 * var(--u));
+  -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - calc(40 * var(--u))), transparent);
+  mask-image: linear-gradient(90deg, #000 calc(100% - calc(40 * var(--u))), transparent);
 }
 
 .glade-tab {
-  height: 40px;
+  height: calc(40 * var(--u));
   flex: none;
-  border-radius: 999px;
-  padding: 0 16px;
+  border-radius: calc(999 * var(--u));
+  padding: 0 calc(16 * var(--u));
   display: inline-flex;
   align-items: center;
   cursor: pointer;
   font-family: var(--font-ui);
-  font-size: 16px;
-  line-height: 20px;
+  font-size: calc(16 * var(--u));
+  line-height: calc(20 * var(--u));
   font-weight: var(--weight-ui);
   color: var(--ink);
   background: var(--inset);
@@ -37,8 +37,8 @@
 }
 
 .glade-tab[data-focus-visible] {
-  outline: 3px solid var(--focus);
-  outline-offset: 2px;
+  outline: calc(3 * var(--u)) solid var(--focus);
+  outline-offset: calc(2 * var(--u));
 }
 
 .glade-tab-panel {

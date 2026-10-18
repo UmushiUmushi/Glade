@@ -4,7 +4,7 @@
 .glade-slider {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: calc(4 * var(--u));
 }
 
 .glade-slider > input {
@@ -17,8 +17,8 @@
 .glade-slider-stops {
   display: flex;
   justify-content: space-between;
-  font-size: 12px;
-  line-height: 16px;
+  font-size: calc(12 * var(--u));
+  line-height: calc(16 * var(--u));
   font-weight: var(--weight-ui);
   color: var(--ink-muted);
 }

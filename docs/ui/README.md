@@ -36,6 +36,12 @@ so they fit every game: `--selected`, not "sun". The names live in `packages/ui/
 Glade also has its own plain theme (`gladeTheme` in `@glade/ui`): calm greys and the system's
 fonts, for screens where no game is picked (the home page).
 
+**Interface size.** The design's pixel sizes read too big on a desktop screen, so Glade draws every
+interface size at 80 % of them (`UI_BASE_SCALE`); the map itself is not scaled. Shared styles give
+sizes in interface pixels, `calc(44 * var(--u))`, never raw `px`; the theme root sets `--u`, and
+Settings → Interface size (70 % to 130 %) multiplies it again. Theme tokens in `px` are converted
+the same way.
+
 `<ThemeRoot>` puts a theme on a screen. The app picks it by page: a game's planner wears the game's
 theme and icons (from the game registry, `apps/web/src/app/games.ts`); every other page wears
 `gladeTheme`. Popups (menus, tooltips, dialogs) open inside the nearest theme root, so they wear

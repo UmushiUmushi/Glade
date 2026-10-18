@@ -14,6 +14,9 @@ function Fill({ children }: { children: string }) {
   );
 }
 
+/** One interface pixel where `el` is (the theme root's --u), in CSS pixels. */
+const unit = (el: Element) => parseFloat(getComputedStyle(el).getPropertyValue("--u")) || 1;
+
 const meta = {
   title: "Glade/Planner/Layout",
   component: PlannerLayout,
@@ -33,7 +36,7 @@ export const Desktop: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const panel = canvas.getByRole("complementary", { name: "Planner controls" });
-    await expect(panel.getBoundingClientRect().width).toBe(336);
+    await expect(panel.getBoundingClientRect().width).toBeCloseTo(336 * unit(panel), 1);
     await expect(canvas.getByRole("region", { name: "Map viewport" })).toBeVisible();
     await expect(canvas.getByRole("region", { name: "Toolbox" })).toBeVisible();
   },
@@ -45,7 +48,7 @@ export const TabletRail: Story = {
     const rail = within(canvasElement).getByRole("navigation", {
       name: "Planner controls, minimized",
     });
-    await expect(rail.getBoundingClientRect().width).toBe(76);
+    await expect(rail.getBoundingClientRect().width).toBeCloseTo(76 * unit(rail), 1);
   },
 };
 

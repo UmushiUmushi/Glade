@@ -2,26 +2,26 @@
    chunky drop shadow on filled buttons. */
 
 .glade-button {
-  height: 44px;
+  height: calc(44 * var(--u));
   border: none;
-  border-radius: 999px;
-  padding: 0 20px;
+  border-radius: calc(999 * var(--u));
+  padding: 0 calc(20 * var(--u));
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: calc(8 * var(--u));
   cursor: pointer;
   font-family: var(--font-ui);
-  font-size: 16px;
-  line-height: 20px;
+  font-size: calc(16 * var(--u));
+  line-height: calc(20 * var(--u));
   font-weight: var(--weight-ui);
   white-space: nowrap;
 }
 
 .glade-button[data-size="sm"] {
-  height: 36px;
-  padding: 0 16px;
-  font-size: 15px;
+  height: calc(36 * var(--u));
+  padding: 0 calc(16 * var(--u));
+  font-size: calc(15 * var(--u));
   font-weight: var(--weight-strong);
 }
 
@@ -32,7 +32,7 @@
 }
 
 .glade-button[data-variant="secondary"] {
-  padding: 0 18px;
+  padding: 0 calc(18 * var(--u));
   background: var(--float);
   color: var(--on-float);
   box-shadow: var(--shadow-chunk);
@@ -58,7 +58,7 @@
 }
 
 .glade-button[data-pressed] {
-  transform: translateY(2px);
+  transform: translateY(calc(2 * var(--u)));
   box-shadow: none;
 }
 

@@ -7,8 +7,8 @@
   box-sizing: border-box;
   width: 100%;
   height: 100vh;
-  min-width: 1080px;
-  min-height: 760px;
+  min-width: calc(1080 * var(--u));
+  min-height: calc(760 * var(--u));
   display: flex;
   gap: var(--gap);
   padding: var(--gap);
@@ -24,11 +24,11 @@
   background: var(--paper);
   border: var(--border-card) solid var(--frame);
   border-radius: var(--radius-card);
-  box-shadow: 0 5px 0 var(--lip);
+  box-shadow: 0 calc(5 * var(--u)) 0 var(--lip);
 }
 
 .glade-planner-panel {
-  width: 336px;
+  width: calc(336 * var(--u));
   flex: none;
   height: 100%;
   display: flex;
@@ -37,7 +37,7 @@
 }
 
 .glade-planner-panel[data-rail] {
-  width: 76px;
+  width: calc(76 * var(--u));
 }
 
 .glade-planner-main {
@@ -58,10 +58,10 @@
 
 .glade-planner-toolbox {
   flex: none;
-  min-height: 120px;
-  padding: 14px 24px;
+  min-height: calc(120 * var(--u));
+  padding: calc(14 * var(--u)) calc(24 * var(--u));
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: calc(12 * var(--u));
   z-index: 15;
 }
