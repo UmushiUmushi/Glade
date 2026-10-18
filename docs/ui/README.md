@@ -36,6 +36,11 @@ so they fit every game: `--selected`, not "sun". The names live in `packages/ui/
 Glade also has its own plain theme (`gladeTheme` in `@glade/ui`): calm greys and the system's
 fonts, for screens where no game is picked (the home page).
 
+`<ThemeRoot>` puts a theme on a screen. The app picks it by page: a game's planner wears the game's
+theme and icons (from the game registry, `apps/web/src/app/games.ts`); every other page wears
+`gladeTheme`. Popups (menus, tooltips, dialogs) open inside the nearest theme root, so they wear
+the same look as the screen they came from.
+
 **Petit Planet colours**
 
 | Token                            | Light                 | Dark                  | Used for                                  |

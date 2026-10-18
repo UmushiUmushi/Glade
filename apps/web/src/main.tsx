@@ -1,9 +1,10 @@
 // Starts Glade in the browser: logging first (so a crash while starting is logged), then the API
-// client, then the screen. Everything the app needs from the browser is handed in here.
+// client and the browser's history, then the screen. Everything the app needs from the browser is handed in here.
 
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { App } from "./app/app";
+import { browserHistory } from "./app/routes";
 import { createApiClient } from "./platform/api-client";
 import { startLogging } from "./platform/logging";
 
@@ -29,7 +30,11 @@ const root = document.getElementById("root");
 if (root) {
   createRoot(root).render(
     <StrictMode>
-      <App api={api} onError={(error) => logging.logger.error(error)} />
+      <App
+        api={api}
+        history={browserHistory(window)}
+        onError={(error) => logging.logger.error(error)}
+      />
     </StrictMode>,
   );
 }

@@ -5,6 +5,7 @@
 export * from "./button";
 export * from "./checkbox";
 export * from "./dialog";
+export * from "./game-picker";
 export * from "./icon-button";
 export * from "./icons";
 export * from "./menu";

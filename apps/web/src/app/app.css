@@ -1,0 +1,100 @@
+/* The app's pages (app.tsx): the plain pages in Glade's look, and the planner filling the window
+   in its game's look. Colours and fonts come from the theme's tokens only. */
+
+.glade-app {
+  min-height: 100vh;
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--font-ui);
+  font-weight: var(--weight-ui);
+}
+
+.glade-page {
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 64px 16px;
+  display: grid;
+  gap: 12px;
+}
+
+.glade-page p {
+  margin: 0;
+}
+
+.glade-page a {
+  color: var(--ink-title);
+  font-weight: var(--weight-strong);
+}
+
+.glade-page a:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.glade-page-title {
+  margin: 0;
+  font-family: var(--font-title);
+  font-weight: var(--weight-title);
+  color: var(--ink-title);
+}
+
+.glade-page-heading {
+  margin: 16px 0 0;
+  font-family: var(--font-title);
+  font-weight: var(--weight-title);
+  font-size: 20px;
+  color: var(--ink-title);
+}
+
+.glade-game-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 8px;
+}
+
+.glade-muted {
+  color: var(--ink-muted);
+}
+
+.glade-soon {
+  margin-left: 6px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  background: var(--inset);
+  font-size: 12px;
+  font-weight: var(--weight-strong);
+}
+
+.glade-planner {
+  box-sizing: border-box;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px;
+}
+
+.glade-planner-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.glade-planner-picker {
+  width: 260px;
+  display: flex;
+}
+
+.glade-planner-picker > * {
+  flex: 1;
+}
+
+.glade-planner-map {
+  flex: 1;
+  min-height: 0;
+  border-radius: var(--radius-card);
+  overflow: hidden;
+}

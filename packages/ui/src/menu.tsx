@@ -66,16 +66,27 @@ export function Menu(props: MenuProps) {
 export interface MenuItemProps extends Omit<AriaMenuItemProps, "children" | "className" | "style"> {
   icon?: IconId;
   children: string;
+  /** Shows the words as a title in this font (a game's name in its own title font). */
+  titleFont?: string;
+  /** A short word after the text, in a quiet pill: "Soon". */
+  badge?: string;
 }
 
-export function MenuItem({ icon, children, ...rest }: MenuItemProps) {
+export function MenuItem({ icon, children, titleFont, badge, ...rest }: MenuItemProps) {
   return (
     <AriaMenuItem {...rest} className="glade-menu-item" textValue={children}>
       {({ isSelected }) => (
         <>
           {icon && <Icon id={icon} size={20} />}
-          <span className="glade-menu-item-text">{children}</span>
+          <span
+            className="glade-menu-item-text"
+            data-title={titleFont ? "" : undefined}
+            style={titleFont ? { fontFamily: titleFont } : undefined}
+          >
+            {children}
+          </span>
           {isSelected && <Icon id="check" size={20} strokeWidth={3} />}
+          {badge && <span className="glade-menu-item-badge">{badge}</span>}
         </>
       )}
     </AriaMenuItem>

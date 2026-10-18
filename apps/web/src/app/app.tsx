@@ -1,75 +1,63 @@
-// The app's root: Glade's own theme following the system's light or dark, a safety net around the
-// whole screen, and for now a placeholder page that shows the server answers. Routes, the game
-// registry and the home page arrive in Phase 1.
+// The app's root: picks the page from the URL and gives it its look. A game's planner wears the
+// game's theme and icons; every other page wears Glade's own theme. Light or dark follows the
+// system. A safety net goes round each page, so a crash shows a calm message, not a blank screen.
 
-import { messageOf, type GladeError } from "@glade/errors";
-import type { Health } from "@glade/formats";
-import { gladeTheme, ThemeRoot } from "@glade/ui";
-import { useEffect, useState } from "react";
-import { checkServer, type ApiClient } from "../platform/api-client";
+import type { GladeError } from "@glade/errors";
+import { gladeTheme, ThemeRoot, type GameIcons, type Theme } from "@glade/ui";
+import type { ReactNode } from "react";
+import type { ApiClient } from "../platform/api-client";
+import "./app.css";
+import { games as registry, type GladeGame } from "./games";
+import { HomePage } from "./home";
+import { HistoryProvider, useRoute } from "./navigation";
+import { NotFoundPage, NotReadyPage } from "./not-found";
+import { PlannerPage } from "./planner-page";
+import type { AppHistory, Route } from "./routes";
 import { RegionBoundary } from "./region-boundary";
 
 export interface AppProps {
   api: ApiClient;
+  history: AppHistory;
   onError: (error: GladeError) => void;
+  /** The games to offer; the registry's unless a story or test passes its own. */
+  games?: readonly GladeGame[];
 }
 
-type ServerState =
-  { kind: "checking" } | { kind: "ok"; health: Health } | { kind: "error"; text: string };
+/** A page and the look it wears. */
+interface Shown {
+  page: ReactNode;
+  theme: Theme;
+  icons?: GameIcons;
+}
 
-/** Asks the server once, when the page opens. */
-function useServer(api: ApiClient): ServerState {
-  const [state, setState] = useState<ServerState>({ kind: "checking" });
-  useEffect(() => {
-    let live = true;
-    void checkServer(api).then((result) => {
-      if (!live) return;
-      setState(
-        result.ok
-          ? { kind: "ok", health: result.value }
-          : { kind: "error", text: messageOf(result.error).what },
-      );
-    });
-    return () => {
-      live = false;
+function show(route: Route, api: ApiClient, games: readonly GladeGame[]): Shown {
+  if (route.page === "home") {
+    return { page: <HomePage api={api} games={games} />, theme: gladeTheme };
+  }
+  const game = route.page === "planner" ? games.find((g) => g.id === route.game) : undefined;
+  if (game?.planner) {
+    return {
+      page: <PlannerPage game={game} planner={game.planner} games={games} />,
+      theme: game.theme ?? gladeTheme,
+      icons: game.icons,
     };
-  }, [api]);
-  return state;
+  }
+  if (game) return { page: <NotReadyPage title={game.title} />, theme: gladeTheme };
+  return { page: <NotFoundPage />, theme: gladeTheme };
 }
 
-function serverText(state: ServerState): string {
-  if (state.kind === "checking") return "Checking the server…";
-  if (state.kind === "error") return state.text;
-  return state.health.status === "ok"
-    ? `Server ok · version ${state.health.version}`
-    : "The server is up, but not everything works.";
-}
-
-function Placeholder({ api }: { api: ApiClient }) {
-  const server = useServer(api);
+export function App({ api, history, onError, games = registry }: AppProps) {
+  const route = useRoute(history);
+  const { page, theme, icons } = show(route, api, games);
   return (
-    <main
-      style={{ maxWidth: 560, margin: "0 auto", padding: "64px 16px", display: "grid", gap: 12 }}
-    >
-      <h1 style={{ margin: 0, fontFamily: "var(--font-title)", color: "var(--ink-title)" }}>
-        Glade
-      </h1>
-      <p style={{ margin: 0 }}>Plan maps and build items for cosy building games.</p>
-      <p role="status" style={{ margin: 0, color: "var(--ink-muted)" }}>
-        {serverText(server)}
-      </p>
-    </main>
-  );
-}
-
-export function App({ api, onError }: AppProps) {
-  return (
-    <ThemeRoot theme={gladeTheme} mode="system">
-      <div style={{ minHeight: "100vh", background: "var(--ground)" }}>
-        <RegionBoundary region="app" onError={onError}>
-          <Placeholder api={api} />
-        </RegionBoundary>
-      </div>
-    </ThemeRoot>
+    <HistoryProvider value={history}>
+      <ThemeRoot theme={theme} icons={icons} mode="system">
+        <div className="glade-app">
+          <RegionBoundary key={route.page} region="page" onError={onError}>
+            {page}
+          </RegionBoundary>
+        </div>
+      </ThemeRoot>
+    </HistoryProvider>
   );
 }

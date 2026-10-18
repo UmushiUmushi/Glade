@@ -11,10 +11,16 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@glade/core": "workspace:*",
     "@glade/errors": "workspace:*",
     "@glade/formats": "workspace:*",
     "@glade/logging": "workspace:*",
+    "@glade/petit-planet-profile": "workspace:*",
+    "@glade/petit-planet-ui": "workspace:*",
+    "@glade/render": "workspace:*",
+    "@glade/three": "workspace:*",
     "@glade/ui": "workspace:*",
+    "@glade/viewport": "workspace:*",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
     "zod": "^4.6.7"

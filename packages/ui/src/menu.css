@@ -38,6 +38,29 @@
   flex: 1;
 }
 
+/* A title row (the game picker): the name in its own title font, bigger, in the title colour. */
+.glade-menu-item-text[data-title] {
+  font-size: 19px;
+  line-height: 24px;
+  font-weight: var(--weight-title);
+  color: var(--ink-title);
+}
+
+.glade-menu-item[data-disabled] .glade-menu-item-text[data-title] {
+  color: var(--ink-muted);
+}
+
+.glade-menu-item-badge {
+  flex: none;
+  padding: 2px 8px;
+  border-radius: 10px;
+  background: var(--inset);
+  color: var(--ink-muted);
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: var(--weight-strong);
+}
+
 .glade-menu-item[data-focused],
 .glade-menu-item[data-hovered] {
   background: var(--inset);
