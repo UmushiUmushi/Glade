@@ -4,7 +4,7 @@
 
 import { catalogEntry, pathAt, rotatedSize, setPathAt, type Item, type Rotation } from "../../src";
 import type { Placer } from "./placer";
-import type { RoadTile } from "./roads";
+import { roadable, type RoadTile } from "./roads";
 
 const HOUSES: [type: string, weight: number][] = [
   ["island-cottage", 4],
@@ -78,7 +78,10 @@ function tryHouse(placer: Placer, road: RoadTile, rot: Rotation, houses: House[]
   const site = siteFacing(road.X, road.Y, rot, w, h);
   const rect = { x: site.mx, y: site.my, w, h };
   if (!farFrom(houses, rect) || !offRoads(placer, rect)) return null;
-  if (pathAt(placer.doc, site.door.X, site.door.Y)) return null;
+  // The garden path in front of the door needs flat, dry ground like a road (the game checks
+  // nothing in front of a house, so the generator does).
+  const { X, Y } = site.door;
+  if (pathAt(placer.doc, X, Y) || !roadable(placer.doc, placer.profile, X, Y)) return null;
   const item = placer.item(type, site.mx, site.my, rot);
   if (!item) return null;
   setPathAt(placer.doc, site.door.X, site.door.Y, "island-garden");

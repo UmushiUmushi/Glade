@@ -63,7 +63,6 @@ table. A contract test checks that every rule in each map type's rulebook has an
 | I4   | Bridge doesn't fit             | A bridge rests on two cliffs of the same height, across a gap of 2 to 6 blocks.                | Change the gap or use a longer or shorter bridge.       |
 | I5   | Something is under the bridge  | Only paths can go under a bridge.                                                              | Move the item or plant out from under it.               |
 | I6   | Incline needs a cliff edge     | An incline climbs exactly one level onto a straight cliff edge.                                | Place it against a straight one-level cliff.            |
-| B1   | Keep the front clear           | The row in front of a building must be flat, dry ground.                                       | Clear and level the row in front of the door.           |
 | S1   | Can't go on a table            | Only small things can stand on a table top, and only on items that have a top. Nothing stacks. | Put it on the ground, or pick a smaller thing.          |
 | S2   | Doesn't fit on the table       | A thing on a table must stand wholly on its top.                                               | Move it inward, or use a bigger table.                  |
 | S3   | Things on the table overlap    | Two things on one table top can't share space.                                                 | Move one of them.                                       |

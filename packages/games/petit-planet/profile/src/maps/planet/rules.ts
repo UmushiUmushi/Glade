@@ -59,7 +59,6 @@ import {
 } from "@glade/core";
 import { boxToRect, excludesRule } from "@glade/core";
 import { onSurfaces, surfaceRules } from "../../surfaces";
-import { frontSide } from "../../items";
 import { profileOf } from "./data";
 import { gridSpec, type Planet, type Profile } from "./profile";
 import { type Catalog } from "../../catalog";
@@ -218,23 +217,6 @@ function overlapViolations(
     cells,
     objectIds: [a.id, b.id],
   }));
-}
-
-// ---- buildings ----
-
-/** The minor strip one major cell deep in front of a building, by rotation. */
-function buildingFront(r: Rect, rot: number): { strip: Rect; side: string } {
-  const side = frontSide(rot);
-  switch (side) {
-    case "west":
-      return { side, strip: { grid: "minor", x: r.x - 2, y: r.y, w: 2, h: r.h } };
-    case "north":
-      return { side, strip: { grid: "minor", x: r.x, y: r.y - 2, w: r.w, h: 2 } };
-    case "east":
-      return { side, strip: { grid: "minor", x: r.x + r.w, y: r.y, w: 2, h: r.h } };
-    default:
-      return { side, strip: { grid: "minor", x: r.x, y: r.y + r.h, w: r.w, h: 2 } };
-  }
 }
 
 // ---- bridges ----
@@ -1235,49 +1217,6 @@ const ruleList: Rule[] = [
         if (baseOf(ctx.catalog, i.type) !== "incline") continue;
         if (!inScope(ctx, expandRect(ctx.spec, itemRect(ctx.catalog, i), 2))) continue;
         out.push(...checkIncline(map, ctx, i));
-      }
-      return out;
-    },
-  },
-
-  {
-    id: "B1",
-    name: "building-front-clear",
-    description:
-      "The row of cells directly in front of a building, across its width, is dry, flat ground " +
-      "at the building's level: no water, river bank, or cliff. Fronts face south at rotation 0 " +
-      "and turn clockwise with rotation (90 west, 180 north, 270 east).",
-    local: true,
-    check(map, ctx) {
-      const out: Violation[] = [];
-      for (const i of itemsOf(map)) {
-        if (!isA(ctx.catalog, i.type, "building")) continue;
-        const r = itemRect(ctx.catalog, i);
-        const { strip, side } = buildingFront(r, i.rot);
-        if (!inScope(ctx, expandRect(ctx.spec, r, 2))) continue;
-        const under = terrainAt(map, terrainOfMinor(r.x), terrainOfMinor(r.y));
-        const level = under?.h ?? 0;
-        const problems = new Set<string>();
-        const onMap = toMinorRect(ctx.spec, strip);
-        if (onMap.w !== strip.w || onMap.h !== strip.h) problems.add("the map edge");
-        for (const c of cellsInRect(convertRect(ctx.spec, onMap, "terrain"))) {
-          const t = terrainAt(map, c.x, c.y);
-          if (!t) continue;
-          if (t.water) problems.add("water");
-          else if (t.h > level) problems.add(`a cliff up to level ${t.h}`);
-          else if (t.h < level) problems.add(`a drop to level ${t.h}`);
-        }
-        if (problems.size) {
-          out.push({
-            ruleId: "B1",
-            message:
-              `the ${side} front of ${i.type} ${i.id} (level ${level}) is blocked by ` +
-              [...problems].join(", "),
-            cells: [...cellsInRect(convertRect(ctx.spec, onMap, "major"))],
-            objectIds: [i.id],
-            hint: "move or rotate the building, or make the row in front flat dry ground at its level",
-          });
-        }
       }
       return out;
     },

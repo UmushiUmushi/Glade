@@ -22,9 +22,20 @@ export const commonFields: Record<string, string> = {
   description: "optional: what it is",
 };
 
-const PATTERN_HELP =
+/**
+ * A pattern sheet's size in grid cells: 2 tiles across, and a wallpaper's 4 blocks up (a wall's
+ * full height; the game draws every wallpaper for it) or a flooring's 2 tiles down. So a circle
+ * on either sheet is round, and an image for a wallpaper is twice as tall as it is wide.
+ */
+export const SHEETS: Record<"wallpaper" | "flooring", { w: number; h: number }> = {
+  wallpaper: { w: 2, h: 4 },
+  flooring: { w: 2, h: 2 },
+};
+
+const patternHelp = (sheet: string) =>
   "a 2D sheet: { color: '#rrggbb', image?: url (the app's own picture), shapes?: [{ rect: " +
-  "[x, y, w, h], color } | { circle: [cx, cy, r], color }] } on a unit square, x right, y down";
+  `[x, y, w, h], color } | { circle: [cx, cy, r], color }] } on a sheet ${sheet} grid cells, ` +
+  "x right, y down";
 
 export const kinds: KindDef[] = [
   {
@@ -63,8 +74,8 @@ export const kinds: KindDef[] = [
     parent: "item",
     description:
       "Houses and shops. The front faces south at rotation 0 and turns clockwise with rotation " +
-      "(90 west, 180 north, 270 east); the row in front must stay clear, and trees keep a cell away.",
-    rules: ["B1", "L6"],
+      "(90 west, 180 north, 270 east). Trees keep a cell away.",
+    rules: ["L6"],
   },
   {
     kind: "bridge",
@@ -86,7 +97,7 @@ export const kinds: KindDef[] = [
     description:
       "Covers a room's walls (homes): its pattern repeats across each wall, a copy every 2 tiles, " +
       "the full height of the wall, with a seam on the wall's middle.",
-    fields: { pattern: PATTERN_HELP },
+    fields: { pattern: patternHelp("2 across and 4 up (blocks)") },
     rules: ["H4"],
   },
   {
@@ -94,7 +105,7 @@ export const kinds: KindDef[] = [
     description:
       "Covers a room's floor (homes): its pattern repeats in 2 x 2 tile copies, with seams on the " +
       "room's middle lines.",
-    fields: { pattern: PATTERN_HELP },
+    fields: { pattern: patternHelp("2 x 2 (tiles)") },
     rules: ["H4"],
   },
   {
@@ -125,27 +136,41 @@ const common = {
 const kind = z.string().min(1);
 const cells = z.object({ w: z.number().int().positive(), h: z.number().int().positive() });
 const hex = z.string().regex(/^#[0-9a-fA-F]{6}$/);
-// Shapes are on a copy's unit square, but may reach past it (a hill that runs off its edge).
-const shapeAt = z.number().min(-1).max(2);
-const shapeSize = z.number().positive().max(3);
-const covering = z.object({
-  type: z.string().min(1),
-  kind,
-  glyph: z.string().length(1),
-  pattern: z.object({
-    color: hex,
-    image: z.string().min(1).optional(),
-    shapes: z
-      .array(
-        z.union([
-          z.object({ rect: z.tuple([shapeAt, shapeAt, shapeSize, shapeSize]), color: hex }),
-          z.object({ circle: z.tuple([shapeAt, shapeAt, shapeSize]), color: hex }),
-        ]),
-      )
-      .optional(),
-  }),
-  description: z.string().optional(),
-});
+// Shapes are on a copy's sheet (SHEETS), but may reach a sheet past it (a hill that runs off its
+// edge).
+const covering = ({ w, h }: { w: number; h: number }) => {
+  const x = z
+    .number()
+    .min(-w)
+    .max(2 * w);
+  const y = z
+    .number()
+    .min(-h)
+    .max(2 * h);
+  const size = (n: number) =>
+    z
+      .number()
+      .positive()
+      .max(3 * n);
+  return z.object({
+    type: z.string().min(1),
+    kind,
+    glyph: z.string().length(1),
+    pattern: z.object({
+      color: hex,
+      image: z.string().min(1).optional(),
+      shapes: z
+        .array(
+          z.union([
+            z.object({ rect: z.tuple([x, y, size(w), size(h)]), color: hex }),
+            z.object({ circle: z.tuple([x, y, size(Math.max(w, h))]), color: hex }),
+          ]),
+        )
+        .optional(),
+    }),
+    description: z.string().optional(),
+  });
+};
 
 /** The fields of an entry, by the base kind its kind is a sort of. */
 export const entrySchemas = {
@@ -165,8 +190,8 @@ export const entrySchemas = {
     majorSize: z.object({ w: z.number().int().positive(), l: z.number().int().positive() }),
   }),
   incline: z.object({ ...common, kind }),
-  wallpaper: covering,
-  flooring: covering,
+  wallpaper: covering(SHEETS.wallpaper),
+  flooring: covering(SHEETS.flooring),
   path: z.object({
     type: z.string().min(1),
     kind,

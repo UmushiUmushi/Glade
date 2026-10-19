@@ -58,8 +58,8 @@ export interface CatalogEntry {
 }
 
 /**
- * A 2D sheet, repeated across a wall or a floor: an image the app gives, or simple shapes on a
- * unit square (x right, y down), painted in order over its color.
+ * A 2D sheet, repeated across a wall or a floor: an image the app gives, or simple shapes on the
+ * sheet (SHEETS: x right, y down, in grid cells), painted in order over its color.
  */
 export interface Pattern {
   /** The sheet's main color: under the shapes, and wherever an image cannot be shown. */

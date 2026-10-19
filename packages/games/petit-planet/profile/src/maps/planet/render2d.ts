@@ -607,7 +607,7 @@ export const plan: PlanView = {
     ctx.restore();
   },
 
-  /** On hover, a building shows which way it faces: an arrow out of its front (rule B1's side). */
+  /** On hover, a building shows which way it faces: an arrow out of its front. */
   drawHover(ctx, doc, g, p, pxPerUnit) {
     const game = g as Planet;
     const m = toMinor(p);

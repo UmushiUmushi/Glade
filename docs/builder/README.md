@@ -255,10 +255,10 @@ them are made by rules from a few colours (procedural): no pictures, no game ass
 
 Some parts mean something to the game. You **mark** them in the part panel.
 
-| Marking     | Templates     | Mark                         | Then                                                                                                                            |
-| ----------- | ------------- | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| **Surface** | Item, Fence   | The top face of a part       | Placeable things can stand on it. Glade lays the top's half-cell grid on that face (a 2 × 2 table's top might be 12 × 12).      |
-| **Door**    | Building only | A part (or a group of parts) | The door's wall is the building's **front**: the row in front must stay clear (rule B1). Required: Build isn't done without it. |
+| Marking     | Templates     | Mark                         | Then                                                                                                                       |
+| ----------- | ------------- | ---------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| **Surface** | Item, Fence   | The top face of a part       | Placeable things can stand on it. Glade lays the top's half-cell grid on that face (a 2 × 2 table's top might be 12 × 12). |
+| **Door**    | Building only | A part (or a group of parts) | The door's wall is the building's **front**, where the hover marker points. Required: Build isn't done without it.         |
 
 A building needs exactly one door. Glade doesn't add one of its own when the entry has a marked
 door.

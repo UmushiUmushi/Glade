@@ -8,6 +8,7 @@ import { resolveLook, type MapUI, type PlanView, type RenderableMap } from "@gla
 import { catalogEntry, type Catalog } from "../../catalog";
 import { appModel, drawItem2D, itemSize } from "../../items";
 import { drawPattern } from "../../items/pattern";
+import { SHEETS } from "../../kinds";
 import { onSurfaceBox, onSurfaces } from "../../surfaces";
 import { copyStarts, roomCoverings } from "./coverings";
 import {
@@ -81,7 +82,12 @@ export function homeViews2D(layout: HomeLayout): { ui: MapUI; plan: PlanView } {
       } else {
         for (const sy of copyStarts(r.size[1])) {
           for (const sx of copyStarts(r.size[0])) {
-            drawPattern(ctx, pattern, { x: f.x + 2 * sx, y: f.y + 2 * sy, w: 4, h: 4 });
+            drawPattern(ctx, pattern, SHEETS.flooring, {
+              x: f.x + 2 * sx,
+              y: f.y + 2 * sy,
+              w: 4,
+              h: 4,
+            });
           }
         }
       }

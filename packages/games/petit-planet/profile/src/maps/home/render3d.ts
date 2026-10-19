@@ -27,7 +27,8 @@ import {
   placement,
   type LayerInstances,
 } from "../../items/instances";
-import { patternKey, patternTexture } from "../../items/pattern";
+import { patternKey, patternTexture, type Sheet } from "../../items/pattern";
+import { SHEETS } from "../../kinds";
 import { onSurfaceBox, onSurfaces, type Turn } from "../../surfaces";
 import { patternU, roomCoverings } from "./coverings";
 import {
@@ -326,20 +327,24 @@ export function homeScene(layout: HomeLayout): Render3D {
     return out;
   }
 
-  /** A covered surface's material: its pattern over white, or its plain color. */
+  /** A covered surface's material: its pattern (on its sheet) over white, or its plain color. */
   function surfaceMaterial(
-    pattern: Pattern | undefined,
     color: string,
     plane: HidePlane,
+    pattern?: Pattern,
+    sheet?: Sheet,
   ): MaterialSpec {
     return {
-      key: `pp-home-surface ${pattern ? patternKey(pattern) : "plain"}`,
+      key: `pp-home-surface ${pattern && sheet ? patternKey(pattern, sheet) : "plain"}`,
       base: "toon",
-      color: pattern ? "#ffffff" : color,
+      color: pattern && sheet ? "#ffffff" : color,
       gradientSteps: 3,
       vertexPatches: PATTERN_VERTEX,
       fragmentPatches: PATTERN_FRAGMENT,
-      uniforms: { uHide: plane, uPattern: pattern ? patternTexture(pattern) : WHITE },
+      uniforms: {
+        uHide: plane,
+        uPattern: pattern && sheet ? patternTexture(pattern, sheet) : WHITE,
+      },
     };
   }
 
@@ -367,16 +372,22 @@ export function homeScene(layout: HomeLayout): Render3D {
       const out: Record<string, MaterialSpec> = { ...objectMaterials(look, flat, NEVER, "") };
       for (const r of layout.rooms) {
         const covers = doc && catalog ? roomCoverings(doc, catalog, r) : {};
-        out[surfaceName("floor", r.id)] = surfaceMaterial(covers.flooring?.pattern, c.floor, NEVER);
+        out[surfaceName("floor", r.id)] = surfaceMaterial(
+          c.floor,
+          NEVER,
+          covers.flooring?.pattern,
+          SHEETS.flooring,
+        );
         for (const side of SIDES) {
           const plane = hidePlane(r, side);
           out[surfaceName("wall", r.id, side)] = surfaceMaterial(
-            covers.wallpaper?.pattern,
             c.wall,
             plane,
+            covers.wallpaper?.pattern,
+            SHEETS.wallpaper,
           );
-          out[surfaceName("edge", r.id, side)] = surfaceMaterial(undefined, c.edge, plane);
-          out[surfaceName("door", r.id, side)] = surfaceMaterial(undefined, c.door, plane);
+          out[surfaceName("edge", r.id, side)] = surfaceMaterial(c.edge, plane);
+          out[surfaceName("door", r.id, side)] = surfaceMaterial(c.door, plane);
           Object.assign(out, objectMaterials(look, flat, plane, `:${r.id}:${side}`));
         }
       }

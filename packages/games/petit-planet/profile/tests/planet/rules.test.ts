@@ -35,8 +35,8 @@ describe("rulebook", () => {
     const ids = rulesDoc().map((r) => r.id);
     expect(ids).toEqual([
       "T1", "T2", "T3", "T4", "W1", "W2", "W4", "T5", "P1", "P2", "P3", "O1", "O2",
-      "L1", "L2", "L3", "L4", "L5", "L6", "I1", "I2", "I3", "I4", "I5", "I6", "B1", "S1",
-      "S2", "S3", "K1", "W3",
+      "L1", "L2", "L3", "L4", "L5", "L6", "I1", "I2", "I3", "I4", "I5", "I6", "S1", "S2",
+      "S3", "K1", "W3",
     ]); // prettier-ignore
     expect(
       rulesDoc()
@@ -729,7 +729,7 @@ describe("I5 nothing-under-bridge", () => {
 });
 
 // A 5x4-tile house (a building, in the test catalog); at mx 80, my 80 it covers major 40..44 x
-// 40..43 and its front (south at rotation 0) is major row 44, terrain rows 44..45.
+// 40..43 and the row in front (south at rotation 0) is major row 44, terrain rows 44..45.
 function withHouse(rot: 0 | 90 | 180 | 270 = 0) {
   const map = blankMap();
   addItems(map, { id: "h1", type: "house", mx: 80, my: 80, rot });
@@ -811,36 +811,13 @@ describe("I6 incline-on-cliff-edge", () => {
   });
 });
 
-describe("B1 building-front-clear", () => {
-  it("accepts a house with flat, dry ground in front", () => {
+describe("buildings", () => {
+  // The game checks nothing in front of a house: it can face water, a cliff or a drop.
+  it("may face water, a cliff or a drop", () => {
     expect(violations(withHouse())).toEqual([]);
-  });
-
-  it("rejects water in front of the door (a river bank)", () => {
-    const map = fillTerrain(withHouse(), 40, 45, 6, 1, 1, true);
-    const [v] = violations(map, "B1");
-    expect(v.message).toBe("the south front of house h1 (level 1) is blocked by water");
-    expect(v.cells.map((c) => `${c.x},${c.y}`)).toEqual([
-      "40,44",
-      "41,44",
-      "42,44",
-      "43,44",
-      "44,44",
-    ]);
-  });
-
-  it("rejects a cliff or a drop in front", () => {
-    const cliff = fillTerrain(withHouse(), 40, 45, 6, 1, 3);
-    expect(violations(cliff, "B1")[0].message).toMatch(/blocked by a cliff up to level 3$/);
-    const drop = fillTerrain(withHouse(), 40, 45, 6, 1, 0);
-    expect(violations(drop, "B1")[0].message).toMatch(/blocked by a drop to level 0$/);
-  });
-
-  it("follows rotation: at 180 the front faces north", () => {
-    const south = fillTerrain(withHouse(180), 40, 45, 6, 1, 1, true);
-    expect(violations(south, "B1")).toEqual([]);
-    const north = fillTerrain(withHouse(180), 40, 39, 6, 1, 1, true);
-    expect(violations(north, "B1")[0].message).toMatch(/^the north front of house h1/);
+    expect(violations(fillTerrain(withHouse(), 40, 45, 6, 1, 1, true))).toEqual([]);
+    expect(violations(fillTerrain(withHouse(), 40, 45, 6, 1, 3))).toEqual([]);
+    expect(violations(fillTerrain(withHouse(), 40, 45, 6, 1, 0))).toEqual([]);
   });
 });
 

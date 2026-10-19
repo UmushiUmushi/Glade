@@ -473,7 +473,7 @@ function triangle(
 
 /**
  * The marker that shows a building's front (minor units): a small triangle just outside the
- * middle of its front edge (the side rule B1 checks), pointing out, `size` long. Its first point
+ * middle of its front edge, pointing out, `size` long. Its first point
  * is the tip.
  */
 export function frontArrow(r: Box, rot: number, size: number): [number, number][] {

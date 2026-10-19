@@ -33,7 +33,7 @@ export type PetitPlanet = typeof petitPlanet;
 // resolves to.
 
 // Kinds and catalogs (the items are the app's own).
-export { commonFields, entryProblems, entrySchemas, kinds, upgradeCatalog } from "./kinds";
+export { commonFields, entryProblems, entrySchemas, kinds, SHEETS, upgradeCatalog } from "./kinds";
 export { gridSpec } from "./maps/planet/profile";
 export {
   baseKind,

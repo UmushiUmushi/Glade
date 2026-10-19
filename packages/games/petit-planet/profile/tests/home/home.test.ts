@@ -5,6 +5,7 @@ import { bind, validate, type Doc } from "@glade/core";
 import { resolveLook, type MeshSpec } from "@glade/render";
 import { describe, expect, it } from "vitest";
 import {
+  entryProblems,
   homeMap,
   layoutProblems,
   petitPlanet,
@@ -13,8 +14,11 @@ import {
   putCovering,
   putFloorItem,
   putWallItem,
+  SHEETS,
   type HomeLayout,
 } from "../../src";
+import type { Pattern } from "../../src/catalog";
+import { drawPattern, patternTexture } from "../../src/items/pattern";
 import { copyStarts } from "../../src/maps/home/coverings";
 import { homeCatalog, testCatalog } from "../../samples";
 import { addItems, blankMap, item } from "../planet/helpers";
@@ -73,6 +77,56 @@ describe("wallpaper and flooring copies", () => {
     expect(copyStarts(8)).toEqual([0, 2, 4, 6]);
     // Half a copy, 4 whole ones, half a copy: 6 pieces.
     expect(copyStarts(10)).toEqual([-1, 1, 3, 5, 7, 9]);
+  });
+});
+
+describe("pattern sheets", () => {
+  const dot = { color: "#000000", shapes: [{ circle: [1, 2, 0.5], color: "#ffffff" }] } as Pattern;
+  const paper = (shapes: unknown[]) => ({
+    type: "p",
+    kind: "wallpaper",
+    glyph: "p",
+    pattern: { color: "#000000", shapes },
+  });
+
+  it("are in grid cells: a wallpaper is 2 across and 4 up, a flooring 2 x 2", () => {
+    expect(SHEETS).toEqual({ wallpaper: { w: 2, h: 4 }, flooring: { w: 2, h: 2 } });
+  });
+
+  it("paint a wallpaper twice as tall as it is wide, and keep a circle round", () => {
+    const { texture } = patternTexture(dot, SHEETS.wallpaper) as {
+      texture: { width: number; height: number; data: Uint8Array };
+    };
+    expect([texture.width, texture.height]).toEqual([64, 128]);
+    const white = (col: number, row: number) => texture.data[4 * (row * 64 + col)] === 255;
+    const across = [...Array(64).keys()].filter((c) => white(c, 64)).length;
+    const up = [...Array(128).keys()].filter((r) => white(32, r)).length;
+    expect(across).toBe(32);
+    expect(up).toBe(32);
+  });
+
+  it("draw in 2D at the sheet's scale", () => {
+    const calls: number[][] = [];
+    const ctx = {
+      fillRect: (...a: number[]) => calls.push(a),
+    } as unknown as CanvasRenderingContext2D;
+    const band = {
+      color: "#000000",
+      shapes: [{ rect: [0, 3, 2, 1], color: "#ffffff" }],
+    } as Pattern;
+    drawPattern(ctx, band, SHEETS.wallpaper, { x: 0, y: 0, w: 4, h: 8 });
+    expect(calls).toEqual([
+      [0, 0, 4, 8],
+      [0, 6, 4, 2],
+    ]);
+  });
+
+  it("let shapes reach one sheet past each edge, by the sheet's own size", () => {
+    expect(entryProblems(home8, paper([{ rect: [0, 3, 2, 1], color: "#ffffff" }]))).toEqual([]);
+    expect(entryProblems(home8, paper([{ rect: [0, 8, 2, 1], color: "#ffffff" }]))).toEqual([]);
+    expect(entryProblems(home8, paper([{ rect: [0, 9, 2, 1], color: "#ffffff" }]))).not.toEqual([]);
+    const floor = { ...paper([{ rect: [0, 5, 2, 1], color: "#ffffff" }]), kind: "flooring" };
+    expect(entryProblems(home8, floor)).not.toEqual([]);
   });
 });
 

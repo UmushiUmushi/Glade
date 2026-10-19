@@ -100,7 +100,7 @@ describe("plants", () => {
 describe("a building's front marker", () => {
   const house = { x: 0, y: 0, w: 10, h: 8 };
 
-  it("is a triangle just outside the front edge (the side rule B1 checks), pointing out", () => {
+  it("is a triangle just outside the front edge, pointing out", () => {
     for (const rot of [0, 90, 180, 270]) {
       const pts = frontArrow(house, rot, 2);
       expect(pts).toHaveLength(3);

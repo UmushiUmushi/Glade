@@ -195,10 +195,10 @@ const hills: CoveringEntry = {
   pattern: {
     color: "#bfe6dc",
     shapes: [
-      { circle: [0.2, 0.95, 0.3], color: "#7fae5a" },
-      { circle: [0.65, 1, 0.35], color: "#6a9c48" },
-      { circle: [1.05, 0.95, 0.28], color: "#7fae5a" },
-      { circle: [0.5, 0.3, 0.05], color: "#ffffff" },
+      { circle: [0.4, 4, 1.1], color: "#7fae5a" },
+      { circle: [1.3, 4.1, 1.3], color: "#6a9c48" },
+      { circle: [2.1, 4, 1.05], color: "#7fae5a" },
+      { circle: [1, 1.2, 0.15], color: "#ffffff" },
     ],
   },
 };
@@ -207,14 +207,14 @@ const tiles: CoveringEntry = {
   type: "home-tile-flooring",
   kind: "flooring",
   glyph: "#",
-  description: "warm tiles, four to a copy",
+  description: "warm tiles, one a tile, four to a copy",
   pattern: {
     color: "#c9a77d",
     shapes: [
-      { rect: [0.02, 0.02, 0.46, 0.46], color: "#ecd2ad" },
-      { rect: [0.52, 0.02, 0.46, 0.46], color: "#e8cca5" },
-      { rect: [0.02, 0.52, 0.46, 0.46], color: "#e8cca5" },
-      { rect: [0.52, 0.52, 0.46, 0.46], color: "#ecd2ad" },
+      { rect: [0.04, 0.04, 0.92, 0.92], color: "#ecd2ad" },
+      { rect: [1.04, 0.04, 0.92, 0.92], color: "#e8cca5" },
+      { rect: [0.04, 1.04, 0.92, 0.92], color: "#e8cca5" },
+      { rect: [1.04, 1.04, 0.92, 0.92], color: "#ecd2ad" },
     ],
   },
 };

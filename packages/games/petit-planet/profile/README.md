@@ -62,7 +62,7 @@ follows every rule of its parent: a tree is a plant, a building is an item.
 | `shrub`     | `plant`   | bushes and hedges                                        |                                               |                   |
 | `flower`    | `plant`   | flowers                                                  |                                               |                   |
 | `item`      |           | furniture and decorations; on half tiles, rotated        | `onWater`, `connects`, `surface`, `placeable` | O1 O2 I1–I3 S1–S3 |
-| `building`  | `item`    | houses and shops; the front faces south at rotation 0    |                                               | B1 L6             |
+| `building`  | `item`    | houses and shops; the front faces south at rotation 0    |                                               | L6                |
 | `bridge`    |           | spans water or gaps; long axis north-south at rotation 0 | `majorSize`                                   | O1 O2 I1 I3 I4 I5 |
 | `incline`   |           | ramps up a cliff; 1 or 2 tiles wide, 2 long              | —                                             | O1 O2 I1 I3 I6    |
 | `path`      |           | paths on whole tiles; different paths never merge        | `allowsPlants`, `color`, `pattern`            | P1–P3 L4          |
@@ -203,9 +203,16 @@ up from the floor. Doors are 2 x 2 unless a layout says otherwise; things may ha
 
 **Wallpaper and flooring** look like a 2D sheet: `pattern: { color, image?, shapes? }`. `image` is
 the app's own picture (a URL or a data: URL; the profile never stores it), and `shapes` are rects and
-circles on a unit square. The sheet repeats in copies 2 tiles across, a wall's full height on a
-wall and 2 tiles deep on a floor, with a seam on the middle line: an 8-tile wall takes 4 whole
-copies, a 10-tile wall half a copy, 4 whole ones and half a copy.
+circles on the sheet, in grid cells (`SHEETS`, x right, y down):
+
+| Kind        | Sheet                                       | A round dot in the middle |
+| ----------- | ------------------------------------------- | ------------------------- |
+| `wallpaper` | 2 tiles across, 4 blocks up: the whole wall | `{ circle: [1, 2, 0.5] }` |
+| `flooring`  | 2 x 2 tiles                                 | `{ circle: [1, 1, 0.5] }` |
+
+The game draws every wallpaper for a wall's full height, so a wallpaper's image is twice as tall
+as it is wide. The sheet repeats in copies 2 tiles across, with a seam on the middle line: an
+8-tile wall takes 4 whole copies, a 10-tile wall half a copy, 4 whole ones and half a copy.
 
 **The look** is fixed (`look/home.json`): no times of day or seasons, warm and soft, dark outside.
 Homes are seen in plan and in 3D, flat (no curvature). In 3D a wall, its doors and its items hide
@@ -245,7 +252,6 @@ wallpaper and one flooring a room) and S1 to S3 (surfaces).
 | I4  | bridge-span           | bridges rest on cliffs either side of a gap (see Bridges)                          |
 | I5  | nothing-under-bridge  | nothing but paths under a bridge                                                   |
 | I6  | incline-on-cliff-edge | inclines climb one level onto a straight cliff edge (see Inclines)                 |
-| B1  | building-front-clear  | the row in front of a building is flat, dry ground                                 |
 | S1  | on-a-surface          | things on surfaces are placeable, on an item with a surface, and never stack       |
 | S2  | fits-the-surface      | a thing on a surface stands wholly on it, on its half cells                        |
 | S3  | surface-overlap       | things on one surface do not overlap                                               |
@@ -371,23 +377,26 @@ categories (`samples/island/catalog.ts`); it has no problems under any rule. Aft
 generator, `UPDATE_GOLDENS=1 pnpm test island` rewrites the file. Contributors can keep reference screenshots of the game in `../references/` to compare
 with. That folder is ignored by git.
 
+## Checked in the game
+
+Checked in the game's beta (October 2026):
+
+- Path corners: one shaped corner per tile, outer corners only (the inside of an L stays
+  square), none on a one-tile path, and a cut that a new neighbor straightens comes back when the
+  neighbor is removed.
+- Terrain corners: a corner is shaped only when the other three blocks share one level. A cliff
+  corner above a straight lower step can't be rounded or cut (T5).
+- Fences: diagonal neighbors link unless a piece sits beside both; then the diagonal drops and
+  the pieces make an L. Different fence types, and fences on different levels, don't link.
+- Buildings: nothing in front of a house is checked. It may face water, a cliff or a drop.
+- Homes: doors are 2 x 2. Ceiling items turn like floor items; wall items don't turn. Every
+  wallpaper is drawn for the wall's full height.
+
 ## Open questions
 
 These details come from screenshots and haven't been fully confirmed in the game:
 
-- Path corners: a cut or rounded corner spans a whole tile. Confirmed in the game: one shaped
-  corner per tile, outer corners only (the inside of an L stays square), none on a one-tile path,
-  and a cut that a new neighbor straightens comes back when the neighbor is removed.
-- Terrain corners: water and cliff cuts span half a block. A terrain corner is shaped only when
-  the other three blocks share one level. A cliff corner above a straight lower step might be
-  allowed in the game.
-- Fences: diagonal neighbors link unless a piece sits beside both, and a piece with one link runs
-  straight through. Different fence types, and fences on different levels, don't link.
-
-Homes, from one photo of the 8 x 8 room and the game's numbers so far:
-
-- Doors between rooms of a home are taken to be 2 x 2, like the entrance.
-- Ceiling items turn like floor items, and wall items don't turn.
-- A pattern's copy is stretched to its 2-tile span and the wall's full height, so a square sheet
-  shows taller than wide on a wall.
+- Path corners: a cut or rounded corner spans a whole tile.
+- Terrain corners: water and cliff cuts span half a block.
+- Fences: a piece with one link runs straight through.
 - Homes that can't be decorated (the first starting home) aren't described.
