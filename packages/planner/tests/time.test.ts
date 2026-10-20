@@ -19,10 +19,10 @@ import {
 } from "../src/time";
 
 const STOPS: TimeStop[] = [
-  { label: "Early", hour: 7, sky: "#000000" },
-  { label: "Noon", hour: 12, sky: "#ffffff" },
-  { label: "Late", hour: 16.5, sky: "#ff0000" },
-  { label: "Dark", hour: 21, sky: "#0000ff" },
+  { label: "Early", hour: 7, sky: "#000000", icon: "sun" },
+  { label: "Noon", hour: 12, sky: "#ffffff", icon: "sun" },
+  { label: "Late", hour: 16.5, sky: "#ff0000", icon: "sun" },
+  { label: "Dark", hour: 21, sky: "#0000ff", icon: "sun" },
 ];
 
 describe("the track", () => {
@@ -109,13 +109,13 @@ describe("timeStopsFor", () => {
       { name: "unnamed", hour: 18 },
     ];
     const names = [
-      { preset: "second", label: "Noon", sky: "#ffffff" },
-      { preset: "first", label: "Early", sky: "#000000" },
-      { preset: "missing", label: "Gone", sky: "#123456" },
+      { preset: "second", label: "Noon", sky: "#ffffff", icon: "sun" },
+      { preset: "first", label: "Early", sky: "#000000", icon: "sun" },
+      { preset: "missing", label: "Gone", sky: "#123456", icon: "sun" },
     ];
     expect(timeStopsFor(look, names)).toEqual([
-      { label: "Early", hour: 6, sky: "#000000" },
-      { label: "Noon", hour: 13, sky: "#ffffff" },
+      { label: "Early", hour: 6, sky: "#000000", icon: "sun" },
+      { label: "Noon", hour: 13, sky: "#ffffff", icon: "sun" },
     ]);
   });
 });

@@ -1,7 +1,7 @@
 // A game's planner at /<game>/planner, in the game's own look: the planner's three cards on the
 // tray. The side panel (or its rail) drives the planner's own state; the layer rows hide map
-// layers in the viewport. The rail's buttons, the environment and the toolbox's contents arrive in
-// steps 1.5 to 1.8; the Menu holds Home until the rest of it arrives in step 1.11.
+// layers and the time and snow set the look in the viewport. The toolbox's contents arrive in step
+// 1.8; the Menu holds Home until the rest of it arrives in step 1.11.
 
 import {
   EnvironmentSection,
@@ -9,7 +9,7 @@ import {
   mapLayers,
   PlannerLayout,
   plannerReducer,
-  RailHeader,
+  Rail,
   SidePanel,
   timeStopsFor,
   useScreenLayout,
@@ -44,6 +44,7 @@ export function gameChoices(games: readonly GladeGame[]): GameChoice[] {
     title: g.title,
     titleFont: g.theme?.shape.fontTitle,
     ready: g.planner !== null,
+    logo: g.logo,
   }));
 }
 
@@ -103,58 +104,82 @@ function usePlanner(planner: GamePlanner, layout: LayoutSetting | undefined) {
   return { state, dispatch, layers, time, environment };
 }
 
-export function PlannerPage({ game, planner, games, layout }: PlannerPageProps) {
+/** The side panel, or the rail when it is minimized, with the game picker to suit. */
+function PlannerPanel({
+  game,
+  games,
+  plan,
+}: {
+  game: GladeGame;
+  games: readonly GladeGame[];
+  plan: ReturnType<typeof usePlanner> & { planner: GamePlanner };
+}) {
   const history = useHistory();
-  const { state, dispatch, layers, time, environment } = usePlanner(planner, layout);
+  const { state, dispatch, time, planner } = plan;
+  const picker = (compact: boolean) => (
+    <GamePicker
+      games={gameChoices(games)}
+      current={game.id}
+      compact={compact}
+      onPick={(id) => history.push(routePath({ page: "planner", game: id }))}
+    />
+  );
+  if (state.panel === "rail") {
+    return (
+      <Rail
+        state={state}
+        dispatch={dispatch}
+        menu={<MainMenu />}
+        picker={picker(true)}
+        layers={planner.layers}
+        time={time}
+        onClearSelection={() => {}}
+      />
+    );
+  }
+  return (
+    <SidePanel
+      state={state}
+      dispatch={dispatch}
+      menu={<MainMenu />}
+      picker={picker(false)}
+      layers={planner.layers}
+      environment={
+        // A map with a fixed look (one time, no seasons) has no Environment section.
+        time.stops.length > 1 && (
+          <EnvironmentSection
+            state={state}
+            dispatch={dispatch}
+            stops={time.stops}
+            hasSnow={time.hasSnow}
+          />
+        )
+      }
+      onClearSelection={() => {}}
+    />
+  );
+}
+
+export function PlannerPage({ game, planner, games, layout }: PlannerPageProps) {
+  const plan = usePlanner(planner, layout);
   const doc = useMemo(() => planner.newDoc(), [planner]);
   useEffect(() => {
     document.title = `${game.title} planner · Glade`;
   }, [game.title]);
-  const picker = (
-    <GamePicker
-      games={gameChoices(games)}
-      current={game.id}
-      onPick={(id) => history.push(routePath({ page: "planner", game: id }))}
-    />
-  );
   return (
     <main>
       <h1 className="glade-visually-hidden">{game.title} planner</h1>
       <PlannerLayout
-        panelState={state.panel}
-        panel={
-          state.panel === "open" ? (
-            <SidePanel
-              state={state}
-              dispatch={dispatch}
-              menu={<MainMenu />}
-              picker={picker}
-              layers={planner.layers}
-              environment={
-                // A map with a fixed look (one time, no seasons) has no Environment section.
-                time.stops.length > 1 && (
-                  <EnvironmentSection
-                    state={state}
-                    dispatch={dispatch}
-                    stops={time.stops}
-                    hasSnow={time.hasSnow}
-                  />
-                )
-              }
-              onClearSelection={() => {}}
-            />
-          ) : (
-            <RailHeader menu={<MainMenu />} dispatch={dispatch} />
-          )
-        }
+        panelState={plan.state.panel}
+        panel={<PlannerPanel game={game} games={games} plan={{ ...plan, planner }} />}
         viewport={
           <MapViewport
             map={planner.map}
             doc={doc}
             view={startView(planner.map)}
             camera="iso"
-            environment={environment}
-            layers={layers}
+            environment={plan.environment}
+            layers={plan.layers}
             label={`${game.title} map, new and empty`}
           />
         }

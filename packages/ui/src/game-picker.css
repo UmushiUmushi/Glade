@@ -37,3 +37,11 @@
   text-overflow: ellipsis;
   padding-top: calc(2 * var(--u));
 }
+
+/* On the rail: a 44 round button with the game's logo. */
+.glade-game-picker[data-compact] {
+  width: calc(44 * var(--u));
+  flex: none;
+  padding: 0;
+  justify-content: center;
+}

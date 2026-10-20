@@ -27,6 +27,8 @@ export interface GladeGame {
   theme: Theme | null;
   /** Its own drawings, by icon id. */
   icons?: GameIcons;
+  /** Its small logo's icon id, for the rail's game button. */
+  logo?: string;
   /** What its planner opens; null for a game that isn't ready yet ("Soon"). */
   planner: GamePlanner | null;
 }
@@ -55,6 +57,7 @@ export const games: readonly GladeGame[] = [
     title: petitPlanetTitle,
     theme: petitPlanetTheme,
     icons: petitPlanetIcons,
+    logo: "planet",
     planner: {
       map: island,
       newDoc: () => island.newDoc("Island"),

@@ -39,6 +39,13 @@ describe("tools", () => {
     );
   });
 
+  it("remember the select tool used last, through other tools", () => {
+    expect(initialPlanner().lastSelectTool).toBe("select-rect");
+    const s = run({ type: "tool", tool: "lasso" }, { type: "tool", tool: "camera" });
+    expect(s.tool).toBe("camera");
+    expect(s.lastSelectTool).toBe("lasso");
+  });
+
   it("do nothing when the active one is picked again", () => {
     const s = initialPlanner();
     expect(plannerReducer(s, { type: "tool", tool: "pointer" })).toBe(s);

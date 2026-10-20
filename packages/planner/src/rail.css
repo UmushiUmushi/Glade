@@ -1,0 +1,81 @@
+/* The rail (rail.tsx). From the design: a column of 44 px round buttons, centred, in sections split
+   by dotted lines; layers and "Always on" filled when on and an outlined disc when off; a small
+   badge on the Select button for the mode. */
+
+.glade-rail-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.glade-rail-section {
+  border-top: calc(2 * var(--u)) dotted var(--line);
+  padding: calc(10 * var(--u)) 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: calc(6 * var(--u));
+}
+
+.glade-rail-layers {
+  padding-bottom: calc(20 * var(--u));
+}
+
+.glade-rail-rule {
+  width: calc(36 * var(--u));
+  border-top: calc(2 * var(--u)) dotted var(--line);
+  margin: calc(4 * var(--u)) 0;
+}
+
+.glade-rail-toggle {
+  width: calc(44 * var(--u));
+  height: calc(44 * var(--u));
+  flex: none;
+  border: none;
+  border-radius: 999px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  background: transparent;
+  color: var(--ink-muted);
+  box-shadow: inset 0 0 0 calc(2 * var(--u)) var(--line);
+  outline: none;
+}
+
+.glade-rail-toggle[data-selected] {
+  background: var(--float);
+  color: var(--on-float);
+  box-shadow: var(--shadow-chunk);
+}
+
+.glade-rail-toggle[data-disabled] {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.glade-rail-toggle[data-focus-visible] {
+  outline: calc(3 * var(--u)) solid var(--focus);
+  outline-offset: calc(2 * var(--u));
+}
+
+.glade-tool {
+  position: relative;
+}
+
+.glade-rail-badge {
+  position: absolute;
+  right: calc(-2 * var(--u));
+  bottom: calc(-2 * var(--u));
+  min-width: calc(18 * var(--u));
+  height: calc(18 * var(--u));
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: var(--strong);
+  color: var(--on-strong);
+  font-size: calc(13 * var(--u));
+  line-height: 1;
+  font-weight: var(--weight-strong);
+}

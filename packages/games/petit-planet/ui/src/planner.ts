@@ -14,10 +14,10 @@ export const islandLayers = [
 
 /** The slider's stops: the design's sky colours for dawn, day, dusk and night. */
 export const islandTimeStops = [
-  { preset: "morning", label: "Dawn", sky: "#e39aac" },
-  { preset: "midday", label: "Day", sky: "#69d2ff" },
-  { preset: "afternoon", label: "Dusk", sky: "#efc05a" },
-  { preset: "night", label: "Night", sky: "#10283b" },
+  { preset: "morning", label: "Dawn", sky: "#e39aac", icon: "time-dawn" },
+  { preset: "midday", label: "Day", sky: "#69d2ff", icon: "time-day" },
+  { preset: "afternoon", label: "Dusk", sky: "#efc05a", icon: "time-dusk" },
+  { preset: "night", label: "Night", sky: "#10283b", icon: "time-night" },
 ] as const;
 
 /** The look's season that Snow turns on. */

@@ -10,6 +10,8 @@ export interface TimeStop {
   hour: number;
   /** The sky dome's colour at this stop. */
   sky: string;
+  /** Its icon on the rail's Time button: a sunrise, a sun, a sunset, a moon. */
+  icon: string;
 }
 
 /** How a game names one of its look's presets on the slider. */
@@ -18,6 +20,7 @@ export interface TimeStopName {
   preset: string;
   label: string;
   sky: string;
+  icon: string;
 }
 
 /**
@@ -30,7 +33,9 @@ export function timeStopsFor(
 ): TimeStop[] {
   return look.flatMap((preset) => {
     const named = names.find((n) => n.preset === preset.name);
-    return named ? [{ label: named.label, hour: preset.hour, sky: named.sky }] : [];
+    return named
+      ? [{ label: named.label, hour: preset.hour, sky: named.sky, icon: named.icon }]
+      : [];
   });
 }
 

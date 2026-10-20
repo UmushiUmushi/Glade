@@ -1,9 +1,10 @@
 // The game picker: a dark pill with the current game's name in its own title font and a ▾, which
 // opens a "Switch game" menu. Each game's name is in its own title font; games that aren't ready
-// show "Soon" and can't be picked. From the design's side panel header.
+// show "Soon" and can't be picked. From the design's side panel header; on the rail it is a round
+// button with the game's small logo.
 
 import { Button as AriaButton } from "react-aria-components";
-import { Icon } from "./icons";
+import { Icon, type IconId } from "./icons";
 import { Menu, MenuItem } from "./menu";
 import "./game-picker.css";
 
@@ -16,6 +17,8 @@ export interface GameChoice {
   titleFont?: string;
   /** False for a game that isn't ready yet: shown as "Soon", not pickable. */
   ready: boolean;
+  /** The game's small logo, for the rail; a globe when the game draws none. */
+  logo?: IconId;
 }
 
 export interface GamePickerProps {
@@ -23,9 +26,11 @@ export interface GamePickerProps {
   /** The current game's id. */
   current: string;
   onPick: (id: string) => void;
+  /** The rail's round button with the game's logo, instead of the pill with its name. */
+  compact?: boolean;
 }
 
-export function GamePicker({ games, current, onPick }: GamePickerProps) {
+export function GamePicker({ games, current, onPick, compact }: GamePickerProps) {
   const here = games.find((g) => g.id === current);
   const title = here?.title ?? current;
   return (
@@ -36,12 +41,23 @@ export function GamePicker({ games, current, onPick }: GamePickerProps) {
       onSelectedChange={(id) => {
         if (id !== current) onPick(String(id));
       }}
+      placement={compact ? "end top" : "bottom start"}
       trigger={
-        <AriaButton className="glade-game-picker" aria-label={`Game: ${title}. Switch game`}>
-          <span className="glade-game-picker-title" style={{ fontFamily: here?.titleFont }}>
-            {title}
-          </span>
-          <Icon id="chevron-down" size={20} strokeWidth={2.8} />
+        <AriaButton
+          className="glade-game-picker"
+          data-compact={compact ? "" : undefined}
+          aria-label={`Game: ${title}. Switch game`}
+        >
+          {compact ? (
+            <Icon id={here?.logo ?? "globe"} size={22} />
+          ) : (
+            <>
+              <span className="glade-game-picker-title" style={{ fontFamily: here?.titleFont }}>
+                {title}
+              </span>
+              <Icon id="chevron-down" size={20} strokeWidth={2.8} />
+            </>
+          )}
         </AriaButton>
       }
     >

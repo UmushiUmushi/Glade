@@ -10,10 +10,10 @@ import { initialPlanner, plannerReducer } from "./state";
 import type { TimeStop } from "./time";
 
 const STOPS: TimeStop[] = [
-  { label: "Early", hour: 7, sky: "#e39aac" },
-  { label: "Noon", hour: 12, sky: "#69d2ff" },
-  { label: "Late", hour: 16.5, sky: "#efc05a" },
-  { label: "Dark", hour: 21, sky: "#10283b" },
+  { label: "Early", hour: 7, sky: "#e39aac", icon: "sun" },
+  { label: "Noon", hour: 12, sky: "#69d2ff", icon: "sun" },
+  { label: "Late", hour: 16.5, sky: "#efc05a", icon: "sun" },
+  { label: "Dark", hour: 21, sky: "#10283b", icon: "sun" },
 ];
 
 function Environment({ hasSnow }: { hasSnow: boolean }) {

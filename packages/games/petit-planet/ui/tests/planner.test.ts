@@ -36,6 +36,10 @@ describe("the island's time of day", () => {
     expect(islandTimeStops.map((s) => s.preset)).toEqual(presets);
   });
 
+  it("draws an icon for every stop", () => {
+    for (const stop of islandTimeStops) expect(petitPlanetIcons).toHaveProperty(stop.icon);
+  });
+
   it("turns on a season the look has", () => {
     expect(Object.keys(style.seasons ?? {})).toContain(islandSnowSeason);
   });

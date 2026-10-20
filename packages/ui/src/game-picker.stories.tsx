@@ -13,13 +13,14 @@ const GAMES: GameChoice[] = [
   { id: "later", title: "Later Game", ready: false },
 ];
 
-function Picker(props: { onPick: (id: string) => void }) {
+function Picker(props: { onPick: (id: string) => void; compact?: boolean }) {
   const [current, setCurrent] = useState("first");
   return (
     <div style={{ width: 240 }}>
       <GamePicker
         games={GAMES}
         current={current}
+        compact={props.compact}
         onPick={(id) => {
           setCurrent(id);
           props.onPick(id);
@@ -70,5 +71,18 @@ export const SoonCannotBePicked: Story = {
     await userEvent.click(later);
     await expect(args.onPick).not.toHaveBeenCalled();
     await userEvent.keyboard("{Escape}");
+  },
+};
+
+export const CompactOnTheRail: Story = {
+  args: { compact: true },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+    const button = canvas.getByRole("button", { name: "Game: First Game. Switch game" });
+    await expect(button.textContent).toBe("");
+    await userEvent.click(button);
+    await userEvent.click(await body.findByRole("menuitemradio", { name: "Second Game" }));
+    await waitFor(() => expect(args.onPick).toHaveBeenCalledWith("second"));
   },
 };

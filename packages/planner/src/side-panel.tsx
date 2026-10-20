@@ -31,14 +31,14 @@ export interface SidePanelProps {
   onClearSelection: () => void;
 }
 
-interface ToolDef {
+export interface ToolDef {
   id: ToolId | SelectMode;
   label: string;
   icon: IconId;
   shortcut?: string;
 }
 
-const TOOLS: ToolDef[] = [
+export const TOOL_DEFS: ToolDef[] = [
   { id: "camera", label: "Camera: drag to orbit around the centre", icon: "grab", shortcut: "H" },
   {
     id: "pointer",
@@ -48,14 +48,14 @@ const TOOLS: ToolDef[] = [
   },
 ];
 
-const SELECT_TOOLS: ToolDef[] = [
+export const SELECT_TOOL_DEFS: ToolDef[] = [
   { id: "lasso", label: "Lasso", icon: "lasso", shortcut: "L" },
   { id: "select-rect", label: "Rectangle select", icon: "select-rect", shortcut: "M" },
   { id: "select-circle", label: "Circle select", icon: "select-circle", shortcut: "O" },
   { id: "magic", label: "Magic select (flood)", icon: "magic", shortcut: "Y" },
 ];
 
-const MODES: ToolDef[] = [
+export const MODE_DEFS: ToolDef[] = [
   { id: "set", label: "Set: replace the selection", icon: "select-set" },
   { id: "add", label: "Add to the selection", icon: "select-add", shortcut: "Ctrl" },
   {
@@ -87,7 +87,7 @@ export function PanelSection(props: {
 }
 
 /** A group of round tool buttons, one of them chosen: a toolbar of toggles. */
-function ToolGroup(props: {
+export function ToolGroup(props: {
   label: string;
   tools: ToolDef[];
   chosen: string;
@@ -152,14 +152,14 @@ function SelectSection({ state, dispatch, onClearSelection }: SidePanelProps) {
       <div className="glade-panel-row">
         <ToolGroup
           label="Selection tool"
-          tools={SELECT_TOOLS}
+          tools={SELECT_TOOL_DEFS}
           chosen={state.tool}
           onChoose={(id) => dispatch({ type: "tool", tool: id as ToolId })}
         />
         <ToolGroup
           label="Selection mode"
           variant="segment"
-          tools={MODES}
+          tools={MODE_DEFS}
           chosen={state.selectMode}
           onChoose={(id) => dispatch({ type: "select-mode", mode: id as SelectMode })}
         />
@@ -231,7 +231,7 @@ export function SidePanel(props: SidePanelProps) {
         <PanelSection id="glade-panel-tools" title="Tools" aside="Hold Shift to swap">
           <ToolGroup
             label="Tools"
-            tools={TOOLS}
+            tools={TOOL_DEFS}
             chosen={state.tool}
             onChoose={(id) => dispatch({ type: "tool", tool: id as ToolId })}
           />
@@ -241,21 +241,5 @@ export function SidePanel(props: SidePanelProps) {
         <LayersSection {...props} />
       </div>
     </>
-  );
-}
-
-/** The rail's header for now: Menu and Expand. Its full set of buttons arrives in step 1.6. */
-export function RailHeader(props: { menu: ReactNode; dispatch: SidePanelProps["dispatch"] }) {
-  return (
-    <div className="glade-rail-header">
-      {props.menu}
-      <IconButton
-        label="Expand panel"
-        icon="chevron-right"
-        variant="strong"
-        tooltipPlacement="end"
-        onPress={() => props.dispatch({ type: "panel", panel: "open" })}
-      />
-    </div>
   );
 }

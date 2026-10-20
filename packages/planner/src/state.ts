@@ -16,6 +16,8 @@ export type HostLayer = "grid" | "area";
 
 export interface PlannerState {
   tool: ToolId;
+  /** The select tool used last: the rail's Select button shows it and picks it again. */
+  lastSelectTool: ToolId;
   selectMode: SelectMode;
   ruler: boolean;
   /** Layer rows the user has hidden, by row id. */
@@ -48,6 +50,7 @@ export function initialPlanner(
 ): PlannerState {
   return {
     tool: "pointer",
+    lastSelectTool: "select-rect",
     selectMode: "set",
     ruler: false,
     hidden: [],
@@ -62,7 +65,12 @@ export function plannerReducer(state: PlannerState, action: PlannerAction): Plan
   switch (action.type) {
     case "tool":
       // Picking the active tool again does nothing (for Camera, Pointer and the select tools).
-      return state.tool === action.tool ? state : { ...state, tool: action.tool };
+      if (state.tool === action.tool) return state;
+      return {
+        ...state,
+        tool: action.tool,
+        lastSelectTool: SELECT_TOOLS.includes(action.tool) ? action.tool : state.lastSelectTool,
+      };
     case "select-mode":
       return state.selectMode === action.mode ? state : { ...state, selectMode: action.mode };
     case "ruler":

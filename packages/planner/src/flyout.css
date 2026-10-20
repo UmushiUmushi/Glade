@@ -1,0 +1,38 @@
+/* Flyout (flyout.tsx). From the design: the popup colour with its edge, 28 px corners and the
+   float shadow, beside the rail. */
+
+.glade-flyout-anchor {
+  display: flex;
+}
+
+.glade-flyout {
+  box-sizing: border-box;
+  background: var(--pop);
+  border: calc(2 * var(--u)) solid var(--pop-line);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-float);
+  outline: none;
+}
+
+.glade-flyout-body {
+  padding: calc(10 * var(--u)) calc(14 * var(--u)) calc(12 * var(--u));
+  display: flex;
+  flex-direction: column;
+  gap: calc(10 * var(--u));
+  font-family: var(--font-ui);
+}
+
+.glade-flyout-heading {
+  font-size: calc(13 * var(--u));
+  line-height: calc(16 * var(--u));
+  font-weight: var(--weight-title);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+  padding-left: calc(4 * var(--u));
+}
+
+/* Groups keep their own width, as in the design (the mode pill doesn't stretch). */
+.glade-flyout-body > * {
+  align-self: flex-start;
+}

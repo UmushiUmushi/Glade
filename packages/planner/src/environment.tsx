@@ -124,32 +124,46 @@ export interface EnvironmentSectionProps {
   hasSnow: boolean;
 }
 
+/** The time slider: the stops evenly spaced, snapping near them, with the keys of the docs. */
+export function TimeSlider(props: {
+  state: PlannerState;
+  dispatch: (action: PlannerAction) => void;
+  stops: readonly TimeStop[];
+  width?: number;
+}) {
+  const { state, dispatch, stops } = props;
+  const setHour = (hour: number) => dispatch({ type: "hour", hour });
+  return (
+    <Slider
+      label="Time of day"
+      width={props.width}
+      min={0}
+      max={stops.length - 1}
+      step={0.01}
+      value={positionOf(stops, state.hour)}
+      stops={stops.map((s) => s.label)}
+      currentStop={stops.indexOf(nearestStop(stops, state.hour))}
+      valueText={() => timeText(stops, state.hour)}
+      onChange={(p) => setHour(snapHour(stops, hourAt(stops, p)))}
+      onKeyDown={(e) => {
+        const next = hourAfterKey(stops, state.hour, e.key);
+        if (next === null) return;
+        e.preventDefault();
+        setHour(next);
+      }}
+    />
+  );
+}
+
 /** The time of day and the season, for a map whose look changes with them. */
 export function EnvironmentSection({ state, dispatch, stops, hasSnow }: EnvironmentSectionProps) {
   const position = positionOf(stops, state.hour);
-  const setHour = (hour: number) => dispatch({ type: "hour", hour });
   return (
     <PanelSection id="glade-panel-environment" title="Environment">
       <div className="glade-environment">
         <div className="glade-environment-time">
           <SkyDome stops={stops} position={position} />
-          <Slider
-            label="Time of day"
-            min={0}
-            max={stops.length - 1}
-            step={0.01}
-            value={position}
-            stops={stops.map((s) => s.label)}
-            currentStop={stops.indexOf(nearestStop(stops, state.hour))}
-            valueText={() => timeText(stops, state.hour)}
-            onChange={(p) => setHour(snapHour(stops, hourAt(stops, p)))}
-            onKeyDown={(e) => {
-              const next = hourAfterKey(stops, state.hour, e.key);
-              if (next === null) return;
-              e.preventDefault();
-              setHour(next);
-            }}
-          />
+          <TimeSlider state={state} dispatch={dispatch} stops={stops} />
         </div>
         {hasSnow && (
           <Checkbox
