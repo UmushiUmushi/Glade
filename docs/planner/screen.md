@@ -242,13 +242,15 @@ icon and the mode's name below. On phones they sit in a row above the toolbox.
 
 The top-right corner holds, left to right: the share chip, the problems chip, the viewport menu.
 
-| Row                 | Does                                                                                                                                  | Key   |
-| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------- | ----- |
-| 👁 Preview           | Hides all panels and controls. The map fills the screen. Only a closed-eye button stays, top right. Click it (or `Esc`) to come back. | `P`   |
-| 2D / 3D             | Switches view. Hidden when the map type has only one view.                                                                            | `Tab` |
-| View mode (3D only) | Iso, Top or Walk. Click to see the 3 options.                                                                                         | —     |
-| Fit                 | Moves the camera to the default view for 2D or 3D. With a selection, fits the selection.                                              | `F`   |
-| Collapse            | The menu folds into a slim tag of the same height, with a left-pointing chevron.                                                      | —     |
+| Row                 | Does                                                                                                                                  | Key |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------- | --- |
+| 👁 Preview           | Hides all panels and controls. The map fills the screen. Only a closed-eye button stays, top right. Click it (or `Esc`) to come back. | `P` |
+| 2D / 3D             | Switches view. Hidden when the map type has only one view.                                                                            | —   |
+| View mode (3D only) | Iso, Top or Walk. Click to see the 3 options.                                                                                         | —   |
+| Fit                 | Moves the camera to the default view for 2D or 3D. With a selection, fits the selection.                                              | `F` |
+| Collapse            | The menu folds into a slim tag of the same height, with a left-pointing chevron.                                                      | —   |
+
+2D / 3D has no key: `Tab` moves the keyboard between controls, and the planner never takes it.
 
 ### FPS and coordinates (bottom left)
 

@@ -14,12 +14,14 @@ export interface PlannerLayoutProps {
   viewport: ReactNode;
   /** The toolbox under the map; left out, the map takes its place. */
   toolbox?: ReactNode;
+  /** Preview: the panel and toolbox hidden, the map filling the tray (kept mounted, only hidden). */
+  preview?: boolean;
 }
 
 export function PlannerLayout(props: PlannerLayoutProps) {
   const open = props.panelState === "open";
   return (
-    <div className="glade-planner-tray">
+    <div className="glade-planner-tray" data-preview={props.preview ? "" : undefined}>
       {open ? (
         <aside className="glade-planner-card glade-planner-panel" aria-label="Planner controls">
           {props.panel}

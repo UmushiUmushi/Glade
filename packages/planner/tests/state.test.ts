@@ -94,6 +94,45 @@ describe("time and snow", () => {
   });
 });
 
+describe("the viewport", () => {
+  it("starts in 3D with the iso camera, the menu open, no preview, in the mode given", () => {
+    expect(initialPlanner({ mode: "first" })).toMatchObject({
+      mode: "first",
+      view: "3d",
+      camera: "iso",
+      preview: false,
+      viewMenu: "open",
+    });
+    expect(initialPlanner({ view: "2d" }).view).toBe("2d");
+  });
+
+  it("changes mode, view, camera, preview and the menu, and stays the same when nothing changes", () => {
+    const s = run(
+      { type: "mode", mode: "second" },
+      { type: "view", view: "2d" },
+      { type: "camera", camera: "walk" },
+      { type: "preview", on: true },
+      { type: "view-menu", open: false },
+    );
+    expect(s).toMatchObject({
+      mode: "second",
+      view: "2d",
+      camera: "walk",
+      preview: true,
+      viewMenu: "closed",
+    });
+    for (const a of [
+      { type: "mode", mode: "second" },
+      { type: "view", view: "2d" },
+      { type: "camera", camera: "walk" },
+      { type: "preview", on: true },
+      { type: "view-menu", open: false },
+    ] as PlannerAction[]) {
+      expect(plannerReducer(s, a)).toBe(s);
+    }
+  });
+});
+
 describe("the panel", () => {
   it("opens and shrinks to the rail", () => {
     const rail = run({ type: "panel", panel: "rail" });

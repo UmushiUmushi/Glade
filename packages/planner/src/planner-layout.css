@@ -65,3 +65,9 @@
   gap: calc(12 * var(--u));
   z-index: 15;
 }
+
+/* Preview: only the map shows. */
+.glade-planner-tray[data-preview] .glade-planner-panel,
+.glade-planner-tray[data-preview] .glade-planner-toolbox {
+  display: none;
+}

@@ -3,7 +3,14 @@
 
 import { petitPlanet } from "@glade/petit-planet-profile";
 import { describe, expect, it } from "vitest";
-import { islandLayers, islandSnowSeason, islandTimeStops, petitPlanetIcons } from "../src";
+import {
+  islandCoords,
+  islandLayers,
+  islandModes,
+  islandSnowSeason,
+  islandTimeStops,
+  petitPlanetIcons,
+} from "../src";
 
 describe("the island's layer rows", () => {
   const toggles = petitPlanet.maps.planet.ui.layerNames().map((l) => l.id);
@@ -42,5 +49,32 @@ describe("the island's time of day", () => {
 
   it("turns on a season the look has", () => {
     expect(Object.keys(style.seasons ?? {})).toContain(islandSnowSeason);
+  });
+});
+
+describe("the island's modes", () => {
+  it("are Items, Paths, Cliffs and Water, each with a hand-drawn icon", () => {
+    expect(islandModes.map((m) => m.label)).toEqual(["Items", "Paths", "Cliffs", "Water"]);
+    for (const m of islandModes) expect(petitPlanetIcons).toHaveProperty(m.icon);
+  });
+});
+
+describe("the coordinates readout", () => {
+  const doc = petitPlanet.maps.planet.newDoc("test");
+
+  it("gives tiles in half steps for Items and whole tiles for Paths, with the area", () => {
+    expect(islandCoords("items", doc, { x: 34.7, y: 40.2 })).toBe("Tile 34.5, 40 · Area C3");
+    expect(islandCoords("paths", doc, { x: 34.7, y: 40.2 })).toBe("Tile 34, 40 · Area C3");
+  });
+
+  it("gives the terrain block and its level for Cliffs and Water", () => {
+    expect(islandCoords("cliffs", doc, { x: 34.7, y: 40.2 })).toMatch(
+      /^Block 35, 40 · Level \d · Area C3$/,
+    );
+  });
+
+  it("gives nothing off the island", () => {
+    expect(islandCoords("items", doc, { x: -1, y: 5 })).toBeNull();
+    expect(islandCoords("items", doc, { x: 5, y: 1e6 })).toBeNull();
   });
 });

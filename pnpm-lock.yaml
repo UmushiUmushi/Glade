@@ -245,13 +245,15 @@ importers:
       '@fontsource/nunito':
         specifier: ^5.3.0
         version: 5.3.0
-      '@glade/ui':
+      '@glade/core':
         specifier: workspace:*
-        version: link:../../../ui
-    devDependencies:
+        version: link:../../../core
       '@glade/petit-planet-profile':
         specifier: workspace:*
         version: link:../profile
+      '@glade/ui':
+        specifier: workspace:*
+        version: link:../../../ui
 
   packages/logging:
     dependencies:

@@ -2,7 +2,7 @@
   "name": "@glade/petit-planet-ui",
   "version": "0.0.0",
   "private": true,
-  "description": "How Petit Planet looks in Glade: its theme, fonts and hand-drawn icons. Data only, no React.",
+  "description": "How Petit Planet looks and reads in Glade: its theme, fonts, hand-drawn icons, and what its planner shows. Data and plain functions, no React.",
   "license": "MIT",
   "type": "module",
   "exports": {
@@ -12,9 +12,8 @@
   "dependencies": {
     "@fontsource/baloo-2": "^5.3.0",
     "@fontsource/nunito": "^5.3.0",
+    "@glade/core": "workspace:*",
+    "@glade/petit-planet-profile": "workspace:*",
     "@glade/ui": "workspace:*"
-  },
-  "devDependencies": {
-    "@glade/petit-planet-profile": "workspace:*"
   }
 }

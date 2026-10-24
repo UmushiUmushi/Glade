@@ -5,7 +5,7 @@
 
 import type { Doc } from "@glade/core";
 import type { GladeError } from "@glade/errors";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, type RefObject } from "react";
 import type { Environment } from "./environment";
 import { screenToPlan } from "./plan-camera";
 import type { CameraKind, ViewKind } from "./views";
@@ -25,6 +25,8 @@ export interface MapViewportProps {
   onView?: (view: ViewKind) => void;
   /** The viewport, once made, for input and overlays. */
   onReady?: (viewport: Viewport) => void;
+  /** The map point under the pointer in the plan (2D), or null when it leaves or in 3D. */
+  onPointer?: (p: { x: number; y: number } | null) => void;
   /** Loads the 3D code; tests pass their own. */
   load3d?: ViewportDeps["load3d"];
 }
@@ -48,6 +50,15 @@ function planPoint(e: React.PointerEvent<HTMLElement>, vp: Viewport | null) {
   const r = e.currentTarget.getBoundingClientRect();
   const at = { x: e.clientX - r.left, y: e.clientY - r.top };
   return screenToPlan(cam, { w: r.width, h: r.height }, at);
+}
+
+/** The pointer's map point: the hover marks follow it, and so does onPointer (in 2D). */
+function usePointerAt(viewport: RefObject<Viewport | null>, latest: RefObject<MapViewportProps>) {
+  return (p: { x: number; y: number } | null) => {
+    const vp = viewport.current;
+    vp?.setHover(p);
+    latest.current.onPointer?.(p && vp?.state().view === "2d" ? p : null);
+  };
 }
 
 export function MapViewport(props: MapViewportProps) {
@@ -96,14 +107,16 @@ export function MapViewport(props: MapViewportProps) {
     if (props.layers) viewport.current?.setLayers(props.layers);
   }, [props.layers]);
 
+  const pointerAt = usePointerAt(viewport, latest);
+
   return (
     <div
       ref={box}
       role="img"
       aria-label={props.label}
       style={{ position: "relative", width: "100%", height: "100%", overflow: "hidden" }}
-      onPointerMove={(e) => viewport.current?.setHover(planPoint(e, viewport.current))}
-      onPointerLeave={() => viewport.current?.setHover(null)}
+      onPointerMove={(e) => pointerAt(planPoint(e, viewport.current))}
+      onPointerLeave={() => pointerAt(null)}
     >
       <canvas ref={plan} data-layer="plan" style={canvasStyle} aria-hidden="true" />
       <canvas ref={hover} data-layer="hover" style={hoverStyle} aria-hidden="true" />

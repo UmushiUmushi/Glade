@@ -83,6 +83,8 @@ export { onSurfaceBox, onSurfaces, type OnSurface } from "./surfaces";
 // The planet: its map, world, params and rules, and facts about its world that tools need.
 export { lookFile, planet, type PlanetMap } from "./maps/planet";
 export { profileOf } from "./maps/planet/data";
+/** The terrain block under a point given in minor cells (half tiles). */
+export { terrainAtPoint } from "./maps/planet/render2d";
 export {
   defaultTerrainLevel,
   isBeachMajor,

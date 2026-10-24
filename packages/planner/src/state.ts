@@ -1,6 +1,7 @@
 // The planner's own state (not the map's): the active tool, how a new selection combines with the
-// old, the ruler, which layer rows are hidden, the "Always on" ticks, the time of day and snow,
-// and whether the side panel is open or the rail. A pure reducer, so the rules in docs/planner/screen.md are tested without a
+// old, the ruler, which layer rows are hidden, the "Always on" ticks, the time of day and snow, the
+// viewport's mode, view and camera, Preview, and whether the side panel and the viewport menu are
+// open. A pure reducer, so the rules in docs/planner/screen.md are tested without a
 // screen.
 
 /** Tools that share the one "active tool" (paint tools join them with the toolbox). */
@@ -10,6 +11,12 @@ export const SELECT_TOOLS: readonly ToolId[] = ["lasso", "select-rect", "select-
 
 /** How a new selection combines with the old one. */
 export type SelectMode = "set" | "add" | "subtract";
+
+/** 2D (the plan) or 3D. */
+export type ViewKind = "2d" | "3d";
+
+/** The 3D camera. */
+export type CameraKind = "iso" | "top" | "walk";
 
 /** The host's own layer rows, after a game's: grid lines and area lines. */
 export type HostLayer = "grid" | "area";
@@ -28,6 +35,14 @@ export interface PlannerState {
   hour: number;
   /** Winter (Snow ticked). */
   snow: boolean;
+  /** The viewport mode: one of the map's modes (the game's ui), "" for a map with none. */
+  mode: string;
+  view: ViewKind;
+  camera: CameraKind;
+  /** Preview: every panel and control hidden but a way back. */
+  preview: boolean;
+  /** The viewport menu, or its slim tag. */
+  viewMenu: "open" | "closed";
   panel: "open" | "rail";
 }
 
@@ -38,6 +53,11 @@ export type PlannerAction =
   | { type: "toggle-layer"; id: string }
   | { type: "always-on"; layer: HostLayer; on: boolean }
   | { type: "hour"; hour: number }
+  | { type: "mode"; mode: string }
+  | { type: "view"; view: ViewKind }
+  | { type: "camera"; camera: CameraKind }
+  | { type: "preview"; on: boolean }
+  | { type: "view-menu"; open: boolean }
   | { type: "snow"; on: boolean }
   | { type: "panel"; panel: "open" | "rail" };
 
@@ -46,7 +66,7 @@ export type PlannerAction =
  * `hour` (the look's default time).
  */
 export function initialPlanner(
-  start: { panel?: "open" | "rail"; hour?: number } = {},
+  start: { panel?: "open" | "rail"; hour?: number; mode?: string; view?: ViewKind } = {},
 ): PlannerState {
   return {
     tool: "pointer",
@@ -57,6 +77,11 @@ export function initialPlanner(
     alwaysOn: { grid: true, area: false },
     hour: start.hour ?? 12,
     snow: false,
+    mode: start.mode ?? "",
+    view: start.view ?? "3d",
+    camera: "iso",
+    preview: false,
+    viewMenu: "open",
     panel: start.panel ?? "open",
   };
 }
@@ -91,6 +116,18 @@ export function plannerReducer(state: PlannerState, action: PlannerAction): Plan
       return state.hour === action.hour ? state : { ...state, hour: action.hour };
     case "snow":
       return state.snow === action.on ? state : { ...state, snow: action.on };
+    case "mode":
+      return state.mode === action.mode ? state : { ...state, mode: action.mode };
+    case "view":
+      return state.view === action.view ? state : { ...state, view: action.view };
+    case "camera":
+      return state.camera === action.camera ? state : { ...state, camera: action.camera };
+    case "preview":
+      return state.preview === action.on ? state : { ...state, preview: action.on };
+    case "view-menu": {
+      const viewMenu = action.open ? "open" : "closed";
+      return state.viewMenu === viewMenu ? state : { ...state, viewMenu };
+    }
     case "panel":
       return state.panel === action.panel ? state : { ...state, panel: action.panel };
   }

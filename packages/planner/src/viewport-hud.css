@@ -1,0 +1,232 @@
+/* The controls over the map (viewport-hud.tsx). From the design: the mode buttons rise out of their
+   pill, the chosen one in the selected colour, bigger and named; cream round buttons for undo and
+   redo; a slim white card for the viewport menu at the top right; dark pills at the bottom left. */
+
+.glade-hud-top {
+  position: absolute;
+  top: calc(6 * var(--u));
+  left: calc(16 * var(--u));
+  right: calc(96 * var(--u));
+  display: flex;
+  align-items: flex-start;
+  gap: calc(8 * var(--u));
+  flex-wrap: wrap;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.glade-hud-top > * {
+  pointer-events: auto;
+}
+
+.glade-modes {
+  display: flex;
+  gap: calc(10 * var(--u));
+  align-items: flex-start;
+}
+
+.glade-mode {
+  border: none;
+  background: transparent;
+  padding: calc(18 * var(--u)) calc(2 * var(--u)) 0;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: calc(5 * var(--u));
+  font-family: var(--font-ui);
+  outline: none;
+}
+
+.glade-mode[data-on] {
+  padding-top: calc(14 * var(--u));
+}
+
+.glade-mode-base {
+  position: relative;
+  display: block;
+  width: calc(52 * var(--u));
+  height: calc(28 * var(--u));
+  border-radius: 999px;
+  transition:
+    width 160ms,
+    height 160ms;
+}
+
+.glade-mode[data-on] .glade-mode-base {
+  width: calc(66 * var(--u));
+  height: calc(34 * var(--u));
+  background: var(--selected);
+  box-shadow: var(--shadow-chunk);
+}
+
+.glade-mode-icon {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  display: flex;
+}
+
+.glade-mode[data-on] .glade-mode-icon {
+  bottom: calc(7 * var(--u));
+}
+
+.glade-mode-name {
+  padding: calc(2 * var(--u)) calc(10 * var(--u));
+  border-radius: 999px;
+  background: var(--strong);
+  color: var(--on-strong);
+  font-size: calc(12 * var(--u));
+  line-height: calc(16 * var(--u));
+  font-weight: var(--weight-strong);
+  white-space: nowrap;
+}
+
+.glade-mode[data-focus-visible] .glade-mode-base {
+  outline: calc(3 * var(--u)) solid var(--focus);
+  outline-offset: calc(2 * var(--u));
+}
+
+.glade-hud-divider {
+  width: calc(2 * var(--u));
+  height: calc(28 * var(--u));
+  border-radius: calc(2 * var(--u));
+  background: rgba(245, 240, 209, 0.4);
+  margin: calc(22 * var(--u)) calc(4 * var(--u)) 0;
+}
+
+.glade-hud-history {
+  display: flex;
+  align-items: center;
+  gap: calc(8 * var(--u));
+  margin-top: calc(14 * var(--u));
+}
+
+.glade-hud-corner {
+  position: absolute;
+  top: calc(16 * var(--u));
+  right: calc(16 * var(--u));
+  z-index: 12;
+}
+
+.glade-view-menu {
+  width: calc(56 * var(--u));
+  box-sizing: border-box;
+  padding: calc(6 * var(--u));
+  border-radius: var(--radius-card);
+  background: var(--paper);
+  box-shadow: var(--shadow-float);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: calc(6 * var(--u));
+}
+
+.glade-view-dim,
+.glade-view-camera,
+.glade-view-collapse,
+.glade-view-tag {
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  outline: none;
+}
+
+.glade-view-dim {
+  width: calc(44 * var(--u));
+  height: calc(44 * var(--u));
+  border-radius: 999px;
+  background: var(--float);
+  color: var(--on-float);
+  box-shadow: var(--shadow-chunk);
+  font-family: var(--font-title);
+  font-size: calc(17 * var(--u));
+  line-height: calc(20 * var(--u));
+  font-weight: var(--weight-title);
+}
+
+.glade-view-camera {
+  width: calc(40 * var(--u));
+  height: calc(36 * var(--u));
+  border-radius: 999px;
+  background: var(--inset);
+  color: var(--ink);
+  font-family: var(--font-ui);
+  font-size: calc(13 * var(--u));
+  line-height: calc(16 * var(--u));
+  font-weight: var(--weight-strong);
+}
+
+.glade-view-collapse {
+  width: calc(44 * var(--u));
+  height: calc(28 * var(--u));
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ink-muted);
+}
+
+.glade-view-tag {
+  width: calc(20 * var(--u));
+  height: calc(220 * var(--u));
+  border-radius: calc(10 * var(--u));
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: var(--shadow-float);
+}
+
+.glade-view-dim[data-focus-visible],
+.glade-view-camera[data-focus-visible],
+.glade-view-collapse[data-focus-visible],
+.glade-view-tag[data-focus-visible],
+.glade-save[data-focus-visible] {
+  outline: calc(3 * var(--u)) solid var(--focus);
+  outline-offset: calc(2 * var(--u));
+}
+
+.glade-hud-stats {
+  position: absolute;
+  left: calc(16 * var(--u));
+  bottom: calc(16 * var(--u));
+  display: flex;
+  gap: calc(6 * var(--u));
+  z-index: 10;
+  font-variant-numeric: tabular-nums;
+}
+
+.glade-save {
+  position: relative;
+  height: calc(36 * var(--u));
+  border: none;
+  border-radius: 999px;
+  padding: 0 calc(12 * var(--u)) 0 calc(10 * var(--u));
+  display: flex;
+  align-items: center;
+  gap: calc(6 * var(--u));
+  cursor: default;
+  background: var(--float);
+  color: var(--on-float);
+  box-shadow: var(--shadow-chunk);
+  font-family: var(--font-ui);
+  font-size: calc(13 * var(--u));
+  line-height: calc(16 * var(--u));
+  font-weight: var(--weight-strong);
+  white-space: nowrap;
+  outline: none;
+}
+
+.glade-save[data-state="failed"] {
+  color: var(--alert);
+  cursor: pointer;
+}
+
+.glade-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

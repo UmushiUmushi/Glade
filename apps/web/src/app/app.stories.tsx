@@ -120,6 +120,28 @@ export const Environment: Story = {
   },
 };
 
+/** The island's modes and the keys: 2 picks Paths, P opens Preview, Esc comes back. */
+export const ModesAndPreview: Story = {
+  args: { history: memoryHistory("/petit-planet/planner") },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(canvas.getByRole("button", { name: "Items mode" })).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
+    await userEvent.keyboard("2");
+    await expect(canvas.getByRole("button", { name: "Paths mode" })).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
+    await userEvent.keyboard("p");
+    await expect(canvas.queryByRole("complementary", { name: "Planner controls" })).toBeNull();
+    await expect(canvas.getByRole("button", { name: "Exit preview" })).toBeVisible();
+    await userEvent.keyboard("{Escape}");
+    await expect(canvas.getByRole("complementary", { name: "Planner controls" })).toBeVisible();
+  },
+};
+
 /** The side panel's Minimize shrinks it to the rail; the rail's Expand opens it again. */
 export const MinimizeAndExpand: Story = {
   args: { history: memoryHistory("/petit-planet/planner") },

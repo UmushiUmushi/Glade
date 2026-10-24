@@ -3,7 +3,13 @@
 // Data only, never React: the shared screens draw every game with the same components.
 
 export { petitPlanetIcons } from "./icons";
-export { islandLayers, islandSnowSeason, islandTimeStops } from "./planner";
+export {
+  islandCoords,
+  islandLayers,
+  islandModes,
+  islandSnowSeason,
+  islandTimeStops,
+} from "./planner";
 export { petitPlanetTheme } from "./theme";
 
 /** The game's name, as Glade shows it. */

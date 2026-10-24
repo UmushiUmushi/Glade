@@ -77,3 +77,10 @@
   clip-path: inset(50%);
   white-space: nowrap;
 }
+
+/* The map and the controls over it share the viewport card. */
+.glade-planner-stack {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}

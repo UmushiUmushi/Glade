@@ -6,14 +6,16 @@
 import { bind, type Bound, type Doc } from "@glade/core";
 import { petitPlanet } from "@glade/petit-planet-profile";
 import {
+  islandCoords,
   islandLayers,
+  islandModes,
   islandSnowSeason,
   islandTimeStops,
   petitPlanetIcons,
   petitPlanetTheme,
   title as petitPlanetTitle,
 } from "@glade/petit-planet-ui";
-import type { LayerRow, TimeStopName } from "@glade/planner";
+import type { LayerRow, ModeDef, TimeStopName } from "@glade/planner";
 import "@glade/petit-planet-ui/fonts.css";
 import type { RenderableMap } from "@glade/render";
 import type { GameIcons, Theme } from "@glade/ui";
@@ -44,6 +46,10 @@ export interface GamePlanner {
   timeStops: readonly TimeStopName[];
   /** The look's season that Snow turns on; none for a map without one. */
   snowSeason?: string;
+  /** The viewport modes, in key order (1, 2, 3…); none for a map without modes. */
+  modes: readonly ModeDef[];
+  /** Where a map point is, in the mode's words, for the coordinates pill. */
+  coords?: (mode: string, doc: Doc, p: { x: number; y: number }) => string | null;
 }
 
 const island = bind(petitPlanet.maps[petitPlanet.defaultMap], {
@@ -64,6 +70,8 @@ export const games: readonly GladeGame[] = [
       layers: islandLayers,
       timeStops: islandTimeStops,
       snowSeason: islandSnowSeason,
+      modes: islandModes,
+      coords: islandCoords,
     },
   },
   { id: "palworld", title: "Palworld", theme: null, planner: null },
